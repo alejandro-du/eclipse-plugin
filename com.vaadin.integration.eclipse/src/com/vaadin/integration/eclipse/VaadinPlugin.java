@@ -2,6 +2,8 @@ package com.vaadin.integration.eclipse;
 
 import java.net.URL;
 
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -103,6 +105,10 @@ public class VaadinPlugin extends AbstractUIPlugin {
         super.start(context);
         nightlyBuildUpdater = new NightlyBuildUpdater();
         nightlyBuildUpdater.startUpdateJob();
+        // Listen to new projects in order to add AddonStylesBuilder on import
+        // when necessary (#15500).
+        ResourcesPlugin.getWorkspace().addResourceChangeListener(
+                new NewProjectListener(), IResourceChangeEvent.POST_BUILD);
     }
 
     @Override

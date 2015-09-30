@@ -107,6 +107,27 @@ public class AddonStylesBuilder extends IncrementalProjectBuilder {
         project.setDescription(desc, null);
     }
 
+    public static void removeBuilder(IProject project) throws CoreException {
+        IProjectDescription desc = project.getDescription();
+        ICommand[] commands = desc.getBuildSpec();
+        int builderIndex = -1;
+        for (int i = 0; i < commands.length; i++) {
+            if (commands[i].getBuilderName().equals(
+                    AddonStylesBuilder.BUILDER_ID)) {
+                builderIndex = i;
+                break;
+            }
+        }
+        if (builderIndex != -1) {
+            ICommand[] newCommands = new ICommand[commands.length - 1];
+            System.arraycopy(commands, 0, newCommands, 0, builderIndex);
+            System.arraycopy(commands, builderIndex + 1, newCommands,
+                    builderIndex, (commands.length - 1) - builderIndex);
+            desc.setBuildSpec(newCommands);
+            project.setDescription(desc, null);
+        }
+    }
+
     private static boolean isAddonPackageWithStyles(IPath resource) {
         return ProjectUtil.hasManifestAttribute("Vaadin-Stylesheets", resource);
     }

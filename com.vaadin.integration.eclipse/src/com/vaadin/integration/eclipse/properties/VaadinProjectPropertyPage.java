@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.dialogs.PropertyPage;
 
+import com.vaadin.integration.eclipse.builder.AddonStylesBuilder;
 import com.vaadin.integration.eclipse.builder.AddonStylesImporter;
 import com.vaadin.integration.eclipse.builder.WidgetsetBuildManager;
 import com.vaadin.integration.eclipse.properties.VaadinVersionComposite.VersionSelectionChangeListener;
@@ -41,7 +42,7 @@ import com.vaadin.integration.eclipse.util.data.MavenVaadinVersion;
 
 /**
  * Property page grouping Vaadin related project properties.
- * 
+ *
  * Vaadin version selection is here, future subpages may contain more settings.
  */
 public class VaadinProjectPropertyPage extends PropertyPage {
@@ -150,6 +151,11 @@ public class VaadinProjectPropertyPage extends PropertyPage {
                     performDefaults();
                 }
             }
+            if (themingComposite.isAddonScanningSuspended()) {
+                AddonStylesBuilder.removeBuilder(project);
+            } else {
+                AddonStylesBuilder.addBuilder(project);
+            }
 
         } catch (CoreException e) {
             ErrorUtil
@@ -185,7 +191,7 @@ public class VaadinProjectPropertyPage extends PropertyPage {
 
     /**
      * Updates the project Vaadin jar if needed.
-     * 
+     *
      * @param project
      *            The target project
      * @param selectedVaadinVersion
