@@ -73,11 +73,6 @@ public class <%= typeName %> extends AbstractComponentConnector {
 	}
 
 	@Override
-	protected Widget createWidget() {
-		return GWT.create(<%= widgetName %>.class);
-	}
-
-	@Override
 	public <%= widgetName %> getWidget() {
 		return (<%= widgetName %>) super.getWidget();
 	}

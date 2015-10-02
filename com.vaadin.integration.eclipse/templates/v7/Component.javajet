@@ -49,7 +49,7 @@ public class <%= typeName %> extends <%= componentExtends %> {
 
 <% if (t.hasState()) { %>
 	@Override
-	public <%= typeName %>State getState() {
+	protected <%= typeName %>State getState() {
 		return (<%= typeName %>State) super.getState();
 	}
 <% } %>
