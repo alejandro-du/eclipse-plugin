@@ -29,9 +29,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.AbstractElementListSelectionDialog;
 
-import com.vaadin.integration.eclipse.VaadinPlugin;
-import com.vaadin.integration.eclipse.background.NightlyCheckJob;
-import com.vaadin.integration.eclipse.preferences.PreferenceConstants;
+import com.vaadin.integration.eclipse.notifications.Utils;
 import com.vaadin.integration.eclipse.util.ErrorUtil;
 import com.vaadin.integration.eclipse.util.PreferenceUtil;
 import com.vaadin.integration.eclipse.util.ProjectUtil;
@@ -62,8 +60,8 @@ public class VaadinVersionComposite extends Composite {
     // by default, do not allow selecting Vaadin 7 versions
     private boolean useDependencyManagement = false;
 
-    private static class DownloadVaadinDialog extends
-            AbstractElementListSelectionDialog {
+    private static class DownloadVaadinDialog
+            extends AbstractElementListSelectionDialog {
 
         /**
          * This is an ugly and inefficient hack: as sorting cannot be disabled
@@ -74,8 +72,8 @@ public class VaadinVersionComposite extends Composite {
          * about which builds are official releases, pre-releases or release
          * candidates, nightly builds etc.
          */
-        private static class VersionStringComparator implements
-                Comparator<String> {
+        private static class VersionStringComparator
+                implements Comparator<String> {
             private Map<String, Integer> positions = new HashMap<String, Integer>();
 
             public VersionStringComparator(
@@ -94,7 +92,8 @@ public class VaadinVersionComposite extends Composite {
             super(parent, new LabelProvider());
 
             setTitle("Select Vaadin Version to Download");
-            setMessage("Select a Vaadin library version (* = any string, ? = any char):");
+            setMessage(
+                    "Select a Vaadin library version (* = any string, ? = any char):");
             setMultipleSelection(false);
         }
 
@@ -153,13 +152,13 @@ public class VaadinVersionComposite extends Composite {
                         .getAvailableVersions(!development);
                 // Equals and hasCode implementation in
                 // AbstractVaadinVersion enables us to do this
-                available.removeAll(LocalFileManager
-                        .getLocalVaadinVersions(true));
+                available.removeAll(
+                        LocalFileManager.getLocalVaadinVersions(true));
 
                 DownloadableVaadinVersion[] versions = available
                         .toArray(new DownloadableVaadinVersion[0]);
-                fFilteredList.setComparator(new VersionStringComparator(
-                        available));
+                fFilteredList
+                        .setComparator(new VersionStringComparator(available));
                 setListElements(versions);
 
                 // try to preserve selection
@@ -181,12 +180,10 @@ public class VaadinVersionComposite extends Composite {
                 }
                 ErrorUtil.displayError(displayMsg,
 
-                ex, getShell());
-                ErrorUtil
-                        .handleBackgroundException(
-                                IStatus.WARNING,
-                                "Failed to update the list of available Vaadin versions",
-                                ex);
+                        ex, getShell());
+                ErrorUtil.handleBackgroundException(IStatus.WARNING,
+                        "Failed to update the list of available Vaadin versions",
+                        ex);
             }
         }
 
@@ -236,8 +233,8 @@ public class VaadinVersionComposite extends Composite {
         label.setText("Vaadin version:");
 
         // Vaadin version selection combo
-        versionCombo = new Combo(this, SWT.BORDER | SWT.DROP_DOWN
-                | SWT.READ_ONLY);
+        versionCombo = new Combo(this,
+                SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         versionCombo.setLayoutData(gd);
 
@@ -265,7 +262,8 @@ public class VaadinVersionComposite extends Composite {
                 } else {
                     PreferenceUtil preferenceUtil = PreferenceUtil.get(project);
                     boolean oldValue = preferenceUtil.isUsingLatestNightly();
-                    enabled = (oldValue != latestNightlyCheckbox.getSelection());
+                    enabled = (oldValue != latestNightlyCheckbox
+                            .getSelection());
                 }
                 if (enabled) {
                     // set preference on commit, not here
@@ -283,8 +281,8 @@ public class VaadinVersionComposite extends Composite {
                             }
                             // do not allow changes of a Vaadin version
                             // outside the project
-                            if (!ProjectUtil
-                                    .isInProject(project, vaadinLibrary)) {
+                            if (!ProjectUtil.isInProject(project,
+                                    vaadinLibrary)) {
                                 return;
                             }
                         }
@@ -302,40 +300,38 @@ public class VaadinVersionComposite extends Composite {
                                 .getAvailableNightlyVersions();
 
                         int index = versionCombo.getSelectionIndex();
-                        String currentVersion = index >= 0 ? versionCombo
-                                .getItem(index) : null;
-                        if ((null == currentVersion || "".equals(currentVersion
-                                .trim())) && !availableNightlies.isEmpty()) {
+                        String currentVersion = index >= 0
+                                ? versionCombo.getItem(index) : null;
+                        if ((null == currentVersion
+                                || "".equals(currentVersion.trim()))
+                                && !availableNightlies.isEmpty()) {
                             // latest nightly build in the list if no branch
                             // specified by current version
                             currentVersion = availableNightlies.get(0)
                                     .getVersionNumber();
                         }
 
-                        DownloadableVaadinVersion latestNightly = NightlyCheckJob
+                        DownloadableVaadinVersion latestNightly = Utils
                                 .getNightlyToUpgradeTo(currentVersion,
                                         availableNightlies);
 
                         updateVersionCombo();
-                        versionCombo.select(versionCombo.indexOf(latestNightly
-                                .getVersionNumber()));
+                        versionCombo.select(versionCombo
+                                .indexOf(latestNightly.getVersionNumber()));
                     } catch (CoreException ex) {
                         // log error and display message
-                        ErrorUtil
-                                .handleBackgroundException(
-                                        IStatus.WARNING,
-                                        "Failed to upgrade to the latest Vaadin nightly build",
-                                        ex);
-                        ErrorUtil
-                                .displayError(
-                                        "Failed to upgrade to the latest Vaadin nightly build",
-                                        ex, getShell());
+                        ErrorUtil.handleBackgroundException(IStatus.WARNING,
+                                "Failed to upgrade to the latest Vaadin nightly build",
+                                ex);
+                        ErrorUtil.displayError(
+                                "Failed to upgrade to the latest Vaadin nightly build",
+                                ex, getShell());
                     }
                 }
             }
         });
-        latestNightlyCheckbox.setLayoutData(new GridData(GridData.FILL,
-                GridData.BEGINNING, true, false));
+        latestNightlyCheckbox.setLayoutData(
+                new GridData(GridData.FILL, GridData.BEGINNING, true, false));
         // Note that this can also be modified by the data model provider
         latestNightlyCheckbox.setEnabled(!useDependencyManagement);
 
@@ -406,8 +402,8 @@ public class VaadinVersionComposite extends Composite {
                 }
 
                 // TODO should use getVaadinLibraryVersion()
-                IPath vaadinLibrary = ProjectUtil.getVaadinLibraryInProject(
-                        project, true);
+                IPath vaadinLibrary = ProjectUtil
+                        .getVaadinLibraryInProject(project, true);
                 if (vaadinLibrary == null) {
                     return;
                 }
@@ -456,11 +452,9 @@ public class VaadinVersionComposite extends Composite {
                 }
             } catch (CoreException ce) {
                 // ignore if cannot select current version
-                ErrorUtil
-                        .handleBackgroundException(
-                                IStatus.WARNING,
-                                "Failed to select the Vaadin version used in the project",
-                                ce);
+                ErrorUtil.handleBackgroundException(IStatus.WARNING,
+                        "Failed to select the Vaadin version used in the project",
+                        ce);
             }
         } catch (CoreException ex) {
             // leave the combo empty and show an error message
@@ -504,8 +498,7 @@ public class VaadinVersionComposite extends Composite {
         } catch (InterruptedException e) {
             return;
         } catch (InvocationTargetException e) {
-            ErrorUtil.displayError(
-                    "Failed to download selected Vaadin version",
+            ErrorUtil.displayError("Failed to download selected Vaadin version",
                     e.getTargetException(), getShell());
         }
     }
@@ -559,8 +552,8 @@ public class VaadinVersionComposite extends Composite {
     }
 
     public AbstractVaadinVersion getSelectedVersion() {
-        AbstractVaadinVersion newVaadinVersion = versionMap.get(versionCombo
-                .getText());
+        AbstractVaadinVersion newVaadinVersion = versionMap
+                .get(versionCombo.getText());
         if ("".equals(newVaadinVersion)) {
             newVaadinVersion = null;
         }
@@ -583,10 +576,10 @@ public class VaadinVersionComposite extends Composite {
 
         boolean useDependencyManagement = false;
         try {
-            IPath vaadinLibrary = ProjectUtil.getVaadinLibraryInProject(
-                    project, true);
-            useDependencyManagement = (vaadinLibrary == null || !ProjectUtil
-                    .isInProject(project, vaadinLibrary));
+            IPath vaadinLibrary = ProjectUtil.getVaadinLibraryInProject(project,
+                    true);
+            useDependencyManagement = (vaadinLibrary == null
+                    || !ProjectUtil.isInProject(project, vaadinLibrary));
         } catch (CoreException e) {
             ErrorUtil.handleBackgroundException(
                     "Error trying to check Vaadin version in project", e);
@@ -604,18 +597,13 @@ public class VaadinVersionComposite extends Composite {
         updateVersionCombo();
 
         if (null != project) {
-            latestNightlyCheckbox.setSelection(PreferenceUtil.get(project)
-                    .isUsingLatestNightly());
-            updateNotificationCheckbox.setSelection(PreferenceUtil.get(project)
-                    .isUpdateNotificationEnabled());
+            latestNightlyCheckbox.setSelection(
+                    PreferenceUtil.get(project).isUsingLatestNightly());
+            updateNotificationCheckbox.setSelection(
+                    PreferenceUtil.get(project).isUpdateNotificationEnabled());
         } else {
             latestNightlyCheckbox.setSelection(false);
-            updateNotificationCheckbox
-                    .setSelection(VaadinPlugin
-                            .getInstance()
-                            .getPreferenceStore()
-                            .getBoolean(
-                                    PreferenceConstants.UPDATE_NOTIFICATIONS_IN_NEW_PROJECTS));
+            updateNotificationCheckbox.setSelection(true);
         }
 
         setControlVisible(downloadButton, !useDependencyManagement);
@@ -629,16 +617,14 @@ public class VaadinVersionComposite extends Composite {
             LocalVaadinVersion newestLocalVaadinVersion = LocalFileManager
                     .getNewestLocalVaadinVersion();
             if (newestLocalVaadinVersion != null) {
-                versionCombo.setText(newestLocalVaadinVersion
-                        .getVersionNumber());
+                versionCombo
+                        .setText(newestLocalVaadinVersion.getVersionNumber());
             }
         } catch (CoreException e) {
             // maybe there is no version downloaded - ignore
-            ErrorUtil
-                    .handleBackgroundException(
-                            IStatus.WARNING,
-                            "Failed to select the most recent cached Vaadin version, probably no versions in cache yet",
-                            e);
+            ErrorUtil.handleBackgroundException(IStatus.WARNING,
+                    "Failed to select the most recent cached Vaadin version, probably no versions in cache yet",
+                    e);
         }
     }
 

@@ -485,4 +485,19 @@ Any metadata changes made will be stored in the project manifest.
             class="com.vaadin.integration.eclipse.preferences.PreferenceInitializer">
       </initializer>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.trim.status">
+         <toolbar
+               id="com.vaadin.integration.eclipse.notifications"
+               label="%notifications.toolbar">
+            <control
+                  class="com.vaadin.integration.eclipse.notifications.NotificationsContribution"
+                  id="%notifications.control">
+            </control>
+         </toolbar>
+      </menuContribution>
+   </extension>
 </plugin>

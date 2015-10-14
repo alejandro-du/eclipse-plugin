@@ -1,5 +1,6 @@
-package com.vaadin.integration.eclipse.background;
+package com.vaadin.integration.eclipse.notifications.jobs.nightly;
 
+import java.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.core.resources.IProject;
@@ -25,15 +26,16 @@ public final class NightlyUpgradeJob extends Job {
 
     private final Map<IProject, DownloadableVaadinVersion> upgrades;
 
-    public NightlyUpgradeJob(String name,
+    public NightlyUpgradeJob(
             Map<IProject, DownloadableVaadinVersion> upgrades) {
-        super(name);
+        super(Messages.Notifications_UpgradeJobName);
+        setUser(false);
         this.upgrades = upgrades;
     }
 
     @Override
     protected IStatus run(IProgressMonitor monitor) {
-        monitor.beginTask("Upgrading Vaadin nightly builds",
+        monitor.beginTask(Messages.Notifications_UpgradeTaskName,
                 upgrades.size() * 6);
 
         try {
@@ -45,8 +47,9 @@ public final class NightlyUpgradeJob extends Job {
                 DownloadableVaadinVersion version = upgrades.get(project);
 
                 // show project and new version in progress monitor
-                monitor.subTask("Upgrading project " + project.getName()
-                        + " to Vaadin " + version.getVersionNumber());
+                monitor.subTask(MessageFormat.format(
+                        Messages.Notifications_UpgradeSubTaskName,
+                        project.getName(), version.getVersionNumber()));
 
                 try {
                     upgradeProject(project, version, monitor);
@@ -54,9 +57,10 @@ public final class NightlyUpgradeJob extends Job {
                 } catch (CoreException e) {
                     // TODO report also with a dialog?
                     ErrorUtil.handleBackgroundException(
-                            "Failed to upgrade project " + project.getName()
-                                    + " to Vaadin "
-                                    + version.getVersionNumber(), e);
+                            "Failed to upgrade project " + project.getName() //$NON-NLS-1$
+                                    + " to Vaadin " //$NON-NLS-1$
+                                    + version.getVersionNumber(),
+                            e);
                 }
             }
 
@@ -78,7 +82,7 @@ public final class NightlyUpgradeJob extends Job {
      */
     private static LocalVaadinVersion upgradeProject(IProject project,
             DownloadableVaadinVersion newVersion, IProgressMonitor monitor)
-            throws CoreException {
+                    throws CoreException {
         // download version (if not already downloaded)
         DownloadManager.downloadVaadin(newVersion.getVersionNumber(),
                 new SubProgressMonitor(monitor, 3));

@@ -1,14 +1,27 @@
 package com.vaadin.integration.eclipse.util;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import com.vaadin.integration.eclipse.VaadinPlugin;
-import com.vaadin.integration.eclipse.preferences.PreferenceConstants;
+import com.vaadin.integration.eclipse.util.data.AbstractVaadinVersion;
+import com.vaadin.integration.eclipse.util.data.MavenVaadinVersion;
+import com.vaadin.integration.eclipse.util.files.LocalFileManager.FileType;
 
+/**
+ * Helper class for accessing per-project preferences of the Vaadin plug-in.
+ */
 public class PreferenceUtil {
 
     private ScopedPreferenceStore prefStore;
@@ -93,6 +106,21 @@ public class PreferenceUtil {
     // widgetset
     private static final String PREFERENCES_PREVIOUS_COMPILE_ACTION = VaadinPlugin.PLUGIN_ID
             + "." + "previousCompileAction";
+
+    // Latest nightly version suggested for the project to upgrade (and may be
+    // already upgraded). Required for persisted notification about versions
+    // upgrade.
+    private static final String PREFERENCES_NIGHTLY_LATEST_VERSION_UPGRADE = VaadinPlugin.PLUGIN_ID
+            + "." + "nightlyLatestVersionUpgrade";
+
+    // Accompanied with previous key. Contains file type for the version
+    private static final String PREFERENCES_NIGHTLY_LATEST_VERSION_FTYPE = VaadinPlugin.PLUGIN_ID
+            + "." + "nightlyLatestVersionFileType";
+
+    // Latest maven versions suggested for the project to upgrade. Required for
+    // persisted notification about version upgrade.
+    private static final String PREFERENCES_MAVEN_LATEST_VERSIONS_UPGRADE = VaadinPlugin.PLUGIN_ID
+            + "." + "mavenLatestVersionsUpgrade";
 
     /**
      * Checks whether scanning for addon themes has explicitly been suspended by
@@ -272,6 +300,84 @@ public class PreferenceUtil {
     }
 
     /**
+     * Persist latest suggested (and may be upgraded) version for the project.
+     */
+    public void setLatestNightlyUpgradeVersion(AbstractVaadinVersion version) {
+        prefStore.setValue(PREFERENCES_NIGHTLY_LATEST_VERSION_UPGRADE,
+                version.getVersionNumber());
+        prefStore.setValue(PREFERENCES_NIGHTLY_LATEST_VERSION_FTYPE,
+                version.getType().name());
+    }
+
+    /**
+     * Persist latest suggested maven versions for the project.
+     */
+    public void setLatestMavenUpgradeVersions(
+            List<MavenVaadinVersion> versions) {
+        JSONArray array = new JSONArray();
+        for (MavenVaadinVersion version : versions) {
+            array.add(version.getVersionNumber());
+        }
+        prefStore.setValue(PREFERENCES_MAVEN_LATEST_VERSIONS_UPGRADE,
+                array.toJSONString());
+    }
+
+    /**
+     * Get persisted latest suggested (and may be upgraded) version for the
+     * project.
+     */
+    public AbstractVaadinVersion getLatestNightlyUpgradeVersion() {
+        String version = prefStore
+                .getString(PREFERENCES_NIGHTLY_LATEST_VERSION_UPGRADE);
+        String fType = prefStore
+                .getString(PREFERENCES_NIGHTLY_LATEST_VERSION_FTYPE);
+        if (version == null || version.isEmpty()) {
+            return null;
+        }
+        return new AbstractVaadinVersion(version, fileTypeForName(fType)) {
+        };
+    }
+
+    /**
+     * Get persisted latest suggested maven versions for the project.
+     */
+    public List<MavenVaadinVersion> getLatestMavenUpgradeVersions() {
+        String versions = prefStore
+                .getString(PREFERENCES_MAVEN_LATEST_VERSIONS_UPGRADE);
+        if (versions == null || versions.isEmpty()) {
+            return Collections.emptyList();
+        }
+        try {
+            Object result = new JSONParser().parse(versions);
+            if (result instanceof JSONArray) {
+                List<MavenVaadinVersion> list = new ArrayList<MavenVaadinVersion>(
+                        ((JSONArray) result).size());
+                for (Object obj : (JSONArray) result) {
+                    list.add(new MavenVaadinVersion(obj.toString()));
+                }
+                return list;
+            }
+        } catch (ParseException e) {
+            Logger.getLogger(PreferenceUtil.class.getName()).log(Level.WARNING,
+                    "Unable to parse persisted maven version "
+                            + "which has been suggested as an upgrade",
+                            e);
+        }
+        return Collections.emptyList();
+    }
+
+    private FileType fileTypeForName(String name) {
+        // Don't use Enum.valueOf() since it throws an uncatched exception if
+        // there is no enum value with given name.
+        for (FileType type : FileType.values()) {
+            if (name.equals(type.name())) {
+                return type;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Compares the two strings. Returns true if both are null or both contain
      * the same characters.
      * 
@@ -326,8 +432,8 @@ public class PreferenceUtil {
     }
 
     public void setWidgetsetDirty(boolean dirty) {
-        prefStore
-                .setValue(PREFERENCES_WIDGETSET_DIRTY, Boolean.toString(dirty));
+        prefStore.setValue(PREFERENCES_WIDGETSET_DIRTY,
+                Boolean.toString(dirty));
     }
 
     /**
@@ -347,7 +453,7 @@ public class PreferenceUtil {
      * the branch. Returns true if the value was changed, false if it remained
      * the same.
      * 
-     * @param style
+     * @param useLatestNightly
      * @return
      */
     public boolean setUsingLatestNightly(boolean useLatestNightly) {
@@ -369,12 +475,7 @@ public class PreferenceUtil {
                     .getBoolean(PREFERENCES_UPDATE_NOTIFICATION_ENABLED);
         }
         // If the project does not have this preference set, use the default
-        // from Eclipse preferences.
-        return VaadinPlugin
-                .getInstance()
-                .getPreferenceStore()
-                .getBoolean(
-                        PreferenceConstants.UPDATE_NOTIFICATIONS_IN_NEW_PROJECTS);
+        return true;
     }
 
     /**

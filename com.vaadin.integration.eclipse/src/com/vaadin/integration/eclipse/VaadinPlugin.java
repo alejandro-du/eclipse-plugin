@@ -14,8 +14,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
-import com.vaadin.integration.eclipse.background.NightlyBuildUpdater;
-
 public class VaadinPlugin extends AbstractUIPlugin {
 
     public static final String PLUGIN_ID = "com.vaadin.integration.eclipse";
@@ -90,10 +88,12 @@ public class VaadinPlugin extends AbstractUIPlugin {
 
     private static VaadinPlugin instance = null;
 
-    private NightlyBuildUpdater nightlyBuildUpdater;
+    private final ImageRegistryDelegate imageRegistry;
 
     public VaadinPlugin() {
         instance = this;
+        // Image registry is not thread safe, wrap it in "synchronized" delegate
+        imageRegistry = new ImageRegistryDelegate(super.getImageRegistry());
     }
 
     public static VaadinPlugin getInstance() {
@@ -103,8 +103,6 @@ public class VaadinPlugin extends AbstractUIPlugin {
     @Override
     public void start(BundleContext context) throws Exception {
         super.start(context);
-        nightlyBuildUpdater = new NightlyBuildUpdater();
-        nightlyBuildUpdater.startUpdateJob();
         // Listen to new projects in order to add AddonStylesBuilder on import
         // when necessary (#15500).
         ResourcesPlugin.getWorkspace().addResourceChangeListener(
@@ -113,9 +111,12 @@ public class VaadinPlugin extends AbstractUIPlugin {
 
     @Override
     public void stop(BundleContext context) throws Exception {
-        nightlyBuildUpdater.stopUpdateJob();
-        nightlyBuildUpdater = null;
         super.stop(context);
+    }
+
+    @Override
+    public ImageRegistry getImageRegistry() {
+        return imageRegistry;
     }
 
     @Override
