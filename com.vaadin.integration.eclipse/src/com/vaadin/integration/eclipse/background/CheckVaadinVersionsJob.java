@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.ui.PlatformUI;
 
 import com.vaadin.integration.eclipse.VaadinFacetUtils;
@@ -97,12 +98,15 @@ public final class CheckVaadinVersionsJob extends Job {
         IProject[] projects = workspaceRoot.getProjects();
         for (IProject project : projects) {
             try {
-                String versionNumber = ProjectUtil.getVaadinLibraryVersion(
-                        project, true);
-                if (null != versionNumber) {
-                    projectsWithVaadin.put(project, versionNumber);
+                // Only search in open java projects which can have a Vaadin
+                // library version
+                if (project.isOpen() && project.hasNature(JavaCore.NATURE_ID)) {
+                    String versionNumber = ProjectUtil
+                            .getVaadinLibraryVersion(project, true);
+                    if (null != versionNumber) {
+                        projectsWithVaadin.put(project, versionNumber);
+                    }
                 }
-
             } catch (CoreException e) {
                 ErrorUtil.handleBackgroundException(
                         IStatus.WARNING,
