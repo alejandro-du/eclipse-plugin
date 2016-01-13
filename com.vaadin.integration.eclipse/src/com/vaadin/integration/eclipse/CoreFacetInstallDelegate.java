@@ -444,7 +444,7 @@ IVaadinFacetInstallDataModelProperties {
         if(createTBTest) {
             extraDependencies.append("\n\t\t<!-- TestBench 4 -->\n");
             extraDependencies
-            .append("\t\t<dependency org=\"com.vaadin\" name=\"vaadin-testbench-api\" rev=\"latest.release\" conf=\"nodeploy -> default\" />\n");
+            .append("\t\t<dependency org=\"com.vaadin\" name=\"vaadin-testbench-api\" rev=\"&vaadin.version;\" conf=\"nodeploy -> default\" />\n");
         }
         substitutions.put("EXTRA_DEPENDENCIES", extraDependencies.toString());
 
