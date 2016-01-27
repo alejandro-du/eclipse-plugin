@@ -88,12 +88,8 @@ public class VaadinPlugin extends AbstractUIPlugin {
 
     private static VaadinPlugin instance = null;
 
-    private final ImageRegistryDelegate imageRegistry;
-
     public VaadinPlugin() {
         instance = this;
-        // Image registry is not thread safe, wrap it in "synchronized" delegate
-        imageRegistry = new ImageRegistryDelegate(super.getImageRegistry());
     }
 
     public static VaadinPlugin getInstance() {
@@ -116,7 +112,7 @@ public class VaadinPlugin extends AbstractUIPlugin {
 
     @Override
     public ImageRegistry getImageRegistry() {
-        return imageRegistry;
+        return LazyInitializer.IMAGE_REGISTRY;
     }
 
     @Override
@@ -139,6 +135,16 @@ public class VaadinPlugin extends AbstractUIPlugin {
         url = FileLocator.find(bundle, path, null);
         desc = ImageDescriptor.createFromURL(url);
         registry.put(COMPILE_WIDGETSET_AND_THEME_IMAGE_ID, desc);
+    }
+
+    private synchronized ImageRegistry doGetImageRegistry() {
+        return super.getImageRegistry();
+    }
+
+    private static class LazyInitializer {
+        // Image registry is not thread safe, wrap it in "synchronized" delegate
+        private static final ImageRegistry IMAGE_REGISTRY = new ImageRegistryDelegate(
+                VaadinPlugin.getInstance().doGetImageRegistry());
     }
 
 }
