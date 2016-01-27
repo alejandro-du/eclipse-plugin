@@ -186,14 +186,16 @@ public class ProjectUtil {
      * 
      * @param jproject
      * @return
-     * @throws JavaModelException
      */
-    public static IType findVaadinApplicationType(IJavaProject jproject)
-            throws JavaModelException {
+    public static IType findVaadinApplicationType(IJavaProject jproject) {
         if (jproject == null) {
             return null;
         }
-        return jproject.findType(VaadinPlugin.APPLICATION_CLASS_FULL_NAME);
+        try {
+            return jproject.findType(VaadinPlugin.APPLICATION_CLASS_FULL_NAME);
+        } catch (JavaModelException e) {
+            return null;
+        }
     }
 
     /**
@@ -201,14 +203,16 @@ public class ProjectUtil {
      * 
      * @param jproject
      * @return
-     * @throws JavaModelException
      */
-    public static IType findVaadinUiType(IJavaProject jproject)
-            throws JavaModelException {
+    public static IType findVaadinUiType(IJavaProject jproject) {
         if (jproject == null) {
             return null;
         }
-        return jproject.findType(VaadinPlugin.UI_CLASS_FULL_NAME);
+        try {
+            return jproject.findType(VaadinPlugin.UI_CLASS_FULL_NAME);
+        } catch (JavaModelException e) {
+            return null;
+        }
     }
 
     /**
@@ -487,37 +491,16 @@ public class ProjectUtil {
     }
 
     /**
-     * Check is a project uses Vaadin 6.2 or later.
+     * Check whether a project uses Vaadin 7 or later.
      * 
      * @param project
      * @return
      */
-    /*-
-    public static boolean isVaadin62(IProject project) {
-        IPath findProjectVaadinJarPath;
-        try {
-            findProjectVaadinJarPath = ProjectUtil
-                    .findProjectVaadinJarPath(JavaCore.create(project));
-        } catch (CoreException e) {
-            return false;
-        }
-
-        return findProjectVaadinJarPath != null
-                && WidgetsetUtil.isWidgetsetPackage(findProjectVaadinJarPath);
-
-    }
-    -*/
-
     public static boolean isVaadin7(IProject project) {
-        try {
-            // String vaadinVersion = getVaadinLibraryVersion(project, true);
-            // return VersionUtil.isVaadin7VersionString(vaadinVersion);
-            IType uiType = findVaadinUiType(JavaCore.create(project));
-            return (null != uiType);
-        } catch (CoreException e) {
-            ErrorUtil.handleBackgroundException("", e);
-            return false;
-        }
+        // String vaadinVersion = getVaadinLibraryVersion(project, true);
+        // return VersionUtil.isVaadin7VersionString(vaadinVersion);
+        IType uiType = findVaadinUiType(JavaCore.create(project));
+        return (null != uiType);
     }
 
     public static boolean isVaadin71(IProject project) {

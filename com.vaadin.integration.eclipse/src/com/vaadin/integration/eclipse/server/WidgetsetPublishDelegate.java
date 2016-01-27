@@ -11,6 +11,7 @@ import org.eclipse.wst.server.core.IServer;
 import org.eclipse.wst.server.core.model.PublishOperation;
 import org.eclipse.wst.server.core.model.PublishTaskDelegate;
 
+import com.vaadin.integration.eclipse.VaadinFacetUtils;
 import com.vaadin.integration.eclipse.util.WidgetsetUtil;
 
 /**
@@ -31,7 +32,7 @@ public class WidgetsetPublishDelegate extends PublishTaskDelegate {
         }
 
         // keep order, even if not really necessary
-        Set<IProject> projects = new LinkedHashSet<IProject>();
+        Set<IProject> vaadinProjects = new LinkedHashSet<IProject>();
 
         for (int i = 0; i < modules.size(); i++) {
             IModule[] moduleArray = (IModule[]) modules.get(i);
@@ -47,8 +48,8 @@ public class WidgetsetPublishDelegate extends PublishTaskDelegate {
             // || kind == IServer.PUBLISH_CLEAN) {
             for (IModule module : moduleArray) {
                 IProject p = module.getProject();
-                if (p != null) {
-                    projects.add(p);
+                if (p != null && VaadinFacetUtils.isVaadinProject(p)) {
+                    vaadinProjects.add(p);
                 }
             }
             // }
@@ -56,7 +57,7 @@ public class WidgetsetPublishDelegate extends PublishTaskDelegate {
         }
 
         List<PublishOperation> tasks = new ArrayList<PublishOperation>();
-        for (IProject project : projects) {
+        for (IProject project : vaadinProjects) {
             // check if project widgetset is dirty (not compiled)
             if (WidgetsetUtil.isWidgetsetDirty(project)) {
                 tasks.add(new WidgetsetPublishTask(project));
