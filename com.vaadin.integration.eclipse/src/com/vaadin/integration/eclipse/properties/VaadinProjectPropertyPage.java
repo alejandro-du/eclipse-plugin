@@ -79,10 +79,10 @@ public class VaadinProjectPropertyPage extends PropertyPage {
             vaadinVersionSelectValueChange();
         } catch (CoreException ex) {
             ErrorUtil
-                    .handleBackgroundException(
-                            IStatus.ERROR,
-                            "Failed reverting to the Vaadin version currently used in the project",
-                            ex);
+            .handleBackgroundException(
+                    IStatus.ERROR,
+                    "Failed reverting to the Vaadin version currently used in the project",
+                    ex);
             vaadinVersionComposite.setProject(null);
         }
 
@@ -159,9 +159,9 @@ public class VaadinProjectPropertyPage extends PropertyPage {
 
         } catch (CoreException e) {
             ErrorUtil
-                    .displayError(
-                            "Failed to change Vaadin version in the project. Check that the Vaadin JAR is not in use.",
-                            e, getShell());
+            .displayError(
+                    "Failed to change Vaadin version in the project. Check that the Vaadin JAR is not in use.",
+                    e, getShell());
             ErrorUtil.handleBackgroundException(IStatus.WARNING,
                     "Failed to change Vaadin version in the project", e);
             return false;
@@ -203,7 +203,7 @@ public class VaadinProjectPropertyPage extends PropertyPage {
      */
     private boolean updateProjectVaadinJar(final IProject project,
             final LocalVaadinVersion selectedVaadinVersion)
-            throws CoreException {
+                    throws CoreException {
 
         // Do the actual update
         IRunnableWithProgress op = new IRunnableWithProgress() {
@@ -252,6 +252,11 @@ public class VaadinProjectPropertyPage extends PropertyPage {
             boolean wasSuspended = AddonStylesImporter.isSuspended(project);
             suspended = themingComposite.isAddonScanningSuspended();
             AddonStylesImporter.setSuspended(project, suspended);
+
+            if (suspended != wasSuspended) {
+                modifiedValues = true;
+            }
+
             if (wasSuspended && !suspended) {
                 try {
                     // Trigger addon import scanning if it previously was
@@ -348,12 +353,12 @@ public class VaadinProjectPropertyPage extends PropertyPage {
         vaadinVersionComposite.createContents();
         vaadinVersionComposite.setUseDependencyManagement(false);
         vaadinVersionComposite
-                .setVersionSelectionListener(new VersionSelectionChangeListener() {
+        .setVersionSelectionListener(new VersionSelectionChangeListener() {
 
-                    public void versionChanged() {
-                        vaadinVersionSelectValueChange();
-                    }
-                });
+            public void versionChanged() {
+                vaadinVersionSelectValueChange();
+            }
+        });
 
         modifiedLabel = new CLabel(group, SWT.NONE);
         modifiedLabel.setImage(ICON_INFORMATION_SMALL);
