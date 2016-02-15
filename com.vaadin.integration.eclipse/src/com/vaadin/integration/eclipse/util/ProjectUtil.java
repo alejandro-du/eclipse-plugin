@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IClasspathContainer;
@@ -29,6 +30,8 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jst.j2ee.web.componentcore.util.WebArtifactEdit;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.wst.common.componentcore.ComponentCore;
 import org.eclipse.wst.common.componentcore.resources.IVirtualComponent;
 import org.eclipse.wst.common.componentcore.resources.IVirtualFolder;
@@ -37,55 +40,81 @@ import com.vaadin.integration.eclipse.VaadinFacetUtils;
 import com.vaadin.integration.eclipse.VaadinPlugin;
 import com.vaadin.integration.eclipse.util.files.LocalFileManager;
 
+// TODO this class needs cleanup of all the project related methods - there is a lot of overlap etc.
 public class ProjectUtil {
     private static final String DEFAULT_GWT_VERSION = "2.0.4";
 
+    public static IProject getAnyProject(ISelection selection) {
+        IResource resource = extractSelection(selection);
+        if (resource != null) {
+            return resource.getProject();
+        }
+
+        return null;
+    }
+
+    private static IResource extractSelection(ISelection sel) {
+        if (!(sel instanceof IStructuredSelection) || sel.isEmpty()) {
+            return null;
+        }
+        IStructuredSelection ss = (IStructuredSelection) sel;
+        Object element = ss.getFirstElement();
+        if (element instanceof IResource) {
+            return (IResource) element;
+        }
+        if (!(element instanceof IAdaptable)) {
+            return null;
+        }
+        IAdaptable adaptable = (IAdaptable) element;
+        Object adapter = adaptable.getAdapter(IResource.class);
+        return (IResource) adapter;
+    }
+
     /**
-     * Find a project that has the Vaadin project facet based on a selection.
+     * Find a project based on a selection.
      * 
      * If the selection is an element in a suitable project, return that
      * project.
      * 
+     * Note that this method can also return Java projects that do not have the
+     * Vaadin facet!
+     * 
      * Otherwise, return null.
      * 
      * @param selection
-     * @return a Vaadin project
+     * @return a project or null
      */
     public static IProject getProject(ISelection selection) {
         IProject project = null;
-        if (selection != null && selection.isEmpty() == false
-                && selection instanceof IStructuredSelection) {
+        Object obj = getSingleSelection(selection);
+        if (obj != null) {
             IStructuredSelection ssel = (IStructuredSelection) selection;
-            if (ssel.size() == 1) {
-                Object obj = ssel.getFirstElement();
-                if (ssel instanceof TreeSelection) {
-                    TreeSelection ts = (TreeSelection) ssel;
-                    obj = ts.getPaths()[0].getFirstSegment();
-                } else {
-                    obj = ssel.getFirstElement();
-                }
-                if (obj instanceof IJavaProject) {
-                    return ((IJavaProject) obj).getProject();
-                }
-                if (obj instanceof IResource) {
-                    project = getProject((IResource) obj);
-                } else if (obj instanceof IJavaProject) {
-                    project = ((IJavaProject) obj).getProject();
-                }
+            if (ssel instanceof TreeSelection) {
+                TreeSelection ts = (TreeSelection) ssel;
+                obj = ts.getPaths()[0].getFirstSegment();
+            }
+            if (obj instanceof IJavaProject) {
+                return ((IJavaProject) obj).getProject();
+            }
+            if (obj instanceof IResource) {
+                project = getProject((IResource) obj);
+            } else if (obj instanceof IJavaProject) {
+                project = ((IJavaProject) obj).getProject();
             }
         }
         return project;
     }
 
     /**
-     * Find a project that has the Vaadin project facet based on a resource.
+     * Find a project based on a resource.
      * 
      * If the resource is an element in a suitable project, return that project.
      * 
      * Otherwise, return null.
      * 
-     * @param selection
-     * @return a Vaadin project or null
+     * @param resource
+     *            a file or some other resource, can be null
+     * @return a project or null
      */
     public static IProject getProject(IResource resource) {
         IContainer container = null;
@@ -95,11 +124,83 @@ public class ProjectUtil {
         } else if (resource != null) {
             container = (resource).getParent();
         }
-        if (container != null
-                && VaadinFacetUtils.isVaadinProject(container.getProject())) {
+        if (container != null) {
             project = container.getProject();
         }
         return project;
+    }
+
+    /**
+     * Returns the file open in an active editor.
+     * 
+     * @param editor
+     *            active editor, can be null
+     * @return file being edited or null
+     */
+    public static IFile getFileForEditor(IEditorPart editor) {
+        IFile file = null;
+        if (editor != null
+                && editor.getEditorInput() instanceof IFileEditorInput) {
+            IFileEditorInput input = (IFileEditorInput) editor.getEditorInput();
+            file = input.getFile();
+        }
+        return file;
+    }
+
+    /**
+     * Find a project based on current selection and active editor.
+     * 
+     * If the current selection is not a single element structured selection,
+     * the open file in the editor is used to find the relevant project.
+     * 
+     * @param currentSelection
+     *            current selection, can be null
+     * @param activeEditor
+     *            currently active editor, can be null
+     * @return project or null if no suitable project found based on selection
+     *         and active editor
+     */
+    public static IProject getProject(ISelection currentSelection,
+            IEditorPart activeEditor) {
+        Object obj = getSingleSelection(currentSelection);
+        if (obj != null) {
+            if (obj instanceof IFile) {
+                IFile file = (IFile) obj;
+                return file.getProject();
+            }
+            IProject project = ProjectUtil.getProject(currentSelection);
+            if (project == null) {
+                IFile file = getFileForEditor(activeEditor);
+                if (file != null && file.exists()) {
+                    return file.getProject();
+                }
+            } else {
+                return project;
+            }
+        } else {
+            IFile file = getFileForEditor(activeEditor);
+            if (file != null) {
+                return file.getProject();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the selection content if a structured selection with size one,
+     * otherwise return null.
+     * 
+     * @param currentSelection
+     *            current selection, can be null
+     * @return single selected item or null if none or multiple selection
+     */
+    public static Object getSingleSelection(ISelection currentSelection) {
+        if (currentSelection instanceof IStructuredSelection
+                && ((IStructuredSelection) currentSelection).size() == 1) {
+            IStructuredSelection ssel = (IStructuredSelection) currentSelection;
+            return ssel.getFirstElement();
+        }
+        return null;
     }
 
     public static IFolder getWebInfLibFolder(IProject project)

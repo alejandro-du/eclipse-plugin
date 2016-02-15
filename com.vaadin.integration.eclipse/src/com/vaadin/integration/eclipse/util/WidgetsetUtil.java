@@ -649,6 +649,7 @@ public class WidgetsetUtil {
      * by the plugin.
      *
      * @param project
+     *            the project to check, can be null
      * @return true if the widgetset should be automatically managed
      */
     public static boolean isWidgetsetManagedByPlugin(IProject project) {

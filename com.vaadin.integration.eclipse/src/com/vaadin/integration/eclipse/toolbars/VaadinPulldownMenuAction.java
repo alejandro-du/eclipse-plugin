@@ -21,11 +21,12 @@ import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
 import org.eclipse.ui.PlatformUI;
 
 import com.vaadin.integration.eclipse.VaadinPlugin;
-import com.vaadin.integration.eclipse.handlers.AbstractVaadinCompileHandler;
+import com.vaadin.integration.eclipse.handlers.CompileThemeAndWidgetsetHandler;
 import com.vaadin.integration.eclipse.handlers.CompileThemeHandler;
 import com.vaadin.integration.eclipse.handlers.CompileWidgetsetHandler;
 import com.vaadin.integration.eclipse.util.ErrorUtil;
 import com.vaadin.integration.eclipse.util.PreferenceUtil;
+import com.vaadin.integration.eclipse.util.ProjectUtil;
 
 /**
  * This action shows the widgetset and theme compilation related commands with a
@@ -75,8 +76,8 @@ public class VaadinPulldownMenuAction implements
                         ISelection currentSelection = activePage.getSelection();
                         IEditorPart activeEditor = activePage.getActiveEditor();
 
-                        IProject project = AbstractVaadinCompileHandler
-                                .getProject(currentSelection, activeEditor);
+                        IProject project = ProjectUtil.getProject(
+                                currentSelection, activeEditor);
                         persistCompileAction(project,
                                 VaadinPlugin.COMPILE_ACTION_WIDGETSET);
 
@@ -101,7 +102,7 @@ public class VaadinPulldownMenuAction implements
                         ISelection currentSelection = activePage.getSelection();
                         IEditorPart activeEditor = activePage.getActiveEditor();
 
-                        IProject project = AbstractVaadinCompileHandler
+                        IProject project = ProjectUtil
                                 .getProject(currentSelection, activeEditor);
                         persistCompileAction(project,
                                 VaadinPlugin.COMPILE_ACTION_THEME);
@@ -127,14 +128,13 @@ public class VaadinPulldownMenuAction implements
                         ISelection currentSelection = activePage.getSelection();
                         IEditorPart activeEditor = activePage.getActiveEditor();
 
-                        IProject project = AbstractVaadinCompileHandler
-                                .getProject(currentSelection, activeEditor);
+                        IProject project = ProjectUtil.getProject(
+                                currentSelection, activeEditor);
                         persistCompileAction(project,
                                 VaadinPlugin.COMPILE_ACTION_BOTH);
 
-                        CompileThemeHandler.startCompileThemeJob(
-                                currentSelection, activeEditor, project);
-                        CompileWidgetsetHandler.startCompileWidgetsetJob(
+                        CompileThemeAndWidgetsetHandler
+                                .startCompileThemeAndWidgetsetJob(
                                 currentSelection, activeEditor, project);
                     }
                 }
@@ -177,8 +177,8 @@ public class VaadinPulldownMenuAction implements
             ISelection currentSelection = activePage.getSelection();
             IEditorPart activeEditor = activePage.getActiveEditor();
 
-            IProject project = AbstractVaadinCompileHandler.getProject(
-                    currentSelection, activeEditor);
+            IProject project = ProjectUtil.getProject(currentSelection,
+                    activeEditor);
 
             if (null == project) {
                 return;
@@ -189,15 +189,16 @@ public class VaadinPulldownMenuAction implements
 
             String lastAction = PreferenceUtil.get(project)
                     .getPreviousCompileAction();
-            if (VaadinPlugin.COMPILE_ACTION_THEME.equals(lastAction)
-                    || VaadinPlugin.COMPILE_ACTION_BOTH.equals(lastAction)) {
+            if (VaadinPlugin.COMPILE_ACTION_THEME.equals(lastAction)) {
                 CompileThemeHandler.startCompileThemeJob(currentSelection,
                         activeEditor, project);
-            }
-            if (VaadinPlugin.COMPILE_ACTION_WIDGETSET.equals(lastAction)
-                    || VaadinPlugin.COMPILE_ACTION_BOTH.equals(lastAction)) {
+            } else if (VaadinPlugin.COMPILE_ACTION_WIDGETSET.equals(lastAction)) {
                 CompileWidgetsetHandler.startCompileWidgetsetJob(
                         currentSelection, activeEditor, project);
+            } else if (VaadinPlugin.COMPILE_ACTION_BOTH.equals(lastAction)) {
+                CompileThemeAndWidgetsetHandler
+                        .startCompileThemeAndWidgetsetJob(currentSelection,
+                                activeEditor, project);
             }
         }
     }
@@ -208,8 +209,7 @@ public class VaadinPulldownMenuAction implements
         IEditorPart activeEditor = activePage != null ? activePage
                 .getActiveEditor() : null;
 
-        IProject project = AbstractVaadinCompileHandler.getProject(selection,
-                activeEditor);
+        IProject project = ProjectUtil.getProject(selection, activeEditor);
 
         updateTooltip(action, project);
     }

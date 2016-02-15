@@ -3,15 +3,9 @@ package com.vaadin.integration.eclipse.handlers;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.handlers.HandlerUtil;
-
-import com.vaadin.integration.eclipse.util.ProjectUtil;
 
 /**
  * Abstract base class for theme and widgetset compilation handlers
@@ -42,49 +36,4 @@ public abstract class AbstractVaadinCompileHandler extends AbstractHandler {
     protected abstract void startCompileJob(ISelection currentSelection,
             IEditorPart activeEditor);
 
-    public static IFile getFileForEditor(IEditorPart editor) {
-        IFile file = null;
-        if (editor != null
-                && editor.getEditorInput() instanceof IFileEditorInput) {
-            IFileEditorInput input = (IFileEditorInput) editor.getEditorInput();
-            file = input.getFile();
-        }
-        return file;
-    }
-
-    /**
-     * Find a project based on current selection and active editor.
-     * 
-     * @param currentSelection
-     * @param activeEditor
-     * @return project or null if no suitable project found based on selection
-     *         and active editor
-     */
-    public static IProject getProject(ISelection currentSelection,
-            IEditorPart activeEditor) {
-        if (currentSelection instanceof IStructuredSelection
-                && ((IStructuredSelection) currentSelection).size() == 1) {
-            IStructuredSelection ssel = (IStructuredSelection) currentSelection;
-            Object obj = ssel.getFirstElement();
-            if (obj instanceof IFile) {
-                IFile file = (IFile) obj;
-                return file.getProject();
-            }
-            IProject project = ProjectUtil.getProject(currentSelection);
-            if (project == null) {
-                IFile file = getFileForEditor(activeEditor);
-                if (file != null && file.exists()) {
-                    return file.getProject();
-                }
-            } else {
-                return project;
-            }
-        } else {
-            IFile file = getFileForEditor(activeEditor);
-            if (file != null) {
-                return file.getProject();
-            }
-        }
-        return null;
-    }
 }
