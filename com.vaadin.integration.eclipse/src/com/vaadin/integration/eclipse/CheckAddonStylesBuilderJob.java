@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import com.vaadin.integration.eclipse.builder.AddonStylesBuilder;
+import com.vaadin.integration.eclipse.maven.MavenUtil;
 import com.vaadin.integration.eclipse.util.ErrorUtil;
 import com.vaadin.integration.eclipse.util.PreferenceUtil;
 import com.vaadin.integration.eclipse.util.ProjectUtil;
@@ -28,7 +29,8 @@ public class CheckAddonStylesBuilderJob extends Job {
             // project settings
             PreferenceUtil prefUtil = PreferenceUtil.get(project);
             try {
-                if (prefUtil.isAddonThemeScanningSuspended()) {
+                if (prefUtil.isAddonThemeScanningSuspended()
+                        || MavenUtil.isMavenProject(project)) {
                     AddonStylesBuilder.removeBuilder(project);
                 } else {
                     AddonStylesBuilder.addBuilder(project);

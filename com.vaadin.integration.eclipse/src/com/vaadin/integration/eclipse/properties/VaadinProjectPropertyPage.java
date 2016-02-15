@@ -30,6 +30,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 import com.vaadin.integration.eclipse.builder.AddonStylesBuilder;
 import com.vaadin.integration.eclipse.builder.AddonStylesImporter;
 import com.vaadin.integration.eclipse.builder.WidgetsetBuildManager;
+import com.vaadin.integration.eclipse.maven.MavenUtil;
 import com.vaadin.integration.eclipse.properties.VaadinVersionComposite.VersionSelectionChangeListener;
 import com.vaadin.integration.eclipse.util.ErrorUtil;
 import com.vaadin.integration.eclipse.util.PreferenceUtil;
@@ -151,7 +152,8 @@ public class VaadinProjectPropertyPage extends PropertyPage {
                     performDefaults();
                 }
             }
-            if (themingComposite.isAddonScanningSuspended()) {
+            if (themingComposite.isAddonScanningSuspended()
+                    || MavenUtil.isMavenProject(project)) {
                 AddonStylesBuilder.removeBuilder(project);
             } else {
                 AddonStylesBuilder.addBuilder(project);

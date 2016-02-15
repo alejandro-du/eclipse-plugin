@@ -8,6 +8,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
 import com.vaadin.integration.eclipse.builder.AddonStylesImporter;
+import com.vaadin.integration.eclipse.maven.MavenUtil;
 
 public class ThemingParametersComposite extends Composite {
 
@@ -38,14 +39,19 @@ public class ThemingParametersComposite extends Composite {
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         if (suspendAddonThemeScanning != null) {
-            suspendAddonThemeScanning.setEnabled(enabled);
+            suspendAddonThemeScanning.setEnabled(enabled
+                    && !MavenUtil.isMavenProject(project));
         }
     }
 
     public void setProject(IProject project) {
         this.project = project;
-        boolean suspendend = AddonStylesImporter.isSuspended(project);
-        suspendAddonThemeScanning.setSelection(suspendend);
+        if (MavenUtil.isMavenProject(project)) {
+            suspendAddonThemeScanning.setEnabled(false);
+        } else {
+            boolean suspendend = AddonStylesImporter.isSuspended(project);
+            suspendAddonThemeScanning.setSelection(suspendend);
+        }
     }
 
     public boolean isAddonScanningSuspended() {
