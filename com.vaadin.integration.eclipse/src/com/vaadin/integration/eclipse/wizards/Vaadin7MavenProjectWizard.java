@@ -22,7 +22,6 @@ import org.eclipse.m2e.core.MavenPlugin;
 import org.eclipse.m2e.core.internal.IMavenConstants;
 import org.eclipse.m2e.core.ui.internal.MavenImages;
 import org.eclipse.m2e.core.ui.internal.Messages;
-import org.eclipse.m2e.core.ui.internal.wizards.AbstactCreateMavenProjectJob;
 import org.eclipse.m2e.core.ui.internal.wizards.AbstractMavenProjectWizard;
 import org.eclipse.m2e.core.ui.internal.wizards.MavenProjectWizardArchetypeParametersPage;
 import org.eclipse.osgi.util.NLS;
@@ -206,7 +205,7 @@ public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
         final String javaPackage = parametersPage.getJavaPackage();
         final Properties properties = parametersPage.getProperties();
 
-        job = new AbstactCreateMavenProjectJob(NLS.bind(
+        job = new AbstractCreateMavenProjectJob(NLS.bind(
                 Messages.wizardProjectJobCreating, archetype.getArtifactId()),
                 workingSets) {
             @Override
