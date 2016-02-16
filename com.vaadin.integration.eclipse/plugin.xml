@@ -70,13 +70,13 @@
          </delegate>
       </action>
       <template id="template.vaadin6">
-         <label>Vaadin 6 Project</label>
+         <label>Vaadin 6 Project (deprecated)</label>
          <fixed facet="jst.java"/>
          <fixed facet="jst.web"/>
          <fixed facet="com.vaadin.integration.eclipse.core"/>
       </template>
       <template id="template.vaadin7">
-         <label>Vaadin 7 Project</label>
+         <label>Vaadin 7 Ivy Project (deprecated)</label>
          <fixed facet="jst.java"/>
          <fixed facet="jst.web"/>
          <fixed facet="com.vaadin.integration.eclipse.core"/>
@@ -117,7 +117,23 @@
             id="com.vaadin">
       </category>
       <wizard
-            name="Vaadin 6 Project"
+            name="Vaadin 7 Maven Project"
+            icon="icons/new-project-16.png"
+            category="com.vaadin"
+            project="true"
+            finalPerspective="org.eclipse.jst.j2ee.J2EEPerspective"
+            id="com.vaadin.integration.eclipse.wizards.Vaadin7MavenProjectWizard">
+         <class class="com.vaadin.integration.eclipse.wizards.Vaadin7MavenProjectWizard">
+            <parameter name="menuIndex" value="20" />
+         </class>
+         <description>
+            Create a Vaadin 7.x Maven project.
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IResource" />
+      </wizard>
+      <wizard
+            name="Vaadin 6 Project (deprecated)"
             icon="icons/new-project-16.png"
             category="com.vaadin"
             project="true"
@@ -134,7 +150,7 @@
                class="org.eclipse.core.resources.IResource" />
       </wizard>
       <wizard
-            name="Vaadin 7 Project"
+            name="Vaadin 7 Ivy Project (deprecated)"
             icon="icons/new-project-16.png"
             category="com.vaadin"
             project="true"
@@ -155,13 +171,13 @@
     <extension
        point="org.eclipse.ui.perspectiveExtensions">
        <perspectiveExtension targetID="org.eclipse.jst.j2ee.J2EEPerspective">
-          <newWizardShortcut id="com.vaadin.integration.eclipse.wizards.Vaadin6ProjectWizard"/>
+          <newWizardShortcut id="com.vaadin.integration.eclipse.wizards.Vaadin7MavenProjectWizard"/>
           <newWizardShortcut id="com.vaadin.integration.eclipse.wizards.Vaadin7ProjectWizard"/>
        </perspectiveExtension>
     </extension>
 	<!-- This is required to have the New Vaadin Project in the project explorer top-level menu -->
     <extension point="org.eclipse.ui.navigator.navigatorContent">
-       <commonWizard type="new" wizardId="com.vaadin.integration.eclipse.wizards.Vaadin6ProjectWizard" menuGroupId="org.eclipse.jst.j2ee.ui.newProjects">
+       <commonWizard type="new" wizardId="com.vaadin.integration.eclipse.wizards.Vaadin7MavenProjectWizard" menuGroupId="org.eclipse.jst.j2ee.ui.newProjects">
           <enablement></enablement>
        </commonWizard>
        <commonWizard type="new" wizardId="com.vaadin.integration.eclipse.wizards.Vaadin7ProjectWizard" menuGroupId="org.eclipse.jst.j2ee.ui.newProjects">
