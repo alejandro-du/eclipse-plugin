@@ -9,7 +9,7 @@ public class Vaadin7ProjectWizard extends VaadinProjectWizard {
 
     @Override
     protected String getProjectTypeTitle() {
-        return "New Vaadin 7 Project";
+        return "New Vaadin 7 Ivy Project (deprecated)";
     }
 
     @Override

@@ -9,7 +9,7 @@ public class Vaadin6ProjectWizard extends VaadinProjectWizard {
 
     @Override
     protected String getProjectTypeTitle() {
-        return "New Vaadin 6 Project";
+        return "New Vaadin 6 Project (deprecated)";
     }
 
     @Override

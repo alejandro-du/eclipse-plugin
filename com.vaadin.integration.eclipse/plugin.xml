@@ -70,13 +70,13 @@
          </delegate>
       </action>
       <template id="template.vaadin6">
-         <label>Vaadin 6 Project</label>
+         <label>Vaadin 6 Project (deprecated)</label>
          <fixed facet="jst.java"/>
          <fixed facet="jst.web"/>
          <fixed facet="com.vaadin.integration.eclipse.core"/>
       </template>
       <template id="template.vaadin7">
-         <label>Vaadin 7 Project</label>
+         <label>Vaadin 7 Ivy Project (deprecated)</label>
          <fixed facet="jst.java"/>
          <fixed facet="jst.web"/>
          <fixed facet="com.vaadin.integration.eclipse.core"/>
@@ -95,7 +95,7 @@
       <supported>
          <facet
                id="com.vaadin.integration.eclipse.core">
-         </facet> 
+         </facet>
          <runtime-component
                any="true">
          </runtime-component>
@@ -117,7 +117,23 @@
             id="com.vaadin">
       </category>
       <wizard
-            name="Vaadin 6 Project"
+            name="Vaadin 7 Maven Project"
+            icon="icons/new-vaadin-project-7-16.png"
+            category="com.vaadin"
+            project="true"
+            finalPerspective="org.eclipse.jst.j2ee.J2EEPerspective"
+            id="com.vaadin.integration.eclipse.wizards.Vaadin7MavenProjectWizard">
+         <class class="com.vaadin.integration.eclipse.wizards.Vaadin7MavenProjectWizard">
+            <parameter name="menuIndex" value="20" />
+         </class>
+         <description>
+            Create a Vaadin 7.x Maven project.
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IResource" />
+      </wizard>
+      <wizard
+            name="Vaadin 6 Project (deprecated)"
             icon="icons/new-vaadin-project-6-16.png"
             category="com.vaadin"
             project="true"
@@ -134,7 +150,7 @@
                class="org.eclipse.core.resources.IResource" />
       </wizard>
       <wizard
-            name="Vaadin 7 Project"
+            name="Vaadin 7 Ivy Project (deprecated)"
             icon="icons/new-vaadin-project-7-16.png"
             category="com.vaadin"
             project="true"
@@ -155,20 +171,20 @@
     <extension
        point="org.eclipse.ui.perspectiveExtensions">
        <perspectiveExtension targetID="org.eclipse.jst.j2ee.J2EEPerspective">
-          <newWizardShortcut id="com.vaadin.integration.eclipse.wizards.Vaadin6ProjectWizard"/>
+          <newWizardShortcut id="com.vaadin.integration.eclipse.wizards.Vaadin7MavenProjectWizard"/>
           <newWizardShortcut id="com.vaadin.integration.eclipse.wizards.Vaadin7ProjectWizard"/>
        </perspectiveExtension>
     </extension>
 	<!-- This is required to have the New Vaadin Project in the project explorer top-level menu -->
     <extension point="org.eclipse.ui.navigator.navigatorContent">
-       <commonWizard type="new" wizardId="com.vaadin.integration.eclipse.wizards.Vaadin6ProjectWizard" menuGroupId="org.eclipse.jst.j2ee.ui.newProjects">
+       <commonWizard type="new" wizardId="com.vaadin.integration.eclipse.wizards.Vaadin7MavenProjectWizard" menuGroupId="org.eclipse.jst.j2ee.ui.newProjects">
           <enablement></enablement>
        </commonWizard>
        <commonWizard type="new" wizardId="com.vaadin.integration.eclipse.wizards.Vaadin7ProjectWizard" menuGroupId="org.eclipse.jst.j2ee.ui.newProjects">
           <enablement></enablement>
        </commonWizard>
     </extension>
-	
+
    <extension
          point="org.eclipse.wst.common.project.facet.ui.wizardPages">
       <wizard-pages
@@ -223,7 +239,7 @@ Any metadata changes made will be stored in the project manifest.
          </selection>
       </wizard>
    </extension>
-   
+
    <extension
          id="com.vaadin.integration.eclipse.wizards.WarExportCompileWidgetsetOperation"
          name="Compile Widgetset"
@@ -232,11 +248,11 @@ Any metadata changes made will be stored in the project manifest.
             preOperationClass="com.vaadin.integration.eclipse.wizards.WarExportCompileWidgetsetOperation"
             id="org.eclipse.jst.j2ee.internal.web.archive.operations.WebComponentExportOperation">
       </operationExtension>
-   </extension>   
-   
+   </extension>
+
    <extension point="org.eclipse.ltk.core.refactoring.renameParticipants">
 	<renameParticipant
-		id="com.vaadin.integration.eclipse.WebContextRenameParticipant" 
+		id="com.vaadin.integration.eclipse.WebContextRenameParticipant"
 		name="Vaadin web context rename participant"
 		class="com.vaadin.integration.eclipse.refactoring.WebContextRenameParticipant">
 		<enablement>
@@ -248,7 +264,7 @@ Any metadata changes made will be stored in the project manifest.
 		</enablement>
 	</renameParticipant>
 	<renameParticipant
-		id="com.vaadin.integration.eclipse.LaunchRenameParticipant" 
+		id="com.vaadin.integration.eclipse.LaunchRenameParticipant"
 		name="Vaadin launch configuration rename participant"
 		class="com.vaadin.integration.eclipse.refactoring.LaunchRenameParticipant">
 		<enablement>
@@ -260,7 +276,7 @@ Any metadata changes made will be stored in the project manifest.
 		</enablement>
 	</renameParticipant>
 	<renameParticipant
-		id="com.vaadin.integration.eclipse.WidgetSetRenameParticipant" 
+		id="com.vaadin.integration.eclipse.WidgetSetRenameParticipant"
 		name="Vaadin widgetset rename participant"
 		class="com.vaadin.integration.eclipse.refactoring.WidgetSetRenameParticipant">
 		<enablement>
@@ -274,7 +290,7 @@ Any metadata changes made will be stored in the project manifest.
 </extension>
    <extension point="org.eclipse.ltk.core.refactoring.moveParticipants">
 	<moveParticipant
-		id="com.vaadin.integration.eclipse.WebContextMoveParticipant" 
+		id="com.vaadin.integration.eclipse.WebContextMoveParticipant"
 		name="Vaadin web context move participant"
 		class="com.vaadin.integration.eclipse.refactoring.WebContextMoveParticipant">
 		<enablement>
@@ -286,7 +302,7 @@ Any metadata changes made will be stored in the project manifest.
 		</enablement>
 	</moveParticipant>
 	<moveParticipant
-		id="com.vaadin.integration.eclipse.LaunchMoveParticipant" 
+		id="com.vaadin.integration.eclipse.LaunchMoveParticipant"
 		name="Vaadin launch configuration move participant"
 		class="com.vaadin.integration.eclipse.refactoring.LaunchMoveParticipant">
 		<enablement>
@@ -298,7 +314,7 @@ Any metadata changes made will be stored in the project manifest.
 		</enablement>
 	</moveParticipant>
 	<moveParticipant
-		id="com.vaadin.integration.eclipse.WidgetSetMoveParticipant" 
+		id="com.vaadin.integration.eclipse.WidgetSetMoveParticipant"
 		name="Vaadin widgetset move participant"
 		class="com.vaadin.integration.eclipse.refactoring.WidgetSetMoveParticipant">
 		<enablement>
@@ -332,7 +348,7 @@ Any metadata changes made will be stored in the project manifest.
                 value="org.eclipse.wst.common.project.facet.core.nature">
             </filter>
             <enabledWhen>
-               <adapt type="org.eclipse.core.resources.IProject"/> 
+               <adapt type="org.eclipse.core.resources.IProject"/>
             </enabledWhen>
       </page>
    </extension>
@@ -368,20 +384,20 @@ Any metadata changes made will be stored in the project manifest.
             id="com.vaadin.integration.eclipse.widgetsetBuilder">
       </builder>
    </extension>
-   
+
    <extension
          id="addonStylesBuilder"
          name="Addon Styles Builder"
          point="org.eclipse.core.resources.builders">
       <builder>
-         <run class="com.vaadin.integration.eclipse.builder.AddonStylesBuilder" />        
+         <run class="com.vaadin.integration.eclipse.builder.AddonStylesBuilder" />
       </builder>
    </extension>
-   
-   
-   <!-- TODO make the commands/buttons/handlers so that compile widgetset is 
+
+
+   <!-- TODO make the commands/buttons/handlers so that compile widgetset is
     "dropdown button" with all available compilable widgetsets.   -->
-   
+
    <extension
          point="org.eclipse.ui.commands">
       <category
