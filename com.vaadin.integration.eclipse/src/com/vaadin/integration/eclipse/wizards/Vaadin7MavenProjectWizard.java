@@ -25,6 +25,7 @@ import org.eclipse.m2e.core.ui.internal.Messages;
 import org.eclipse.m2e.core.ui.internal.wizards.AbstractMavenProjectWizard;
 import org.eclipse.m2e.core.ui.internal.wizards.MavenProjectWizardArchetypeParametersPage;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.INewWizard;
 
@@ -140,7 +141,48 @@ public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
          * Archetype parameters page. The only needed page for Vaadin Archetype.
          */
         parametersPage = new MavenProjectWizardArchetypeParametersPage(
-                importConfiguration);
+                importConfiguration) {
+
+            private static final String DEFAULT_GROUP_ID = "com.example";
+            private static final String DEFAULT_ARTIFACT_ID = "myapplication";
+
+            @Override
+            public void createControl(Composite parent) {
+                super.createControl(parent);
+
+                // Input some default values.
+                if (groupIdCombo.getText().isEmpty()) {
+                    groupIdCombo.setText(DEFAULT_GROUP_ID);
+                }
+
+                if (artifactIdCombo.getText().isEmpty()) {
+                    artifactIdCombo.setText(DEFAULT_ARTIFACT_ID);
+                }
+            }
+
+            @Override
+            public void setVisible(boolean visible) {
+                // This is a workaround for setVisible setting package as
+                // customized, even though the user never actually customized
+                // it. The customization from wizards point of view was done by
+                // overriding this class.
+
+                // If package is not customized before setting visible, we
+                // should restore it to not being customized.
+                boolean shouldRestore = !packageCustomized;
+
+                super.setVisible(visible);
+
+                String group = groupIdCombo.getText();
+                String artifact = artifactIdCombo.getText();
+
+                // Only restore if groupId and artifactId match the defaults.
+                if (shouldRestore && (DEFAULT_GROUP_ID.equals(group))
+                        && (DEFAULT_ARTIFACT_ID.equals(artifact))) {
+                    packageCustomized = false;
+                }
+            }
+        };
 
         addPage(vaadinArchetypeSelectionPage);
         addPage(parametersPage);
