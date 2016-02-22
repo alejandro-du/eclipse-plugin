@@ -43,17 +43,20 @@ public class MavenUtil {
     }
 
     public static boolean compileWidgetSet(ISelection currentSelection) {
-        runMavenGoal(currentSelection, "vaadin:compile");
+        runMavenGoal(currentSelection, "vaadin:update-widgetset vaadin:compile");
         return true;
     }
 
     public static boolean compileTheme(ISelection currentSelection) {
-        runMavenGoal(currentSelection, "vaadin:compile-theme");
+        runMavenGoal(currentSelection,
+                "vaadin:update-theme vaadin:compile-theme");
         return true;
     }
 
     public static boolean compileThemeAndWidgetset(ISelection currentSelection) {
-        runMavenGoal(currentSelection, "vaadin:compile-theme vaadin:compile");
+        runMavenGoal(
+                currentSelection,
+                "vaadin:update-theme vaadin:update-widgetset vaadin:compile-theme vaadin:compile");
         return true;
     }
 }
