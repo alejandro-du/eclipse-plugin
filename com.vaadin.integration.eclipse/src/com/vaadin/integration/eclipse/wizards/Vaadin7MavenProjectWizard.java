@@ -17,7 +17,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.jface.dialogs.IPageChangingListener;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.PageChangingEvent;
+import org.eclipse.jface.wizard.IWizardContainer;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.m2e.core.MavenPlugin;
 import org.eclipse.m2e.core.internal.IMavenConstants;
 import org.eclipse.m2e.core.ui.internal.MavenImages;
@@ -35,7 +39,7 @@ import com.vaadin.integration.eclipse.util.network.MavenVersionManager;
 
 @SuppressWarnings("restriction")
 public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
-        implements INewWizard, ArchetypeSelectionCallback {
+        implements INewWizard {
 
     /** The wizard page for gathering archetype project information. */
     protected MavenProjectWizardArchetypeParametersPage parametersPage;
@@ -43,6 +47,8 @@ public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
     private List<VaadinArchetype> vaadinArchetypes = new ArrayList<VaadinArchetype>();
 
     private Vaadin7MavenProjectArchetypeSelectionPage vaadinArchetypeSelectionPage;
+
+    private boolean parametersPageInitialized = false;
 
     /**
      * Default constructor. Sets the title and image of the wizard.
@@ -72,20 +78,26 @@ public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
         }
 
         vaadinArchetypes
-                .add(new VaadinArchetype(
-                        "Clean Application, Multi Module",
-                        "vaadin-archetype-application-multimodule",
-                        "com.vaadin",
+                .add(new VaadinArchetype("Single-module Application Project",
+                        "vaadin-archetype-application", "com.vaadin",
                         vaadinVersion,
-                        "A clean, multi module Vaadin application project. \n\nThis is suitable for most applications."));
+                        "A template for a simple Vaadin application.\nPuts everything in one module."));
 
         vaadinArchetypes
                 .add(new VaadinArchetype(
-                        "Clean Application",
-                        "vaadin-archetype-application",
+                        "Multi-module Application Project",
+                        "vaadin-archetype-application-multimodule",
                         "com.vaadin",
                         vaadinVersion,
-                        "A clean, single module Vaadin application project. \n\nThis is suitable for small applications."));
+                        "A template for a more complex Vaadin project.\nSeparates deployment, UI and widgetset into separate Maven modules."));
+
+        vaadinArchetypes
+                .add(new VaadinArchetype(
+                        "Add-on Project",
+                        "vaadin-archetype-widget",
+                        "com.vaadin",
+                        vaadinVersion,
+                        "A multi-module widget add-on project for creating a re-usable Vaadin component, including a demo application.\nPackages the add-on in a format ready to be deployed to Vaadin Directory."));
 
         vaadinArchetypes
                 .add(new VaadinArchetype(
@@ -93,40 +105,13 @@ public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
                         "vaadin-archetype-application-example",
                         "com.vaadin",
                         vaadinVersion,
-                        "A multi module example CRUD (create/read/update/delete) Vaadin application containing a login screen, basic access control examples and more\n\nProvides a good example on how you can structure a Vaadin application."));
-
-        vaadinArchetypes
-                .add(new VaadinArchetype(
-                        "Add-on widget",
-                        "vaadin-archetype-widget",
-                        "com.vaadin",
-                        vaadinVersion,
-                        "A multi module widget add-on project which provides a good starting point for creating a re-usable Vaadin component including a demo application.\n\nPackages the add-on in a format ready to be deployed to Vaadin Directory"));
+                        "A multi-module example CRUD (create/read/update/delete) application containing a login screen, basic access control examples and more.\nProvides a good example on how you can structure a Vaadin application."));
 
         // TODO: other archetypes need to be filled in
-        // vaadinArchetypes
-        // .add(new VaadinArchetype(
-        // "JavaEE CRUD Example",
-        // "",
-        // "com.vaadin",
-        // vaadinVersion,
-        // "A JavaEE (CDI, EJB, JPA) based multi module example CRUD (create/read/update/delete) Vaadin application containing a login screen, basic access control examples and more.\n\nProvides a good example on how you can structure a Vaadin JavaEE application."));
-        //
-        // vaadinArchetypes
-        // .add(new VaadinArchetype(
-        // "Spring CRUD Example",
-        // "",
-        // "com.vaadin",
-        // vaadinVersion,
-        // "A Spring based multi module example CRUD (create/read/update/delete) Vaadin application containing a login screen, basic access control examples and more.\n\nProvides a good example on how you can structure a Vaadin Spring application.\nFor Spring Boot projects, alternatively use Spring Initializr at http://start.spring.io ."));
-        //
-        // vaadinArchetypes
-        // .add(new VaadinArchetype(
-        // "Liferay 6 Portlet",
-        // "",
-        // "com.vaadin",
-        // vaadinVersion,
-        // "Creates a clean Liferay 6 portlet\n\nRequires separate installation of the Liferay Maven Plugin(?)"));
+        // JavaEE CRUD Example
+        // Spring CRUD Example
+        // Liferay 6 Portlet(Requires separate installation of the Liferay Maven
+        // Plugin(?))
     }
 
     @Override
@@ -135,7 +120,7 @@ public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
          * Vaadin Archetype selection page.
          */
         vaadinArchetypeSelectionPage = new Vaadin7MavenProjectArchetypeSelectionPage(
-                this, vaadinArchetypes);
+                vaadinArchetypes);
 
         /*
          * Archetype parameters page. The only needed page for Vaadin Archetype.
@@ -188,6 +173,22 @@ public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
         addPage(parametersPage);
     }
 
+    @Override
+    public void setContainer(IWizardContainer wizardContainer) {
+        super.setContainer(wizardContainer);
+
+        if (wizardContainer instanceof WizardDialog) {
+            ((WizardDialog) wizardContainer)
+                    .addPageChangingListener(new IPageChangingListener() {
+                        public void handlePageChanging(PageChangingEvent event) {
+                            selectArchetype(vaadinArchetypeSelectionPage
+                                    .getVaadinArchetype());
+                        }
+                    });
+        }
+
+    }
+
     /** Returns the model. */
     public Model getModel() {
         return parametersPage.getModel();
@@ -202,6 +203,15 @@ public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
      */
     @Override
     public boolean performFinish() {
+        // this needs to be done to support Finish without ever using Next
+        if (!parametersPageInitialized) {
+            // only set the archetype, not the "used" flag
+            parametersPage.setArchetype(vaadinArchetypeSelectionPage
+                    .getVaadinArchetype().getArchetype());
+            // this is needed to force loading the parameter default values etc.
+            parametersPage.setVisible(true);
+        }
+
         // First of all, we extract all the information from the wizard pages.
         // Note that this should not be done inside the operation we will run
         // since many of the wizard pages' methods can only be invoked from
@@ -285,10 +295,11 @@ public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
         return true;
     }
 
-    public void onArchetypeSelect(VaadinArchetype archetype) {
+    private void selectArchetype(VaadinArchetype archetype) {
         parametersPage.setArchetype(archetype.getArchetype());
         parametersPage.setUsed(true);
         parametersPage.updatePropertyEditors();
+        parametersPageInitialized = true;
 
         getContainer().updateButtons();
     }
