@@ -32,7 +32,9 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.INewWizard;
+import org.eclipse.ui.PlatformUI;
 
+import com.vaadin.integration.eclipse.VaadinPlugin;
 import com.vaadin.integration.eclipse.util.ErrorUtil;
 import com.vaadin.integration.eclipse.util.data.MavenVaadinVersion;
 import com.vaadin.integration.eclipse.util.network.MavenVersionManager;
@@ -40,6 +42,9 @@ import com.vaadin.integration.eclipse.util.network.MavenVersionManager;
 @SuppressWarnings("restriction")
 public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
         implements INewWizard {
+
+    private static final String CONTEXT_ID = VaadinPlugin.PLUGIN_ID
+            + ".mavenwizardhelp";
 
     /** The wizard page for gathering archetype project information. */
     protected MavenProjectWizardArchetypeParametersPage parametersPage;
@@ -59,6 +64,7 @@ public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
 
         // TODO should have own icon
         setDefaultPageImageDescriptor(MavenImages.WIZ_NEW_PROJECT);
+        setHelpAvailable(true);
         setNeedsProgressMonitor(true);
 
         // TODO: the list should be populated automatically, possibly from
@@ -120,7 +126,18 @@ public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
          * Vaadin Archetype selection page.
          */
         vaadinArchetypeSelectionPage = new Vaadin7MavenProjectArchetypeSelectionPage(
-                vaadinArchetypes);
+                vaadinArchetypes) {
+            @Override
+            public void createControl(Composite parent) {
+                super.createControl(parent);
+
+                // doing this instead of performHelp() of the page explicitly showing
+                // help because otherwise another (system) help listener overrides the
+                // help we have shown
+                PlatformUI.getWorkbench().getHelpSystem()
+                        .setHelp(vaadinArchetypeSelectionPage.getControl(), CONTEXT_ID);
+            }
+        };
 
         /*
          * Archetype parameters page. The only needed page for Vaadin Archetype.
@@ -148,6 +165,12 @@ public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
                 if (DEFAULT_VERSION.equals(versionCombo.getText())) {
                     versionCombo.setText(DEFAULT_SNAPSHOT_VERSION);
                 }
+
+                // doing this instead of performHelp() of the page explicitly
+                // showing help because otherwise another (system) help listener
+                // overrides the help we have shown
+                PlatformUI.getWorkbench().getHelpSystem()
+                        .setHelp(getControl(), CONTEXT_ID);
             }
 
             @Override

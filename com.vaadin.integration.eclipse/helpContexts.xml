@@ -1,0 +1,7 @@
+<contexts>
+      <context id="mavenwizardhelp" title="Vaadin 7 Maven Project Wizard">
+        <description>Lets you create a new Vaadin 7 project that uses Maven for build and dependency management. To do so, you have to select 1) select a Maven archetype and 2) specify archetype parameters.</description>
+        <topic href="html/select_archetype.html"  label="Select a Maven archetype"/> 
+        <topic href="html/specify_archetype_parameters.html"  label="Specify archetype parameters"/> 
+  </context>
+</contexts>

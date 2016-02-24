@@ -108,6 +108,13 @@
             path="icons/vaadin-icon-16.png">
       </image>
    </extension>
+   <extension
+         id="com.vaadin.integration.eclipse.wizardhelp"
+         point="org.eclipse.help.contexts">
+      <contexts
+            file="helpContexts.xml"
+            />
+   </extension>
 
     <extension
          id="VaadinUIProjectWizards"
