@@ -8,6 +8,7 @@
   <modules>
     <module>com.vaadin.integration.eclipse</module>
     <module>feature</module>
+    <module>legacy-feature</module>
     <module>update-site</module>
   </modules>
 

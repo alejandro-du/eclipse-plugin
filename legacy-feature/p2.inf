@@ -1,0 +1,4 @@
+update.id=com.vaadin.wysiwyg.eclipse
+instructions.configure=\
+  org.eclipse.equinox.p2.touchpoint.eclipse.addRepository(location:http${#58}//www.apache.org/dist/ant/ivyde/updatesite,type:0,name:IvyDE,enabled:true);\
+  org.eclipse.equinox.p2.touchpoint.eclipse.addRepository(location:http${#58}//www.apache.org/dist/ant/ivyde/updatesite,type:1,name:IvyDE,enabled:true);
