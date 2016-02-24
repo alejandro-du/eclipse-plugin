@@ -130,6 +130,7 @@ public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
 
             private static final String DEFAULT_GROUP_ID = "com.example";
             private static final String DEFAULT_ARTIFACT_ID = "myapplication";
+            private static final String DEFAULT_SNAPSHOT_VERSION = "1.0-SNAPSHOT";
 
             @Override
             public void createControl(Composite parent) {
@@ -142,6 +143,10 @@ public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
 
                 if (artifactIdCombo.getText().isEmpty()) {
                     artifactIdCombo.setText(DEFAULT_ARTIFACT_ID);
+                }
+
+                if (DEFAULT_VERSION.equals(versionCombo.getText())) {
+                    versionCombo.setText(DEFAULT_SNAPSHOT_VERSION);
                 }
             }
 
