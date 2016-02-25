@@ -17,18 +17,22 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.IPageChangingListener;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.PageChangingEvent;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.wizard.IWizardContainer;
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.m2e.core.MavenPlugin;
 import org.eclipse.m2e.core.internal.IMavenConstants;
-import org.eclipse.m2e.core.ui.internal.MavenImages;
 import org.eclipse.m2e.core.ui.internal.Messages;
 import org.eclipse.m2e.core.ui.internal.wizards.AbstractMavenProjectWizard;
 import org.eclipse.m2e.core.ui.internal.wizards.MavenProjectWizardArchetypeParametersPage;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.INewWizard;
@@ -43,6 +47,8 @@ import com.vaadin.integration.eclipse.util.network.MavenVersionManager;
 public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
         implements INewWizard {
 
+    public static final String WIZARD_PAGE_TITLE = "Vaadin 7 Project with Maven";
+
     private static final String CONTEXT_ID = VaadinPlugin.PLUGIN_ID
             + ".mavenwizardhelp";
 
@@ -55,6 +61,8 @@ public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
 
     private boolean parametersPageInitialized = false;
 
+    private VaadinTitle vaadinTitle;
+
     /**
      * Default constructor. Sets the title and image of the wizard.
      */
@@ -62,8 +70,12 @@ public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
         super();
         setWindowTitle("New Vaadin 7 Maven Project");
 
-        // TODO should have own icon
-        setDefaultPageImageDescriptor(MavenImages.WIZ_NEW_PROJECT);
+        ImageRegistry registry = VaadinPlugin.getInstance().getImageRegistry();
+        Image wizardBannerIcon = registry
+                .get(VaadinPlugin.NEW_MAVEN_PROJECT_WIZARD_BANNER_IMAGE_ID);
+        setDefaultPageImageDescriptor(ImageDescriptor
+                .createFromImage(wizardBannerIcon));
+
         setHelpAvailable(true);
         setNeedsProgressMonitor(true);
 
@@ -199,10 +211,27 @@ public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
 
         addPage(vaadinArchetypeSelectionPage);
         addPage(parametersPage);
+
+        for (IWizardPage page : getPages()) {
+            page.setTitle(WIZARD_PAGE_TITLE);
+        }
     }
 
     @Override
     public void setContainer(IWizardContainer wizardContainer) {
+        if (wizardContainer != null) {
+
+            // Monitor the page change to switch title colors.
+            if (wizardContainer instanceof IPageChangeProvider) {
+                vaadinTitle = new VaadinTitle(
+                        (IPageChangeProvider) wizardContainer, wizardContainer);
+            }
+
+        } else if (vaadinTitle != null) {
+            vaadinTitle.destroy();
+            vaadinTitle = null;
+        }
+
         super.setContainer(wizardContainer);
 
         if (wizardContainer instanceof WizardDialog) {

@@ -21,8 +21,10 @@ public class Vaadin7MavenProjectArchetypeSelectionPage extends WizardPage {
     }
 
     public void createControl(Composite parent) {
-        setTitle("Create New Vaadin 7 Maven Project");
-        setDescription("Select a project template from the list below");
+        // set by the wizard for all pages
+        // setTitle(Vaadin7MavenProjectWizard.WIZARD_PAGE_TITLE);
+
+        setDescription("Select a Maven archetype");
         selectionView = new Vaadin7MavenProjectArchetypeSelectionView(
                 vaadinArchetypes, parent, SWT.NONE);
         setControl(selectionView);

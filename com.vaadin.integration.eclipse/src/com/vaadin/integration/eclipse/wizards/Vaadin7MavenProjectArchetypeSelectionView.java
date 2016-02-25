@@ -30,7 +30,7 @@ public class Vaadin7MavenProjectArchetypeSelectionView extends
             List<VaadinArchetype> vaadinArchetypes, Composite parent, int style) {
         super(parent, SWT.V_SCROLL | style);
         
-        this.vaadinArchetypeButtons = new ArrayList<Button>(
+        vaadinArchetypeButtons = new ArrayList<Button>(
                 vaadinArchetypes.size());
 
         archetypesComposite = createContents(vaadinArchetypes);
@@ -57,14 +57,16 @@ public class Vaadin7MavenProjectArchetypeSelectionView extends
             btnArchetype.setData(vaadinArch);
             GridData btnGridData = new GridData(SWT.DEFAULT, SWT.DEFAULT, true,
                     false, 1, 1);
-            btnGridData.horizontalIndent = stdHeight * 1;
-            if (!vaadinArchetypeButtons.isEmpty())
+            btnGridData.horizontalIndent = stdHeight / 2;
+            if (!vaadinArchetypeButtons.isEmpty()) {
                 btnGridData.verticalIndent = stdHeight * 2;
+            }
             btnArchetype.setLayoutData(btnGridData);
             vaadinArchetypeButtons.add(btnArchetype);
 
             MouseListener btnActivateListener = new MouseAdapter() {
 
+                @Override
                 public void mouseDown(MouseEvent arg0) {
                     btnArchetype.setFocus();
                     btnArchetype.setSelection(true);
@@ -105,8 +107,9 @@ public class Vaadin7MavenProjectArchetypeSelectionView extends
 
     public VaadinArchetype getVaadinArchetype() {
         for (Button btn : vaadinArchetypeButtons) {
-            if (btn.getSelection())
+            if (btn.getSelection()) {
                 return (VaadinArchetype) btn.getData();
+            }
         }
         return (VaadinArchetype) vaadinArchetypeButtons.get(0).getData();
     }
