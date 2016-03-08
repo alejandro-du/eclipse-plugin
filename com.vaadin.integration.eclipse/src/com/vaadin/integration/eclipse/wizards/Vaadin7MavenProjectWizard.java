@@ -95,41 +95,7 @@ public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
             ErrorUtil.handleBackgroundException(e);
         }
 
-        vaadinArchetypes
-                .add(new VaadinArchetype("Single-module Application Project",
-                        "vaadin-archetype-application", "com.vaadin",
-                        vaadinVersion,
-                        "A template for a simple Vaadin application.\nPuts everything in one module."));
-
-        vaadinArchetypes
-                .add(new VaadinArchetype(
-                        "Multi-module Application Project",
-                        "vaadin-archetype-application-multimodule",
-                        "com.vaadin",
-                        vaadinVersion,
-                        "A template for a more complex Vaadin project.\nSeparates deployment, UI and widgetset into separate Maven modules."));
-
-        vaadinArchetypes
-                .add(new VaadinArchetype(
-                        "Add-on Project",
-                        "vaadin-archetype-widget",
-                        "com.vaadin",
-                        vaadinVersion,
-                        "A multi-module widget add-on project for creating a re-usable Vaadin component, including a demo application.\nPackages the add-on in a format ready to be deployed to Vaadin Directory."));
-
-        vaadinArchetypes
-                .add(new VaadinArchetype(
-                        "CRUD Example",
-                        "vaadin-archetype-application-example",
-                        "com.vaadin",
-                        vaadinVersion,
-                        "A multi-module example CRUD (create/read/update/delete) application containing a login screen, basic access control examples and more.\nProvides a good example on how you can structure a Vaadin application."));
-
-        // TODO: other archetypes need to be filled in
-        // JavaEE CRUD Example
-        // Spring CRUD Example
-        // Liferay 6 Portlet(Requires separate installation of the Liferay Maven
-        // Plugin(?))
+        vaadinArchetypes = MavenVersionManager.getAvailableArtifacts();
     }
 
     @Override
@@ -359,41 +325,5 @@ public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
         parametersPageInitialized = true;
 
         getContainer().updateButtons();
-    }
-
-    public static class VaadinArchetype {
-
-        private String title;
-        private String description;
-        private Archetype archetype;
-
-        public VaadinArchetype(String title, Archetype archetype,
-                String description) {
-            this.title = title;
-            this.archetype = archetype;
-            this.description = description;
-        }
-
-        public VaadinArchetype(String title, String artifactId, String groupId,
-                String version, String description) {
-            this.title = title;
-            archetype = new Archetype();
-            archetype.setArtifactId(artifactId);
-            archetype.setGroupId(groupId);
-            archetype.setVersion(version);
-            this.description = description;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public Archetype getArchetype() {
-            return archetype;
-        }
     }
 }

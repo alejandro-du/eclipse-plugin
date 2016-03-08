@@ -6,8 +6,6 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-import com.vaadin.integration.eclipse.wizards.Vaadin7MavenProjectWizard.VaadinArchetype;
-
 public class Vaadin7MavenProjectArchetypeSelectionPage extends WizardPage {
 
     private final List<VaadinArchetype> vaadinArchetypes;

@@ -18,8 +18,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
-import com.vaadin.integration.eclipse.wizards.Vaadin7MavenProjectWizard.VaadinArchetype;
-
 public class Vaadin7MavenProjectArchetypeSelectionView extends
         ScrolledComposite {
 

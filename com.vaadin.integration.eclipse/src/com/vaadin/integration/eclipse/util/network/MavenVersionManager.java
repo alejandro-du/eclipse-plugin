@@ -1,5 +1,6 @@
 package com.vaadin.integration.eclipse.util.network;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,21 +10,124 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.apache.commons.io.IOUtils;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import com.vaadin.integration.eclipse.util.ErrorUtil;
 import com.vaadin.integration.eclipse.util.data.MavenVaadinVersion;
 import com.vaadin.integration.eclipse.util.files.LocalFileManager;
 import com.vaadin.integration.eclipse.util.files.LocalFileManager.FileType;
+import com.vaadin.integration.eclipse.wizards.VaadinArchetype;
 
 public class MavenVersionManager {
 
+    private static final String VERSIONS_FILE_NAME = "VERSIONS_7";
+
+    private static final String ARCHETYPES_FILE_NAME = "maven-archetypes.xml";
+
     private static final String AVAILABLE_VAADIN_VERSIONS_7_URL = DownloadManager.VAADIN_DOWNLOAD_BASE_URL
-            + "VERSIONS_7";
+            + VERSIONS_FILE_NAME;
+
+    private static final String AVAILABLE_VAADIN_ARTIFACTS_URL = DownloadManager.VAADIN_DOWNLOAD_BASE_URL
+            + ARCHETYPES_FILE_NAME;
 
     private static List<MavenVaadinVersion> availableVersions;
+    
+    private static List<VaadinArchetype> availableArchetypes;
+
+    /**
+     * Returns a list of available Vaadin archetypes.
+     * It is not guaranteed that the list is fetched from the site every time
+     * this is called.
+     * 
+     * @return A sorted list of available Vaadin archetypes
+     * @throws CoreException
+     * 
+     */
+
+    public static synchronized List<VaadinArchetype> getAvailableArtifacts() {
+        if (availableArchetypes == null) {
+            try {
+                loadAndCacheResource(AVAILABLE_VAADIN_ARTIFACTS_URL,
+                        ARCHETYPES_FILE_NAME);
+            } catch (IOException e) {
+                ErrorUtil
+                        .handleBackgroundException(
+                                "Failed to retrieve Vaadin archetypes list from server",
+                                e);
+            }
+            try {
+                availableArchetypes = loadCachedArchetypes();
+            } catch (CoreException e) {
+                ErrorUtil.handleBackgroundException(
+                        "Failed to load cached Vaadin archetypes", e);
+            }
+            if (availableArchetypes == null){
+                availableArchetypes = loadDefaultArchetypes();
+            }
+        }
+        return availableArchetypes;
+    }
+
+
+    private static List<VaadinArchetype> loadCachedArchetypes()
+            throws CoreException {
+        File file = getCacheFile(ARCHETYPES_FILE_NAME);
+        InputStream is = null;
+        try {
+            is = new BufferedInputStream(new FileInputStream(file));
+            return parseArchetypesStream(is);
+        } catch (IOException ignored) {}
+        finally {
+            try {
+                if (is != null)
+                    is.close();
+            } catch (IOException ignored) {
+            }
+        }
+        return null;
+    }
+
+    private static List<VaadinArchetype> loadDefaultArchetypes() {
+        InputStream is = MavenVersionManager.class.getResourceAsStream("/resources/default-maven-archetypes.xml");
+        try 
+        {
+            return parseArchetypesStream(is);
+        } finally {
+            try{
+                is.close();
+            } catch (Exception e) {
+                ErrorUtil.handleBackgroundException("Failed to load cached Vaadin archetypes", e);
+            }
+        }
+        
+    }
+
+    private static List<VaadinArchetype> parseArchetypesStream(InputStream is) {
+        List<VaadinArchetype> result = new ArrayList<VaadinArchetype>();
+        try {
+            Document parsedArchetypeList = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
+            NodeList nodeList = parsedArchetypeList.getDocumentElement().getElementsByTagName("archetype");
+            for(int i = 0; i < nodeList.getLength(); i++) {
+                Element archetypeNode = (Element)nodeList.item(i);
+                String archetypeId = archetypeNode.getAttribute("archetypeId");
+                String groupId = archetypeNode.getAttribute("groupId");
+                String version = archetypeNode.getAttribute("version");
+                String title = archetypeNode.getElementsByTagName("title").item(0).getTextContent();
+                String description = archetypeNode.getElementsByTagName("description").item(0).getTextContent();
+                result.add(new VaadinArchetype(title, archetypeId, groupId, version, description));
+            }
+        } catch (Exception e) {
+            ErrorUtil.handleBackgroundException("Failed to parse archetype list", e);
+        }
+        return result.isEmpty() ? null : result;
+    }
 
     /**
      * Returns a list of what Vaadin versions are available for dependency
@@ -82,34 +186,39 @@ public class MavenVersionManager {
     private static List<MavenVaadinVersion> downloadAvailableVersionsList()
             throws CoreException {
         try {
-            String versionData = DownloadManager
-                    .downloadURL(AVAILABLE_VAADIN_VERSIONS_7_URL);
-
-            // store versionData in cache
-            try {
-                File cacheFile = getCacheFile();
-                BufferedWriter writer = new BufferedWriter(new FileWriter(
-                        cacheFile));
-                try {
-                    writer.write(versionData);
-                } finally {
-                    writer.close();
-                }
-            } catch (CoreException e) {
-                // log and ignore - the version list is still valid
-                ErrorUtil.handleBackgroundException(
-                        "Failed to save Vaadin 7 version list to cache", e);
-            } catch (IOException e) {
-                // log and ignore - the version list is still valid
-                ErrorUtil.handleBackgroundException(
-                        "Failed to save Vaadin 7 version list to cache", e);
-            }
-
+            String versionData = loadAndCacheResource(AVAILABLE_VAADIN_VERSIONS_7_URL, VERSIONS_FILE_NAME);
             return parseAvailableVersions(versionData);
         } catch (IOException e) {
             throw ErrorUtil.newCoreException(
                     "Failed to download list of available Vaadin versions", e);
         }
+    }
+
+    private static String loadAndCacheResource(String url, String cacheFileName) throws IOException {
+        String data = DownloadManager
+                .downloadURL(url);
+
+        // store downloaded data to cache
+        try {
+            File cacheFile = getCacheFile(cacheFileName);
+            cacheFile.getParentFile().mkdirs();
+            BufferedWriter writer = new BufferedWriter(new FileWriter(
+                    cacheFile));
+            try {
+                writer.write(data);
+            } finally {
+                writer.close();
+            }
+        } catch (CoreException e) {
+            // log and ignore - the data is still valid
+            ErrorUtil.handleBackgroundException(
+                    "Failed to save " + url + " to cache", e);
+        } catch (IOException e) {
+            // log and ignore - the data is still valid
+            ErrorUtil.handleBackgroundException(
+                    "Failed to save " + url + " to cache", e);
+        }
+        return data;
     }
 
     /**
@@ -122,7 +231,7 @@ public class MavenVersionManager {
     private static List<MavenVaadinVersion> getCachedAvailableVersionsList()
             throws CoreException {
         try {
-            File cacheFile = getCacheFile();
+            File cacheFile = getCacheFile(VERSIONS_FILE_NAME);
             InputStream is = new FileInputStream(cacheFile);
             String versionData;
             try {
@@ -140,9 +249,9 @@ public class MavenVersionManager {
         }
     }
 
-    private static File getCacheFile() throws CoreException {
+    private static File getCacheFile(String fileName) throws CoreException {
         IPath path = LocalFileManager.getConfigurationPath().append(
-                IPath.SEPARATOR + "VERSIONS_7");
+                IPath.SEPARATOR + fileName);
         return path.toFile();
     }
 
