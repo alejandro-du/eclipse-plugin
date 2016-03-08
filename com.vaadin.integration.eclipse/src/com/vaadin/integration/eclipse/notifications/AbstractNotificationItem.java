@@ -55,8 +55,7 @@ abstract class AbstractNotificationItem extends Composite {
     }
 
     protected AbstractNotificationItem(Composite parent,
-            Notification notification, ItemStyle style,
-            boolean hasNewIndicator) {
+            Notification notification, ItemStyle style, boolean hasNewIndicator) {
         super(parent, SWT.NONE);
         this.notification = notification;
         this.style = style;
@@ -190,8 +189,8 @@ abstract class AbstractNotificationItem extends Composite {
         if (getNotification().isRead() && hasNewIndicator()) {
             // this code allows to keep the same indentation regardless of icon
             // presence
-            newNotificationFactory
-                    .hint(newNotificationIcon.getImageData().width, 0);
+            newNotificationFactory.hint(
+                    newNotificationIcon.getImageData().width, 0);
         } else if (!hasNewIndicator()) {
             // don't eat any space in case icon label shouldn't be here at all
             newNotificationFactory.hint(0, 0);
@@ -223,8 +222,12 @@ abstract class AbstractNotificationItem extends Composite {
     private class DisposeHandler implements DisposeListener {
 
         public void widgetDisposed(DisposeEvent e) {
-            style.dispose();
-            defaultStyle.dispose();
+            if (style != null) {
+                style.dispose();
+            }
+            if (defaultStyle != null) {
+                defaultStyle.dispose();
+            }
         }
 
     }
@@ -244,21 +247,24 @@ abstract class AbstractNotificationItem extends Composite {
 
         Font getFont() {
             if (font == null) {
-                font = Utils.createFont(12, SWT.NORMAL, Utils.HELVETICA, Utils.ARIAL);
+                font = Utils.createFont(12, SWT.NORMAL, Utils.HELVETICA,
+                        Utils.ARIAL);
             }
             return font;
         }
 
         Color getTextColor() {
             if (color == null) {
-                color = new Color(PlatformUI.getWorkbench().getDisplay(), 154, 150, 143);
+                color = new Color(PlatformUI.getWorkbench().getDisplay(), 154,
+                        150, 143);
             }
             return color;
         }
 
         Color getReadMoreColor() {
             if (readMoreColor == null) {
-                readMoreColor = new Color(PlatformUI.getWorkbench().getDisplay(), 0, 180, 240);
+                readMoreColor = new Color(PlatformUI.getWorkbench()
+                        .getDisplay(), 0, 180, 240);
             }
             return readMoreColor;
         }
