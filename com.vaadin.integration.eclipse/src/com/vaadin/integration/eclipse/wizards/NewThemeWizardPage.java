@@ -174,6 +174,11 @@ public class NewThemeWizardPage extends WizardPage {
         }
         String themeName = getThemeName();
 
+        if(!themeName.matches("^[a-zA-Z][-_a-zA-Z0-9]*$")) {
+            updateStatus("Theme name is empty or contains illegal characters.");
+            return;
+        }
+
         if (container == null
                 || (container.getType() & (IResource.PROJECT | IResource.FOLDER)) == 0) {
             updateStatus("No suitable project found");
@@ -200,7 +205,7 @@ public class NewThemeWizardPage extends WizardPage {
     }
 
     public String getThemeName() {
-        return themeName.getText();
+        return themeName.getText().trim();
     }
 
     public IProject getProject() {
