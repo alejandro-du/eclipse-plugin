@@ -609,6 +609,16 @@ public class ProjectUtil {
     }
     -*/
 
+    /**
+     * Check that the project has Vaadin 7 or later on its classpath.
+     * 
+     * Effectively this method checks for the existence of the class
+     * com.vaadin.ui.UI on the classpath.
+     * 
+     * @param project
+     *            project to check
+     * @return true if the project uses Vaadin 7 or later
+     */
     public static boolean isVaadin7(IProject project) {
         try {
             // String vaadinVersion = getVaadinLibraryVersion(project, true);
@@ -616,7 +626,7 @@ public class ProjectUtil {
             IType uiType = findVaadinUiType(JavaCore.create(project));
             return (null != uiType);
         } catch (CoreException e) {
-            ErrorUtil.handleBackgroundException("", e);
+            // ErrorUtil.handleBackgroundException("", e);
             return false;
         }
     }

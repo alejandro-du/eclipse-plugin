@@ -10,9 +10,9 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.wizards.NewContainerWizardPage;
 import org.eclipse.jdt.ui.wizards.NewTypeWizardPage;
 
-import com.vaadin.integration.eclipse.VaadinFacetUtils;
 import com.vaadin.integration.eclipse.VaadinPlugin;
 import com.vaadin.integration.eclipse.util.ErrorUtil;
+import com.vaadin.integration.eclipse.util.ProjectUtil;
 
 public abstract class AbstractVaadinNewTypeWizardPage extends NewTypeWizardPage {
 
@@ -34,7 +34,7 @@ public abstract class AbstractVaadinNewTypeWizardPage extends NewTypeWizardPage 
         IJavaProject jp = JavaCore.create(project);
         // do as other wizards do: allow showing page even if no project
         // exists
-        if (jp != null && VaadinFacetUtils.isVaadinProject(project)) {
+        if (jp != null && ProjectUtil.isVaadin7(project)) {
             // this will also call setProjectInternal(IProject)
             try {
                 IPackageFragmentRoot[] roots = jp.getPackageFragmentRoots();
@@ -61,7 +61,7 @@ public abstract class AbstractVaadinNewTypeWizardPage extends NewTypeWizardPage 
     protected void setProjectInternal(IProject project) {
         this.project = project;
 
-        if (project == null || !VaadinFacetUtils.isVaadinProject(project)) {
+        if (project == null || !ProjectUtil.isVaadin7(project)) {
             setPackageFragment(null, false);
             setTypeName("", false);
             return;
@@ -116,7 +116,7 @@ public abstract class AbstractVaadinNewTypeWizardPage extends NewTypeWizardPage 
 
     protected IStatus[] getStatus() {
         IStatus[] status;
-        if (project == null || !VaadinFacetUtils.isVaadinProject(project)) {
+        if (project == null || !ProjectUtil.isVaadin7(project)) {
             status = new Status[] { new Status(IStatus.ERROR,
                     VaadinPlugin.PLUGIN_ID, "No suitable project found.") };
         } else {

@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import com.vaadin.integration.eclipse.VaadinFacetUtils;
 import com.vaadin.integration.eclipse.VaadinPlugin;
 import com.vaadin.integration.eclipse.templates.TEMPLATES;
 import com.vaadin.integration.eclipse.util.ErrorUtil;
@@ -93,7 +92,7 @@ public class NewComponentWizardPage extends AbstractVaadinNewTypeWizardPage {
         }
 
         // show the page even when there is no project - eclipse guidelines
-        if (project == null || !VaadinFacetUtils.isVaadinProject(project)) {
+        if (project == null || !ProjectUtil.isVaadin7(project)) {
             return;
         }
 

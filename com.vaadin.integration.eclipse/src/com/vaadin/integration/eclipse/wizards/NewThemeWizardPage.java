@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import com.vaadin.integration.eclipse.VaadinFacetUtils;
 import com.vaadin.integration.eclipse.VaadinPlugin;
 import com.vaadin.integration.eclipse.util.ProjectUtil;
 import com.vaadin.integration.eclipse.viewers.ApplicationList;
@@ -68,7 +67,7 @@ public class NewThemeWizardPage extends WizardPage {
         projectCombo.setLayoutData(gd);
         for (IProject project : ResourcesPlugin.getWorkspace().getRoot()
                 .getProjects()) {
-            if (VaadinFacetUtils.isVaadinProject(project)) {
+            if (ProjectUtil.isVaadin7(project)) {
                 projectCombo.add(project.getName());
             }
         }
