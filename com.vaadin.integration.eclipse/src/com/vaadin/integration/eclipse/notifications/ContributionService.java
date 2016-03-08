@@ -170,8 +170,11 @@ public final class ContributionService extends ContributionControlAccess {
         // This method has to be called inside SWT UI thread.
         assert Display.getCurrent() != null;
 
-        if (VaadinPlugin.getInstance().getPreferenceStore().getBoolean(
-                PreferenceConstants.NOTIFICATIONS_VERSION_UPDATE_ITEM)) {
+        if (VaadinPlugin
+                .getInstance()
+                .getPreferenceStore()
+                .getBoolean(
+                        PreferenceConstants.NOTIFICATIONS_VERSION_UPDATE_ITEM)) {
             return versionNotification.isEmpty() ? null : versionNotification;
         } else {
             return null;
@@ -212,8 +215,11 @@ public final class ContributionService extends ContributionControlAccess {
         // This method has to be called inside SWT UI thread.
         assert Display.getCurrent() != null;
 
-        VaadinPlugin.getInstance().getPreferenceStore().setValue(
-                PreferenceConstants.NOTIFICATIONS_USER_TOKEN, getToken());
+        VaadinPlugin
+                .getInstance()
+                .getPreferenceStore()
+                .setValue(PreferenceConstants.NOTIFICATIONS_USER_TOKEN,
+                        getToken());
         refreshNotifications(callback);
     }
 
@@ -230,7 +236,7 @@ public final class ContributionService extends ContributionControlAccess {
         assert Display.getCurrent() != null;
 
         VaadinPlugin.getInstance().getPreferenceStore()
-        .setValue(PreferenceConstants.NOTIFICATIONS_USER_TOKEN, "");
+                .setValue(PreferenceConstants.NOTIFICATIONS_USER_TOKEN, "");
         refreshNotifications(callback);
     }
 
@@ -315,8 +321,7 @@ public final class ContributionService extends ContributionControlAccess {
             // The job is out of scheduling when runnable is provided
             currentPollingJob = new WeakReference<Job>(job);
         }
-        job.addJobChangeListener(
-                new NotificationJobListener(mediator, runnable));
+        job.addJobChangeListener(new NotificationJobListener(mediator, runnable));
         job.schedule();
     }
 
@@ -449,9 +454,12 @@ public final class ContributionService extends ContributionControlAccess {
                 long mask = 0x7fffffffL << (hi & 0xf);
 
                 if (~(hi | low | mask) == 0) {
-                    VaadinPlugin.getInstance().getPreferenceStore().setValue(
-                            PreferenceConstants.NOTIFICATIONS_USER_TOKEN,
-                            token);
+                    VaadinPlugin
+                            .getInstance()
+                            .getPreferenceStore()
+                            .setValue(
+                                    PreferenceConstants.NOTIFICATIONS_USER_TOKEN,
+                                    token);
                     return true;
                 }
             } catch (NumberFormatException e) {
@@ -490,15 +498,21 @@ public final class ContributionService extends ContributionControlAccess {
     }
 
     boolean isNotificationsCenterPopupEnabled() {
-        return VaadinPlugin.getInstance().getPreferenceStore().getBoolean(
-                PreferenceConstants.NOTIFICATIONS_CENTER_POPUP_ENABLED)
+        return VaadinPlugin
+                .getInstance()
+                .getPreferenceStore()
+                .getBoolean(
+                        PreferenceConstants.NOTIFICATIONS_CENTER_POPUP_ENABLED)
                 && VaadinPlugin.getInstance().getPreferenceStore()
                         .getBoolean(PreferenceConstants.NOTIFICATIONS_ENABLED);
     }
 
     boolean isVersionUpdatePopupEnabled() {
-        return VaadinPlugin.getInstance().getPreferenceStore().getBoolean(
-                PreferenceConstants.NOTIFICATIONS_NEW_VERSION_POPUP_ENABLED)
+        return VaadinPlugin
+                .getInstance()
+                .getPreferenceStore()
+                .getBoolean(
+                        PreferenceConstants.NOTIFICATIONS_NEW_VERSION_POPUP_ENABLED)
                 && VaadinPlugin.getInstance().getPreferenceStore()
                         .getBoolean(PreferenceConstants.NOTIFICATIONS_ENABLED);
     }
@@ -509,7 +523,9 @@ public final class ContributionService extends ContributionControlAccess {
 
                 public void accept(String url) {
                     if (url != null) {
-                        VaadinPlugin.getInstance().getPreferenceStore()
+                        VaadinPlugin
+                                .getInstance()
+                                .getPreferenceStore()
                                 .setValue(
                                         PreferenceConstants.NOTIFICATIONS_SETTINGS_URL,
                                         url);
@@ -521,21 +537,31 @@ public final class ContributionService extends ContributionControlAccess {
     }
 
     private boolean isVersionNotificationRead() {
-        return VaadinPlugin.getInstance().getPreferenceStore().getBoolean(
-                PreferenceConstants.NOTIFICATIONS_VERSIONS_INFO_READ);
+        return VaadinPlugin
+                .getInstance()
+                .getPreferenceStore()
+                .getBoolean(
+                        PreferenceConstants.NOTIFICATIONS_VERSIONS_INFO_READ);
     }
 
     private void enableVersionNotification(boolean enable) {
-        VaadinPlugin.getInstance().getPreferenceStore().setValue(
-                PreferenceConstants.NOTIFICATIONS_VERSION_UPDATE_ITEM, enable);
+        VaadinPlugin
+                .getInstance()
+                .getPreferenceStore()
+                .setValue(
+                        PreferenceConstants.NOTIFICATIONS_VERSION_UPDATE_ITEM,
+                        enable);
     }
 
     private void setVersionNotificationRead(boolean read) {
         if (read) {
             versionNotification.setRead();
         }
-        VaadinPlugin.getInstance().getPreferenceStore().setValue(
-                PreferenceConstants.NOTIFICATIONS_VERSIONS_INFO_READ, read);
+        VaadinPlugin
+                .getInstance()
+                .getPreferenceStore()
+                .setValue(PreferenceConstants.NOTIFICATIONS_VERSIONS_INFO_READ,
+                        read);
     }
 
     private VersionUpdateNotification buildVersionNotification() {
@@ -589,9 +615,11 @@ public final class ContributionService extends ContributionControlAccess {
             ids.add(id);
             JSONArray array = new JSONArray();
             array.addAll(ids);
-            VaadinPlugin.getInstance().getPreferenceStore().setValue(
-                    PreferenceConstants.NOTIFICATIONS_READ_IDS,
-                    array.toJSONString());
+            VaadinPlugin
+                    .getInstance()
+                    .getPreferenceStore()
+                    .setValue(PreferenceConstants.NOTIFICATIONS_READ_IDS,
+                            array.toJSONString());
         }
     }
 
@@ -605,10 +633,10 @@ public final class ContributionService extends ContributionControlAccess {
             NewNotificationsJob job = new NewNotificationsJob(
                     new NewNotificationsConsumer());
             currentPollingJob = new WeakReference<Job>(job);
-            job.addJobChangeListener(
-                    new NotificationJobListener(mediator, null));
+            job.addJobChangeListener(new NotificationJobListener(mediator, null));
             preferencesListener.notificationsJobScheduled(job);
-            job.schedule(getNotificationsPollingInterval());
+            long notificationsPollingInterval = getNotificationsPollingInterval();
+            job.schedule(notificationsPollingInterval * 1000);
         }
     }
 
@@ -638,8 +666,7 @@ public final class ContributionService extends ContributionControlAccess {
     }
 
     private boolean isBundleActive() {
-        return VaadinPlugin.getInstance().getBundle()
-                .getState() == Bundle.ACTIVE;
+        return VaadinPlugin.getInstance().getBundle().getState() == Bundle.ACTIVE;
     }
 
     private boolean isNotificationsUpdateEnabled() {
@@ -655,21 +682,20 @@ public final class ContributionService extends ContributionControlAccess {
     }
 
     private int getNotificationsPollingInterval() {
-        return getPollingInterval(
-                PreferenceConstants.NOTIFICATIONS_CENTER_POLLING_INTERVAL);
+        return getPollingInterval(PreferenceConstants.NOTIFICATIONS_CENTER_POLLING_INTERVAL);
     }
 
     private int getVersionUpdateDelay() {
-        return getPollingInterval(
-                PreferenceConstants.NOTIFICATIONS_CENTER_POLLING_INTERVAL);
+        return getPollingInterval(PreferenceConstants.NOTIFICATIONS_CENTER_POLLING_INTERVAL);
     }
 
     private int getPollingInterval(String preferenceKey) {
         String intervalString = VaadinPlugin.getInstance().getPreferenceStore()
                 .getString(preferenceKey);
 
-        for (NotificationsPollingSchedule nps: NotificationsPollingSchedule.values()) {
-            if (nps.name().equals(intervalString)) {
+        for (NotificationsPollingSchedule nps : NotificationsPollingSchedule
+                .values()) {
+            if (("" + nps.getSeconds()).equals(intervalString)) {
                 return nps.getSeconds();
             }
         }
@@ -717,20 +743,22 @@ public final class ContributionService extends ContributionControlAccess {
 
         registerIcon(Utils.NEW_VERSIONS_ICON);
 
-        ImageDescriptor descriptor = getImageDescriptor(
-                Utils.NEW_VERSIONS_IMAGE);
+        ImageDescriptor descriptor = getImageDescriptor(Utils.NEW_VERSIONS_IMAGE);
         ImageData imageData = descriptor.getImageData();
         Point size = new Point(Utils.MAX_WIDTH,
                 (Utils.MAX_WIDTH * imageData.height) / imageData.width);
 
-        VaadinPlugin.getInstance().getImageRegistry().put(
-                Utils.NEW_VERSIONS_IMAGE, ImageDescriptor.createFromImageData(
-                        imageData.scaledTo(size.x, size.y)));
+        VaadinPlugin
+                .getInstance()
+                .getImageRegistry()
+                .put(Utils.NEW_VERSIONS_IMAGE,
+                        ImageDescriptor.createFromImageData(imageData.scaledTo(
+                                size.x, size.y)));
     }
 
     private static void registerIcon(String id) {
-        VaadinPlugin.getInstance().getImageRegistry().put(id,
-                getImageDescriptor(id));
+        VaadinPlugin.getInstance().getImageRegistry()
+                .put(id, getImageDescriptor(id));
     }
 
     private static ImageDescriptor getImageDescriptor(String id) {
@@ -819,14 +847,12 @@ public final class ContributionService extends ContributionControlAccess {
      * consumer (a NewNotificationsJob) which in turn is given a consumer
      * callback to refresh all notifications (AllNotificationsConsumer).
      */
-    final class NewNotificationsConsumer
-            extends AbstractConsumer<NewNotificationsJob> {
+    final class NewNotificationsConsumer extends
+            AbstractConsumer<NewNotificationsJob> {
         @Override
         protected void handleData(NewNotificationsJob consumer) {
-            consumer.accept(
-                    new Pair<String, Consumer<Pair<String, Collection<Notification>>>>(
-                            getToken(),
-                            new AllNotificationsConsumer(mediator, false)));
+            consumer.accept(new Pair<String, Consumer<Pair<String, Collection<Notification>>>>(
+                    getToken(), new AllNotificationsConsumer(mediator, false)));
         }
     }
 
@@ -835,8 +861,8 @@ public final class ContributionService extends ContributionControlAccess {
      * {@link NightlyCheckSchedulerJob} class and execute logic inside SWT UI
      * thread.
      */
-    private class ProjectsUpgradeConsumer
-            implements Consumer<ProjectsUpgradeInfo>, Runnable {
+    private class ProjectsUpgradeConsumer implements
+            Consumer<ProjectsUpgradeInfo>, Runnable {
 
         private final Display display;
         private final AtomicReference<ProjectsUpgradeInfo> info;
@@ -878,10 +904,12 @@ public final class ContributionService extends ContributionControlAccess {
                 if (ContributionService.getInstance()
                         .isVersionUpdatePopupEnabled()) {
                     // Note: currently, the versionNotification above is used
-                    // instead of this temporary notification - see the comments in
+                    // instead of this temporary notification - see the comments
+                    // in
                     // UpgradeNotificationPopup
                     UpgradeNotificationPopup popup = new UpgradeNotificationPopup(
-                            new VersionUpdateNotification(nightlies, newUpgrades));
+                            new VersionUpdateNotification(nightlies,
+                                    newUpgrades));
                     popup.open();
                 }
             }
@@ -921,8 +949,8 @@ public final class ContributionService extends ContributionControlAccess {
                     .entrySet().iterator(); iterator.hasNext();) {
                 Entry<IProject, List<MavenVaadinVersion>> entry = iterator
                         .next();
-                List<MavenVaadinVersion> knownVersions = known
-                        .get(entry.getKey());
+                List<MavenVaadinVersion> knownVersions = known.get(entry
+                        .getKey());
                 if (entry.getValue().equals(knownVersions)) {
                     iterator.remove();
                 }
