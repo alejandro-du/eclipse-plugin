@@ -59,6 +59,10 @@ class SignInComposite extends Composite {
         initComponenets();
     }
 
+    public void focus() {
+        email.forceFocus();
+    }
+
     private void initComponenets() {
         Label title = new Label(this, SWT.NONE);
         titleFont = Utils.createFont(18, SWT.NORMAL, Utils.HELVETICA,
@@ -152,8 +156,8 @@ class SignInComposite extends Composite {
         Composite wrapper = new Composite(this, SWT.BORDER);
         wrapper.setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
         GridDataFactory.fillDefaults().grab(true, false).span(2, 1)
-                .hint(SWT.DEFAULT, Utils.FIELD_HEIGHT).align(SWT.FILL, SWT.FILL)
-                .applyTo(wrapper);
+                .hint(SWT.DEFAULT, Utils.FIELD_HEIGHT)
+                .align(SWT.FILL, SWT.FILL).applyTo(wrapper);
         wrapper.setLayout(new GridLayout(1, false));
         return wrapper;
     }
@@ -185,8 +189,9 @@ class SignInComposite extends Composite {
 
     private void showOperationProgress() {
         loginInProgress = new Label(this, SWT.NONE);
-        GridDataFactory.fillDefaults().grab(true, false).span(2, 1).indent(3, 0)
-                .align(SWT.CENTER, SWT.TOP).applyTo(loginInProgress);
+        GridDataFactory.fillDefaults().grab(true, false).span(2, 1)
+                .indent(3, 0).align(SWT.CENTER, SWT.TOP)
+                .applyTo(loginInProgress);
         loginInProgress.setText(Messages.Notifications_SignInProgress);
         loginInProgress.setForeground(signInColor);
         loginInProgress.setFont(labelsFont);
@@ -218,9 +223,9 @@ class SignInComposite extends Composite {
      * callback for login , see {@link SignInComposite#login()}.
      *
      */
-    private class Listener extends HyperlinkAdapter
-            implements DisposeListener, MouseListener, Consumer<Boolean>,
-            MouseTrackListener, org.eclipse.swt.widgets.Listener {
+    private class Listener extends HyperlinkAdapter implements DisposeListener,
+            MouseListener, Consumer<Boolean>, MouseTrackListener,
+            org.eclipse.swt.widgets.Listener {
 
         public void widgetDisposed(DisposeEvent e) {
             if (titleFont != null) {

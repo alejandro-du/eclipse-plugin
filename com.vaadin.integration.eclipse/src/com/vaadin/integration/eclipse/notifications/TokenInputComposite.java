@@ -148,8 +148,8 @@ class TokenInputComposite extends Composite {
             styleRange.underlineStyle = SWT.UNDERLINE_LINK;
             text.setStyleRange(styleRange);
 
-            LinkListener linkListener = new LinkListener(index,
-                    index + vaadin.length());
+            LinkListener linkListener = new LinkListener(index, index
+                    + vaadin.length());
             text.addMouseListener(linkListener);
             text.addMouseMoveListener(linkListener);
             text.addMouseTrackListener(linkListener);
@@ -185,16 +185,16 @@ class TokenInputComposite extends Composite {
         label.setEditable(false);
         label.setForeground(textColor);
         label.setCaret(null);
-        GridDataFactory factory = GridDataFactory.fillDefaults().align(SWT.LEFT,
-                SWT.FILL);
+        GridDataFactory factory = GridDataFactory.fillDefaults().align(
+                SWT.LEFT, SWT.FILL);
         if (indent) {
             factory.indent(0, VERTICAL_SPACE);
         }
         factory.applyTo(label);
     }
 
-    private static class LinkListener extends MouseTrackAdapter
-            implements MouseMoveListener, MouseListener {
+    private static class LinkListener extends MouseTrackAdapter implements
+            MouseMoveListener, MouseListener {
 
         private final int startPosition;
         private final int endPosition;
@@ -257,9 +257,9 @@ class TokenInputComposite extends Composite {
 
         private void activateLink() {
             if (!Program.launch(Utils.SIGN_IN_URL)) {
-                Logger.getLogger(TokenInputComposite.class.getName())
-                        .warning("Couldn't open sign in URL "
-                                + Utils.SIGN_IN_URL + " in external browsrer");
+                Logger.getLogger(TokenInputComposite.class.getName()).warning(
+                        "Couldn't open sign in URL " + Utils.SIGN_IN_URL
+                                + " in external browsrer");
             }
         }
 
@@ -275,9 +275,8 @@ class TokenInputComposite extends Composite {
 
     }
 
-    private class Listener extends HyperlinkAdapter
-            implements DisposeListener, MouseListener, MouseTrackListener,
-            org.eclipse.swt.widgets.Listener {
+    private class Listener extends HyperlinkAdapter implements DisposeListener,
+            MouseListener, MouseTrackListener, org.eclipse.swt.widgets.Listener {
 
         public void widgetDisposed(DisposeEvent e) {
             if (font != null) {
@@ -350,8 +349,7 @@ class TokenInputComposite extends Composite {
             String text = token.getText().trim();
             if (ContributionService.getInstance().validateToken(text)) {
                 manager.showNotificationsList();
-            } else if (wrongTokenLabel == null
-                    || wrongTokenLabel.isDisposed()) {
+            } else if (wrongTokenLabel == null || wrongTokenLabel.isDisposed()) {
                 wrongTokenLabel = new Label(TokenInputComposite.this, SWT.NONE);
                 wrongTokenLabel.setForeground(errorColor);
                 wrongTokenLabel.setText(Messages.Notifications_TokenErrorMsg);
@@ -364,5 +362,9 @@ class TokenInputComposite extends Composite {
             }
         }
 
+    }
+
+    public void focus() {
+        token.forceFocus();
     }
 }

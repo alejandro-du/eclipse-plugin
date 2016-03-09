@@ -41,13 +41,12 @@ class NotificationsListPopup extends AbstractPopup {
 
     private static final int ITEMS_LIMIT = 100;
 
-    private final Composite nullComposite = new Composite(new Shell(),
-            SWT.NONE);
+    private final Composite nullComposite = new Composite(new Shell(), SWT.NONE);
 
     private NotificationsListComposite notificationsList;
 
     private final UpdateManagerImpl updateManager = new UpdateManagerImpl();
-    private ActiveControlListener mouseListener = new ActiveControlListener();
+    private ActiveControlListener closeListener = new ActiveControlListener();
 
     private StackLayout mainLayout;
 
@@ -90,13 +89,15 @@ class NotificationsListPopup extends AbstractPopup {
 
         super.create();
 
-        mouseListener = new ActiveControlListener();
-        PlatformUI.getWorkbench().getDisplay().addFilter(SWT.MouseDown,
-                mouseListener);
-        PlatformUI.getWorkbench().getDisplay().addFilter(SWT.FocusOut,
-                mouseListener);
+        closeListener = new ActiveControlListener();
+        PlatformUI.getWorkbench().getDisplay()
+                .addFilter(SWT.MouseDown, closeListener);
+        PlatformUI.getWorkbench().getDisplay()
+                .addFilter(SWT.FocusOut, closeListener);
+        PlatformUI.getWorkbench().getDisplay()
+                .addFilter(SWT.KeyDown, closeListener);
         PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell()
-                .addListener(SWT.Resize, mouseListener);
+                .addListener(SWT.Resize, closeListener);
 
         switch (ContributionService.getInstance().getViewMode()) {
         case SIGN_IN:
@@ -122,11 +123,12 @@ class NotificationsListPopup extends AbstractPopup {
                 || window.getShell().getDisplay() == null) {
             return true;
         }
-        window.getShell().getDisplay().removeFilter(SWT.MouseDown,
-                mouseListener);
-        window.getShell().removeListener(SWT.Resize, mouseListener);
-        PlatformUI.getWorkbench().getDisplay().removeFilter(SWT.FocusOut,
-                mouseListener);
+        window.getShell().getDisplay()
+                .removeFilter(SWT.MouseDown, closeListener);
+        window.getShell().removeListener(SWT.Resize, closeListener);
+        window.getShell().getDisplay().removeFilter(SWT.KeyDown, closeListener);
+        PlatformUI.getWorkbench().getDisplay()
+                .removeFilter(SWT.FocusOut, closeListener);
         nullComposite.getShell().dispose();
         nullComposite.dispose();
         return super.close();
@@ -149,8 +151,8 @@ class NotificationsListPopup extends AbstractPopup {
         titleTextLabel.setText(getPopupShellTitle());
         titleTextLabel.setFont(getBoldFont());
         titleTextLabel.setForeground(getTitleForeground());
-        titleTextLabel
-                .setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true));
+        titleTextLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+                true));
         titleTextLabel.setVisible(showContent);
 
         clearAll = createClearAll(parent);
@@ -270,8 +272,7 @@ class NotificationsListPopup extends AbstractPopup {
         return createListArea(pane, ITEMS_LIMIT);
     }
 
-    private NotificationsListComposite createListArea(Composite pane,
-            int limit) {
+    private NotificationsListComposite createListArea(Composite pane, int limit) {
         NotificationsListComposite composite = new NotificationsListComposite(
                 pane, updateManager, limit);
         return composite;
@@ -308,19 +309,22 @@ class NotificationsListPopup extends AbstractPopup {
                 && ContributionService.getInstance().getSettingsUrl() != null);
     }
 
-    private class UpdateManagerImpl extends HyperlinkAdapter
-            implements PopupUpdateManager {
+    private class UpdateManagerImpl extends HyperlinkAdapter implements
+            PopupUpdateManager {
 
         public void showSignIn() {
             updateTitle();
 
             Composite main = mainLayout.topControl.getParent();
-            mainLayout.topControl = new SignInComposite(main, updateManager);
+            SignInComposite signIn = new SignInComposite(main, updateManager);
+            mainLayout.topControl = signIn;
             main.layout();
 
             clearAll.setVisible(false);
             ContributionService.getInstance()
                     .setViewMode(PopupViewMode.SIGN_IN);
+
+            signIn.focus();
         }
 
         public void showNotification(Notification notification) {
@@ -331,8 +335,10 @@ class NotificationsListPopup extends AbstractPopup {
             main.layout();
 
             clearAll.setVisible(false);
-            ContributionService.getInstance()
-                    .setViewMode(PopupViewMode.NOTIFICATION);
+            ContributionService.getInstance().setViewMode(
+                    PopupViewMode.NOTIFICATION);
+
+            mainLayout.topControl.forceFocus();
         }
 
         public void close() {
@@ -342,18 +348,21 @@ class NotificationsListPopup extends AbstractPopup {
         public void showTokenInput() {
             updateTitle();
             Composite main = mainLayout.topControl.getParent();
-            mainLayout.topControl = new TokenInputComposite(main,
+            TokenInputComposite tokenInput = new TokenInputComposite(main,
                     updateManager);
+            mainLayout.topControl = tokenInput;
             main.layout();
             ContributionService.getInstance().setViewMode(PopupViewMode.TOKEN);
+
+            tokenInput.focus();
         }
 
         public void showNotificationsList() {
             activateNotificationsList();
             showList();
 
-            ContributionService.getInstance()
-                    .signIn(new RefreshCallback(mainLayout.topControl));
+            ContributionService.getInstance().signIn(
+                    new RefreshCallback(mainLayout.topControl));
         }
 
         @Override
@@ -392,8 +401,7 @@ class NotificationsListPopup extends AbstractPopup {
                 return new VersionsUpgradeInfoComposite(parent,
                         (VersionUpdateNotification) notification, this);
             } else {
-                return new NotificationInfoComposite(parent, notification,
-                        this);
+                return new NotificationInfoComposite(parent, notification, this);
             }
         }
 
@@ -413,8 +421,8 @@ class NotificationsListPopup extends AbstractPopup {
 
         private void handleSettings() {
             try {
-                Utils.openUrl(
-                        ContributionService.getInstance().getSettingsUrl());
+                Utils.openUrl(ContributionService.getInstance()
+                        .getSettingsUrl());
             } catch (UrlOpenException exception) {
                 Utils.reportError(Messages.Notifications_BrowserFailTitle,
                         Messages.Notifications_SettingsFailMsg,
@@ -425,8 +433,8 @@ class NotificationsListPopup extends AbstractPopup {
         private void handleSignOut() {
             showList();
 
-            ContributionService.getInstance()
-                    .signOut(new RefreshCallback(mainLayout.topControl));
+            ContributionService.getInstance().signOut(
+                    new RefreshCallback(mainLayout.topControl));
             signOutWidget.setVisible(false);
         }
 
@@ -475,7 +483,7 @@ class NotificationsListPopup extends AbstractPopup {
             }
             if (isCloseEvent(event)) {
                 getShell().getDisplay().removeFilter(SWT.MouseDown,
-                        mouseListener);
+                        closeListener);
                 // There can be "deadlock like" situation: if close() is
                 // scheduled via async call while main window is resizing then
                 // UI freezes.
@@ -499,15 +507,22 @@ class NotificationsListPopup extends AbstractPopup {
         }
 
         private boolean isCloseEvent(Event event) {
+            if (event.type == SWT.KeyDown) {
+                return (char) event.keyCode == SWT.ESC;
+            }
+
             // Be very careful with this logic : there can be unexpected effects
             // (leading to Exceptions) if this is written inaccurate (f.e.
             // layout may cause sending focus event)
             Point location = event.widget.getDisplay().getCursorLocation();
-            return !shellContainsWidget(event.widget)
-                    && !getShell()
-                            .equals(event.widget.getDisplay().getActiveShell())
-                    && !getShell().isDisposed()
-                    && !getShell().getBounds().contains(location);
+            boolean shellContainsWidget = shellContainsWidget(event.widget);
+            boolean shellEqualsActiveShell = getShell().equals(
+                    event.widget.getDisplay().getActiveShell());
+            boolean shellIsDisposed = getShell().isDisposed();
+            boolean shellBoundsContainsLocation = getShell().getBounds()
+                    .contains(location);
+            return !shellContainsWidget && !shellEqualsActiveShell
+                    && !shellIsDisposed && !shellBoundsContainsLocation;
         }
 
         private boolean shellContainsWidget(Widget widget) {
