@@ -63,8 +63,8 @@ class NotificationsListComposite extends ScrolledComposite {
         super.setBackground(color);
     }
 
-    private static final class CustomComposite extends Composite
-            implements Listener, DisposeListener {
+    private static final class CustomComposite extends Composite implements
+            Listener, DisposeListener {
 
         private final PopupUpdateManager updateManager;
 
@@ -74,8 +74,7 @@ class NotificationsListComposite extends ScrolledComposite {
 
         private ItemStyle itemStyle;
 
-        CustomComposite(Composite parent, PopupUpdateManager manager,
-                int limit) {
+        CustomComposite(Composite parent, PopupUpdateManager manager, int limit) {
             super(parent, SWT.NONE);
             this.updateManager = manager;
             this.limit = limit;
@@ -138,8 +137,8 @@ class NotificationsListComposite extends ScrolledComposite {
                     .getInstance().getNotifications();
             for (Notification notification : notifications) {
                 if (limit == -1 || i < limit) {
-                    setControlLayoutData(
-                            new NotificationItem(this, notification, itemStyle));
+                    setControlLayoutData(new NotificationItem(this,
+                            notification, itemStyle));
                 } else {
                     hasMore = true;
                     break;
@@ -174,7 +173,7 @@ class NotificationsListComposite extends ScrolledComposite {
             GridDataFactory.fillDefaults().grab(true, false)
                     .align(SWT.FILL, SWT.FILL).applyTo(item);
             GridData data = (GridData) item.getLayoutData();
-            data.heightHint = Utils.ITEM_HEIGHT;
+            data.minimumHeight = Utils.ITEM_HEIGHT;
         }
     }
 
