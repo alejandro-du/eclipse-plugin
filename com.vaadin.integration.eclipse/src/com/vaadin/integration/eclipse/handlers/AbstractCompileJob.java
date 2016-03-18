@@ -11,8 +11,6 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
 
 import com.vaadin.integration.eclipse.maven.MavenUtil;
@@ -43,13 +41,7 @@ public abstract class AbstractCompileJob extends Job {
                     activeEditor);
             boolean compiled = false;
             if (MavenUtil.isMavenProject(selectedProject)) {
-                // Convert selection if necessary as runMavenGoal only
-                // understands certain kinds of selection.
-                // We only need to know the project, as it is only used to find
-                // the base directory.
-                IStructuredSelection selection = new StructuredSelection(
-                        selectedProject);
-                compiled = handleMavenProject(selection);
+                compiled = handleMavenProject(selectedProject);
             } else {
                 compiled = handleIvyProject(currentSelection, activeEditor,
                         monitor);
@@ -150,13 +142,13 @@ public abstract class AbstractCompileJob extends Job {
     protected abstract void showException(final Exception e);
 
     /**
-     * Compile a Maven project based on a selection.
+     * Compile a Maven project based.
      * 
-     * @param current
-     *            selection
+     * @param project
+     *            selected project
      * @return true if a compilation process was triggered
      */
-    protected abstract boolean handleMavenProject(ISelection currentSelection);
+    protected abstract boolean handleMavenProject(IProject project);
 
     // TODO the methods below and how the Ivy project compilation calls them are
     // somewhat messy, but kept this way to minimize behavioral changes from

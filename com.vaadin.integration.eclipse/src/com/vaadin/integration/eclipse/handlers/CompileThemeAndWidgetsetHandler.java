@@ -39,8 +39,8 @@ public class CompileThemeAndWidgetsetHandler extends AbstractVaadinCompileHandle
                 currentSelection, activeEditor) {
 
             @Override
-            protected boolean handleMavenProject(ISelection currentSelection) {
-                return MavenUtil.compileThemeAndWidgetset(currentSelection);
+            protected boolean handleMavenProject(IProject project) {
+                return MavenUtil.compileThemeAndWidgetset(project);
             }
 
             @Override

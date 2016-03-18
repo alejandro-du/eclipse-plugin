@@ -43,8 +43,8 @@ public class CompileThemeHandler extends AbstractVaadinCompileHandler {
         Job job = new AbstractCompileJob("Compiling theme...", currentSelection, activeEditor) {
 
             @Override
-            protected boolean handleMavenProject(ISelection currentSelection) {
-                return MavenUtil.compileTheme(currentSelection);
+            protected boolean handleMavenProject(IProject project) {
+                return MavenUtil.compileTheme(project);
             }
 
             @Override

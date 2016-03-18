@@ -44,8 +44,8 @@ public class CompileWidgetsetHandler extends AbstractVaadinCompileHandler {
         Job job = new AbstractCompileJob("Compiling widgetset...", currentSelection, activeEditor) {
 
             @Override
-            protected boolean handleMavenProject(ISelection currentSelection) {
-                return MavenUtil.compileWidgetSet(currentSelection);
+            protected boolean handleMavenProject(IProject project) {
+                return MavenUtil.compileWidgetSet(project);
             }
 
             @Override
