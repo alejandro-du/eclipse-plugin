@@ -16,26 +16,26 @@
 -->
 
 <archetypes>
-	<archetype groupId="com.vaadin" version="7.6.3"
+	<archetype groupId="com.vaadin" version="7.6.4"
 		archetypeId="vaadin-archetype-application">
 		<title>Single-module Application Project</title>
 		<description><![CDATA[A template for a simple Vaadin application.
 Puts everything in one module.]]></description>
 	</archetype>
-	<archetype groupId="com.vaadin" version="7.6.3"
+	<archetype groupId="com.vaadin" version="7.6.4"
 		archetypeId="vaadin-archetype-application-multimodule">
 		<title>Multi-module Application Project</title>
 		<description><![CDATA[A template for a more complex Vaadin project.
 Separates deployment, UI and widgetset into separate Maven modules.]]></description>
 	</archetype>
-	<archetype groupId="com.vaadin" version="7.6.3"
+	<archetype groupId="com.vaadin" version="7.6.4"
 		archetypeId="vaadin-archetype-widget">
 		<title>Add-on Project</title>
 		<description><![CDATA[A multi-module widget add-on project for creating a re-usable Vaadin component, including a demo application.
 Packages the add-on in a format ready to be deployed to Vaadin Directory.]]>
 		</description>
 	</archetype>
-	<archetype groupId="com.vaadin" version="7.6.3"
+	<archetype groupId="com.vaadin" version="7.6.4"
 		archetypeId="vaadin-archetype-application-example">
 		<title>CRUD Example</title>
 		<description><![CDATA[A multi-module example CRUD (create/read/update/delete) application containing a login screen, basic access control examples and more.

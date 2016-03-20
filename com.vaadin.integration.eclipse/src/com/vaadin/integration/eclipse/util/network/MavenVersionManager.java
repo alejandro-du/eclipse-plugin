@@ -34,7 +34,7 @@ public class MavenVersionManager {
     private static final String AVAILABLE_VAADIN_VERSIONS_7_URL = DownloadManager.VAADIN_DOWNLOAD_BASE_URL
             + VERSIONS_FILE_NAME;
 
-    private static final String AVAILABLE_VAADIN_ARTIFACTS_URL = DownloadManager.VAADIN_DOWNLOAD_BASE_URL
+    private static final String AVAILABLE_VAADIN_ARCHETYPES_URL = DownloadManager.VAADIN_DOWNLOAD_BASE_URL
             + ARCHETYPES_FILE_NAME;
 
     private static List<MavenVaadinVersion> availableVersions;
@@ -42,24 +42,21 @@ public class MavenVersionManager {
     private static List<VaadinArchetype> availableArchetypes;
 
     /**
-     * Returns a list of available Vaadin archetypes.
-     * It is not guaranteed that the list is fetched from the site every time
-     * this is called.
+     * Returns a list of available Vaadin archetypes. It is not guaranteed that
+     * the list is fetched from the site every time this is called.
      * 
      * @return A sorted list of available Vaadin archetypes
      * @throws CoreException
-     * 
      */
-
-    public static synchronized List<VaadinArchetype> getAvailableArtifacts() {
+    public static synchronized List<VaadinArchetype> getAvailableArchetypes() {
         if (availableArchetypes == null) {
             try {
-                loadAndCacheResource(AVAILABLE_VAADIN_ARTIFACTS_URL,
+                loadAndCacheResource(AVAILABLE_VAADIN_ARCHETYPES_URL,
                         ARCHETYPES_FILE_NAME);
             } catch (IOException e) {
                 ErrorUtil
                         .handleBackgroundException(
-                                "Failed to retrieve Vaadin archetypes list from server",
+                                "Failed to retrieve Vaadin archetype list from server",
                                 e);
             }
             try {
@@ -86,8 +83,9 @@ public class MavenVersionManager {
         } catch (IOException ignored) {}
         finally {
             try {
-                if (is != null)
+                if (is != null) {
                     is.close();
+                }
             } catch (IOException ignored) {
             }
         }

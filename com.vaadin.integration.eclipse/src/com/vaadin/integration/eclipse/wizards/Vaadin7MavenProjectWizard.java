@@ -39,8 +39,6 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.PlatformUI;
 
 import com.vaadin.integration.eclipse.VaadinPlugin;
-import com.vaadin.integration.eclipse.util.ErrorUtil;
-import com.vaadin.integration.eclipse.util.data.MavenVaadinVersion;
 import com.vaadin.integration.eclipse.util.network.MavenVersionManager;
 
 @SuppressWarnings("restriction")
@@ -79,23 +77,7 @@ public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
         setHelpAvailable(true);
         setNeedsProgressMonitor(true);
 
-        // TODO: the list should be populated automatically, possibly from
-        // metadata on the server including descriptions from POMs etc.
-
-        // fallback
-        String vaadinVersion = "7.6.1";
-        try {
-            List<MavenVaadinVersion> versions = MavenVersionManager
-                    .getAvailableVersions(true);
-            if (!versions.isEmpty()) {
-                vaadinVersion = versions.get(0).getVersionNumber();
-            }
-        } catch (CoreException e) {
-            // fetching of version list failed - using the default above
-            ErrorUtil.handleBackgroundException(e);
-        }
-
-        vaadinArchetypes = MavenVersionManager.getAvailableArtifacts();
+        vaadinArchetypes = MavenVersionManager.getAvailableArchetypes();
     }
 
     @Override
