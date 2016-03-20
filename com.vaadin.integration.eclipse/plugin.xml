@@ -523,4 +523,18 @@ Any metadata changes made will be stored in the project manifest.
          </toolbar>
       </menuContribution>
    </extension>
+
+   <!-- M2E extensions for vaadin-maven-plugin -->
+   <extension
+         point="org.eclipse.m2e.core.projectConfigurators">
+      <configurator
+            class="com.vaadin.integration.eclipse.maven.VaadinMavenProjectConfigurator"
+            id="com.vaadin.integration.eclipse.vaadinConfigurator"
+            name="Vaadin Project Configurator">
+      </configurator>
+   </extension>
+   <extension
+         point="org.eclipse.m2e.core.lifecycleMappingMetadataSource">
+   </extension>
+   
 </plugin>
