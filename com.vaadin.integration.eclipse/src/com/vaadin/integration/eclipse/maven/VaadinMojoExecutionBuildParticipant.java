@@ -126,7 +126,7 @@ public class VaadinMojoExecutionBuildParticipant
             throws CoreException {
         if (isGoal(UPDATE_THEME_GOAL) || isGoal(COMPILE_THEME_GOAL)) {
             for (File themeDir : getThemeDirectories(monitor)) {
-                if (themeDir.exists()) {
+                if (themeDir != null && themeDir.exists()) {
                     buildContext.refresh(themeDir);
                 }
             }
@@ -134,7 +134,7 @@ public class VaadinMojoExecutionBuildParticipant
             // refresh locations where the updated widgetset might have been
             // written
             for (File refreshable : getUpdateWidgetsetRefreshables(monitor)) {
-                if (refreshable.exists()) {
+                if (refreshable != null && refreshable.exists()) {
                     buildContext.refresh(refreshable);
                 }
             }
@@ -180,8 +180,12 @@ public class VaadinMojoExecutionBuildParticipant
             IProgressMonitor monitor) throws CoreException {
         Collection<File> result = getUpdateWidgetsetTriggerDirectories(monitor);
 
-        result.add(getMojoParameterValue(
-                GENERATED_WIDGETSET_DIRECTORY_PARAMETER, File.class, monitor));
+        File generatedWidgetsetDirectory = getMojoParameterValue(
+                GENERATED_WIDGETSET_DIRECTORY_PARAMETER, File.class, monitor);
+        if (generatedWidgetsetDirectory != null
+                && generatedWidgetsetDirectory.exists()) {
+            result.add(generatedWidgetsetDirectory);
+        }
 
         return result;
     }
