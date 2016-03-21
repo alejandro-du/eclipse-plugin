@@ -1,5 +1,7 @@
 package com.vaadin.integration.eclipse.maven;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
@@ -29,9 +31,8 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * disable this or by explicitly defining another action for one or more of the
  * goals in the m2e configuration in the pluginManagement section.
  */
-public class VaadinMojoExecutionBuildParticipant
-    extends MojoExecutionBuildParticipant
-{
+public class VaadinMojoExecutionBuildParticipant extends
+        MojoExecutionBuildParticipant {
     private static final String UPDATE_THEME_GOAL = "update-theme";
     private static final String COMPILE_THEME_GOAL = "compile-theme";
     private static final String UPDATE_WIDGETSET_GOAL = "update-widgetset";
@@ -41,15 +42,13 @@ public class VaadinMojoExecutionBuildParticipant
 
     private static final IMaven maven = MavenPlugin.getMaven();
 
-    public VaadinMojoExecutionBuildParticipant( MojoExecution execution )
-    {
-        super( execution, true );
+    public VaadinMojoExecutionBuildParticipant(MojoExecution execution) {
+        super(execution, true);
     }
 
     @Override
-    public Set<IProject> build( int kind, IProgressMonitor monitor )
-        throws Exception
-    {
+    public Set<IProject> build(int kind, IProgressMonitor monitor)
+            throws Exception {
         BuildContext buildContext = getBuildContext();
 
         // skip executing the goal if no relevant files have changed
@@ -85,6 +84,21 @@ public class VaadinMojoExecutionBuildParticipant
             if (kind == AUTO_BUILD) {
                 if (buildContext.hasDelta("pom.xml")) {
                     return true;
+                } else {
+                    File wsUpdateFile = new File(getMavenProjectFacade()
+                            .getMavenProject().getBuild().getDirectory(),
+                            "ws-updated");
+                    if (!wsUpdateFile.exists()) {
+                        try {
+                            buildContext.newFileOutputStream(wsUpdateFile)
+                                    .close();
+                            buildContext.refresh(wsUpdateFile);
+                        } catch (IOException e) {
+                            // Could not create ws-updated file, might result in
+                            // running update-widgetset multiple times.
+                        }
+                        return true;
+                    }
                 }
             }
             // otherwise, only scan for changes in .gwt.xml files
@@ -122,8 +136,7 @@ public class VaadinMojoExecutionBuildParticipant
     }
 
     private void refreshTarget(BuildContext buildContext,
-            IProgressMonitor monitor)
-            throws CoreException {
+            IProgressMonitor monitor) throws CoreException {
         if (isGoal(UPDATE_THEME_GOAL) || isGoal(COMPILE_THEME_GOAL)) {
             for (File themeDir : getThemeDirectories(monitor)) {
                 if (themeDir != null && themeDir.exists()) {
@@ -192,7 +205,7 @@ public class VaadinMojoExecutionBuildParticipant
 
     private MavenProject getMavenProject(IProgressMonitor monitor)
             throws CoreException {
-        return getMavenProjectFacade().getMavenProject( monitor );
+        return getMavenProjectFacade().getMavenProject(monitor);
     }
 
     private <T> T getMojoParameterValue(String name, Class<T> type,
