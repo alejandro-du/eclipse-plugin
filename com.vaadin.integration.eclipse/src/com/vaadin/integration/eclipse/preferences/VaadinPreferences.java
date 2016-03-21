@@ -64,6 +64,8 @@ public class VaadinPreferences extends PreferencePage
 
         createNotificationsSection(composite);
 
+        createPrereleaseSection(composite);
+
         // checkState();
         return composite;
     }
@@ -115,6 +117,30 @@ public class VaadinPreferences extends PreferencePage
         createUpdateSection(panel);
 
         updateNotificationContols(enabled);
+    }
+
+    private void createPrereleaseSection(Composite composite) {
+        final ExpandableComposite expandable = new ExpandableComposite(
+                composite, SWT.FILL, ExpandableComposite.TWISTIE
+                        | ExpandableComposite.CLIENT_INDENT);
+        expandable.setExpanded(false);
+        GridData data = new GridData();
+        data.horizontalAlignment = SWT.FILL;
+        data.grabExcessHorizontalSpace = true;
+        expandable.setLayoutData(data);
+
+        expandable.addExpansionListener(new ExpansionListener());
+
+        Composite panel = new Composite(expandable, SWT.NONE);
+        expandable.setClient(panel);
+        panel.setLayout(new GridLayout(1, false));
+        expandable.setText("Vaadin Pre-releases");
+        expandable.setFont(CommonFonts.BOLD);
+
+        final VaadinBooleanFieldEditor enabled = new VaadinBooleanFieldEditor(
+                PreferenceConstants.PRERELEASE_ARCHETYPES_ENABLED,
+                "Enable Vaadin pre-release archetypes", panel, true);
+        addField(enabled);
     }
 
     private void createUpdateSection(Composite panel) {

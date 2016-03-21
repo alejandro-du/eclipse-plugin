@@ -31,6 +31,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
                 PreferenceConstants.NOTIFICATIONS_NEW_VERSION_POPUP_ENABLED,
                 true);
 
+        store.setDefault(PreferenceConstants.PRERELEASE_ARCHETYPES_ENABLED,
+                false);
+
         /*
          * Migrate old settings here if they exists.
          */

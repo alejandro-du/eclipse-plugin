@@ -39,6 +39,7 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.PlatformUI;
 
 import com.vaadin.integration.eclipse.VaadinPlugin;
+import com.vaadin.integration.eclipse.preferences.PreferenceConstants;
 import com.vaadin.integration.eclipse.util.network.MavenVersionManager;
 
 @SuppressWarnings("restriction")
@@ -77,7 +78,10 @@ public class Vaadin7MavenProjectWizard extends AbstractMavenProjectWizard
         setHelpAvailable(true);
         setNeedsProgressMonitor(true);
 
-        vaadinArchetypes = MavenVersionManager.getAvailableArchetypes();
+        boolean prereleases = VaadinPlugin.getInstance().getPreferenceStore()
+                .getBoolean(PreferenceConstants.PRERELEASE_ARCHETYPES_ENABLED);
+        vaadinArchetypes = MavenVersionManager
+                .getAvailableArchetypes(prereleases);
     }
 
     @Override

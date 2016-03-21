@@ -54,4 +54,11 @@ public class PreferenceConstants {
 
     public static final String NOTIFICATIONS_SETTINGS_URL = "notificationsSettingsUrlPreference";
 
+    /*
+     * =========================================================================
+     * Pre-release settings
+     */
+
+    public static final String PRERELEASE_ARCHETYPES_ENABLED = "prereleaseArchetypesEnabledPreference";
+
 }
