@@ -76,31 +76,29 @@ public class MavenVersionManager {
                 ErrorUtil.handleBackgroundException(
                         "Failed to load cached Vaadin archetypes", e);
             }
+        }
 
-            if (includePrereleases) {
-                // if anything here fails, just ignore all pre-releases
-                try {
-                    loadAndCacheResource(
-                            AVAILABLE_VAADIN_PRERELEASE_ARCHETYPES_URL,
-                            PRERELEASE_ARCHETYPES_FILE_NAME);
-                    prereleaseArchetypes = loadCachedArchetypes(PRERELEASE_ARCHETYPES_FILE_NAME);
-                    if (prereleaseArchetypes != null) {
-                        for (VaadinArchetype prereleaseArchetype : prereleaseArchetypes) {
-                            prereleaseArchetype.getArchetype().setRepository(
-                                    PRERELEASE_REPOSITORY_URL);
-                        }
+        if (includePrereleases && prereleaseArchetypes == null) {
+            // if anything here fails, just ignore all pre-releases
+            try {
+                loadAndCacheResource(
+                        AVAILABLE_VAADIN_PRERELEASE_ARCHETYPES_URL,
+                        PRERELEASE_ARCHETYPES_FILE_NAME);
+                prereleaseArchetypes = loadCachedArchetypes(PRERELEASE_ARCHETYPES_FILE_NAME);
+                if (prereleaseArchetypes != null) {
+                    for (VaadinArchetype prereleaseArchetype : prereleaseArchetypes) {
+                        prereleaseArchetype.getArchetype().setRepository(
+                                PRERELEASE_REPOSITORY_URL);
                     }
-                } catch (Exception e) {
-                    ErrorUtil
-                            .handleBackgroundException(
-                                    "Failed to load the list of pre-release archetypes",
-                                    e);
                 }
+            } catch (Exception e) {
+                ErrorUtil.handleBackgroundException(
+                        "Failed to load the list of pre-release archetypes", e);
             }
+        }
 
-            if (releaseArchetypes == null) {
-                releaseArchetypes = loadDefaultArchetypes();
-            }
+        if (releaseArchetypes == null) {
+            releaseArchetypes = loadDefaultArchetypes();
         }
 
         List<VaadinArchetype> availableArchetypes = new ArrayList<VaadinArchetype>(
