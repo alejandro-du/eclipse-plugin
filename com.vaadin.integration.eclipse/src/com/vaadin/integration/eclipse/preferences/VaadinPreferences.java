@@ -64,6 +64,8 @@ public class VaadinPreferences extends PreferencePage
 
         createNotificationsSection(composite);
 
+        createMavenSection(composite);
+
         createPrereleaseSection(composite);
 
         // checkState();
@@ -141,6 +143,30 @@ public class VaadinPreferences extends PreferencePage
                 PreferenceConstants.PRERELEASE_ARCHETYPES_ENABLED,
                 "Enable Vaadin pre-release archetypes", panel, true);
         addField(enabled);
+    }
+
+    private void createMavenSection(Composite composite) {
+        final ExpandableComposite expandable = new ExpandableComposite(
+                composite, SWT.FILL, ExpandableComposite.TWISTIE
+                        | ExpandableComposite.CLIENT_INDENT);
+        expandable.setExpanded(true);
+        GridData data = new GridData();
+        data.horizontalAlignment = SWT.FILL;
+        data.grabExcessHorizontalSpace = true;
+        expandable.setLayoutData(data);
+
+        expandable.addExpansionListener(new ExpansionListener());
+
+        Composite panel = new Composite(expandable, SWT.NONE);
+        expandable.setClient(panel);
+        panel.setLayout(new GridLayout(1, false));
+        expandable.setText("Maven");
+        expandable.setFont(CommonFonts.BOLD);
+
+        final VaadinBooleanFieldEditor autoWidgetsetBuildEnabled = new VaadinBooleanFieldEditor(
+                PreferenceConstants.MAVEN_WIDGETSET_AUTOMATIC_BUILD_ENABLED,
+                "Enable automatic widgetset compilation", panel, true);
+        addField(autoWidgetsetBuildEnabled);
     }
 
     private void createUpdateSection(Composite panel) {

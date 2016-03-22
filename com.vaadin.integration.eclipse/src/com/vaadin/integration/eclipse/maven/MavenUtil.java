@@ -19,9 +19,9 @@ import org.eclipse.ui.PlatformUI;
 
 public class MavenUtil {
 
-    private static final String VAADIN_MAVEN_PLUGIN_GROUP_ID = "com.vaadin";
-    private static final String VAADIN_MAVEN_PLUGIN_ARTIFACT_ID = "vaadin-maven-plugin";
-    private static final String VAADIN_MAVEN_PLUGIN_PREFIX = "vaadin:";
+    public static final String VAADIN_MAVEN_PLUGIN_GROUP_ID = "com.vaadin";
+    public static final String VAADIN_MAVEN_PLUGIN_ARTIFACT_ID = "vaadin-maven-plugin";
+    public static final String VAADIN_MAVEN_PLUGIN_PREFIX = "vaadin:";
 
     public static boolean isMavenProject(IProject project) {
         if (project == null) {
@@ -35,8 +35,7 @@ public class MavenUtil {
         }
     }
 
-    public static void runMavenGoal(final IProject project,
-            final String goal) {
+    public static void runMavenGoal(final IProject project, final String goal) {
         Display display = PlatformUI.getWorkbench().getDisplay();
         if (!display.isDisposed()) {
             // this needs to be done in the UI thread and will trigger a
@@ -65,7 +64,7 @@ public class MavenUtil {
      * @return true if the project has the goal configured in the executions
      *         list of the given plug-in
      */
-    private static boolean definesPluginExecution(MavenProject project,
+    public static boolean definesPluginExecution(MavenProject project,
             String pluginGroupId, String pluginArtifactId, String goal) {
         if (project.getOriginalModel().getBuild() == null) {
             return false;
@@ -94,21 +93,18 @@ public class MavenUtil {
     }
 
     private static boolean runMavenGoals(IProject project,
-            String pluginGroupId,
-            String pluginArtifactId, String prefix, String... goals)
-            throws CoreException {
+            String pluginGroupId, String pluginArtifactId, String prefix,
+            String... goals) throws CoreException {
         IMavenProjectFacade facade = getMavenProjectFacade(project);
         MavenProject mavenProject = facade
                 .getMavenProject(new NullProgressMonitor());
         String enabledGoals = "";
         String allGoals = "";
-        for (String goal : goals)
-         {
+        for (String goal : goals) {
             allGoals = allGoals + prefix + goal + " ";
             if (definesPluginExecution(mavenProject, pluginGroupId,
                     pluginArtifactId, goal)) {
-                enabledGoals = enabledGoals + prefix + goal
-                        + " ";
+                enabledGoals = enabledGoals + prefix + goal + " ";
             }
         }
         if (!enabledGoals.isEmpty()) {

@@ -61,4 +61,14 @@ public class PreferenceConstants {
 
     public static final String PRERELEASE_ARCHETYPES_ENABLED = "prereleaseArchetypesEnabledPreference";
 
+    /*
+     * =========================================================================
+     * Maven settings
+     */
+
+    /**
+     * True to compile the widgetset on any relevant change.
+     */
+    public static final String MAVEN_WIDGETSET_AUTOMATIC_BUILD_ENABLED = "mavenAutomaticWidgetsetBuildPreference";
+
 }

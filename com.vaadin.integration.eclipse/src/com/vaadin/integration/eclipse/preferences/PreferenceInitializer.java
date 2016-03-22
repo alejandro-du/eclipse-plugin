@@ -34,6 +34,11 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         store.setDefault(PreferenceConstants.PRERELEASE_ARCHETYPES_ENABLED,
                 false);
 
+        // TODO decide default value
+        store.setDefault(
+                PreferenceConstants.MAVEN_WIDGETSET_AUTOMATIC_BUILD_ENABLED,
+                false);
+
         /*
          * Migrate old settings here if they exists.
          */
@@ -71,6 +76,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
                                 PreferenceConstants.NOTIFICATIONS_CENTER_POPUP_ENABLED));
             }
         }
-
     }
+
 }
