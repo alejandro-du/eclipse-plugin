@@ -69,6 +69,7 @@ import com.vaadin.integration.eclipse.VaadinPlugin;
 import com.vaadin.integration.eclipse.builder.WidgetsetBuildManager;
 import com.vaadin.integration.eclipse.builder.WidgetsetNature;
 import com.vaadin.integration.eclipse.consoles.CompileWidgetsetConsole;
+import com.vaadin.integration.eclipse.maven.MavenUtil;
 import com.vaadin.integration.eclipse.wizards.DirectoryManifestProvider;
 
 public class WidgetsetUtil {
@@ -673,6 +674,11 @@ public class WidgetsetUtil {
         // default to clean until some widgetset found
         boolean result = false;
         try {
+            if (MavenUtil.isMavenProject(project)
+                    || !VaadinFacetUtils.isVaadinProject(project)) {
+                // widgetsets are handled differently for Maven projects
+                return false;
+            }
             IProgressMonitor monitor = new NullProgressMonitor();
             if (ProjectUtil.getVaadinVersion(project) < 6.2) {
                 return false;

@@ -27,7 +27,6 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.launching.IVMInstall;
 
-import com.vaadin.integration.eclipse.VaadinFacetUtils;
 import com.vaadin.integration.eclipse.VaadinPlugin;
 import com.vaadin.integration.eclipse.util.ErrorUtil;
 import com.vaadin.integration.eclipse.util.ProjectUtil;
@@ -127,9 +126,8 @@ public abstract class ReportVaadinUsageStatistics extends Job {
         for (IProject project : projects) {
             try {
                 if (project.isOpen() && project.hasNature(JavaCore.NATURE_ID)) {
-                    String versionNumber = VaadinFacetUtils.isVaadinProject(project)
-                        ? ProjectUtil.getVaadinLibraryVersion(project, true)
-                        : null;
+                    String versionNumber = ProjectUtil.getVaadinLibraryVersion(
+                            project, true);
                     if (null != versionNumber) {
                         projectsWithVaadin.put(project, versionNumber);
                     }

@@ -475,7 +475,7 @@ public class ProjectUtil {
     public static IPath getVaadinLibraryInProject(IProject project,
             boolean useClasspath) throws CoreException {
         IFolder lib = ProjectUtil.getWebInfLibFolder(project);
-        if (lib.exists()) {
+        if (lib != null && lib.exists()) {
             IResource[] files = lib.members();
             for (IResource resource : files) {
                 // is it a Vaadin JAR?
@@ -572,7 +572,7 @@ public class ProjectUtil {
 
         // still no luck? check WEB-INF/lib
         IFolder lib = ProjectUtil.getWebInfLibFolder(javaProject.getProject());
-        if (!lib.exists()) {
+        if (lib == null || !lib.exists()) {
             return null;
         }
         for (IResource resource : lib.members()) {

@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jdt.core.JavaCore;
 
-import com.vaadin.integration.eclipse.VaadinFacetUtils;
 import com.vaadin.integration.eclipse.VaadinPlugin;
 import com.vaadin.integration.eclipse.notifications.Consumer;
 import com.vaadin.integration.eclipse.notifications.ProjectsUpgradeInfo;
@@ -92,7 +91,7 @@ abstract class NightlyCheckJob extends Job {
         List<DownloadableVaadinVersion> availableNightlies = DownloadManager
                 .getAvailableNightlyVersions();
 
-        LOG.info("Available nightlies : " + availableNightlies); //$NON-NLS-1$
+        LOG.fine("Available nightlies : " + availableNightlies); //$NON-NLS-1$
 
         monitor.worked(1);
 
@@ -182,8 +181,7 @@ abstract class NightlyCheckJob extends Job {
                 if (!project.isOpen() || !project.hasNature(JavaCore.NATURE_ID)) {
                     continue;
                 }
-                if (VaadinFacetUtils.isVaadinProject(project)
-                        && ProjectUtil.isVaadin7(project)) {
+                if (ProjectUtil.isVaadin7(project)) {
                     vaadin7Projects.add(project);
                 }
             } catch (CoreException e) {
@@ -215,6 +213,9 @@ abstract class NightlyCheckJob extends Job {
                 }
                 String currentVersion = ProjectUtil
                         .getVaadinLibraryVersion(project, true);
+                if (currentVersion == null) {
+                    continue;
+                }
                 List<MavenVaadinVersion> allUpgrades = new ArrayList<MavenVaadinVersion>();
                 MavenVaadinVersion newestUpgradeSameMinor = getLatestUpgrade(
                         currentVersion, availableVersions, true, false);

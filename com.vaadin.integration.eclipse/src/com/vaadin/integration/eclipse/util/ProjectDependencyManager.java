@@ -70,7 +70,7 @@ public class ProjectDependencyManager {
 
                         // refresh library folder to recompile parts of project
                         IFolder lib = ProjectUtil.getWebInfLibFolder(project);
-                        if (lib.exists()) {
+                        if (lib != null && lib.exists()) {
                             // should exist after adding the library
                             lib.refreshLocal(IResource.DEPTH_ONE, null);
                         }
@@ -141,6 +141,13 @@ public class ProjectDependencyManager {
                 }
                 // refresh library folder to recompile parts of project
                 IFolder lib = ProjectUtil.getWebInfLibFolder(project);
+                if (lib == null) {
+                    ErrorUtil
+                            .logInfo("Could not add Vaadin libraries to the project "
+                                    + project.getName()
+                                    + ". Possibly not a Dynamic Web Project.");
+                    return;
+                }
                 if (lib.exists()) {
                     // should exist at least if added to the project
                     lib.refreshLocal(IResource.DEPTH_ONE, null);
@@ -226,6 +233,15 @@ public class ProjectDependencyManager {
 
             IProject project = jproject.getProject();
             IFolder lib = ProjectUtil.getWebInfLibFolder(project);
+            if (lib == null) {
+                ErrorUtil
+                        .displayWarningFromBackgroundThread(
+                                "Could not add Vaadin JAR",
+                                "The project "
+                                        + project.getName()
+                                        + " does not seem to have the Dynamic Web Module facet.");
+                return;
+            }
             if (!lib.exists()) {
                 VaadinPluginUtil.createFolders(lib, monitor);
             }

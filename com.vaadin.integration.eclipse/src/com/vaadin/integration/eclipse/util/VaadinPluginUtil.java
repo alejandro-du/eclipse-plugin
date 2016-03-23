@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -70,6 +71,7 @@ import com.vaadin.integration.eclipse.util.files.LocalFileManager;
 
 @SuppressWarnings("restriction")
 public class VaadinPluginUtil {
+    private static final Logger LOG = Logger.getLogger(VaadinPluginUtil.class.getName());
 
     private static IPackageFragmentRoot getJavaFragmentRoot(IProject project)
             throws CoreException {
@@ -718,13 +720,11 @@ public class VaadinPluginUtil {
             } catch (MalformedURLException e) {
                 String message = (jarFile == null) ? "Could not access JAR"
                         : "Could not access JAR " + jarFile.getName();
-                ErrorUtil
-                .handleBackgroundException(IStatus.WARNING, message, e);
+                getLogger().fine(message);
             } catch (IOException e) {
                 String message = (jarFile == null) ? "Could not access JAR"
                         : "Could not access JAR " + jarFile.getName();
-                ErrorUtil
-                .handleBackgroundException(IStatus.WARNING, message, e);
+                getLogger().fine(message);
             } finally {
                 closeJarFile(jarFile);
             }
@@ -1484,5 +1484,9 @@ public class VaadinPluginUtil {
         }
 
         return stylesheets.toString();
+    }
+
+    private static Logger getLogger() {
+        return LOG;
     }
 }
