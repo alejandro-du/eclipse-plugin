@@ -34,10 +34,9 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         store.setDefault(PreferenceConstants.PRERELEASE_ARCHETYPES_ENABLED,
                 false);
 
-        // TODO decide default value
         store.setDefault(
                 PreferenceConstants.MAVEN_WIDGETSET_AUTOMATIC_BUILD_ENABLED,
-                false);
+                true);
 
         /*
          * Migrate old settings here if they exists.
