@@ -402,9 +402,7 @@ Any metadata changes made will be stored in the project manifest.
    </extension>
 
 
-   <!-- TODO make the commands/buttons/handlers so that compile widgetset is
-    "dropdown button" with all available compilable widgetsets.   -->
-
+   <!-- Define commands used in toolbars, menus etc. -->
    <extension
          point="org.eclipse.ui.commands">
       <category
@@ -413,18 +411,28 @@ Any metadata changes made will be stored in the project manifest.
       </category>
       <command
             categoryId="com.vaadin.integration.eclipse.commands.category"
+            id="com.vaadin.integration.eclipse.commands.compileThemeCommand"
+            name="Compile Theme Command">
+      </command>
+      <command
+            categoryId="com.vaadin.integration.eclipse.commands.category"
             id="com.vaadin.integration.eclipse.commands.compileWidgetsetCommand"
             name="Compile Widgetset Command">
       </command>
    </extension>
-   <!-- These are still here mostly for the keyboard shortcut -->
+   <!-- Link commands to classes that handle them -->
    <extension
          point="org.eclipse.ui.handlers">
+      <handler
+            class="com.vaadin.integration.eclipse.handlers.CompileThemeHandler"
+            commandId="com.vaadin.integration.eclipse.commands.compileThemeCommand">
+      </handler>
       <handler
             class="com.vaadin.integration.eclipse.handlers.CompileWidgetsetHandler"
             commandId="com.vaadin.integration.eclipse.commands.compileWidgetsetCommand">
       </handler>
    </extension>
+   <!-- Define default keyboard shortcuts for Vaadin commands -->
    <extension
          point="org.eclipse.ui.bindings">
       <key
@@ -434,7 +442,7 @@ Any metadata changes made will be stored in the project manifest.
             sequence="M1+6">
       </key>
    </extension>
-<!--
+   <!-- Define Vaadin toolbar -->
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
@@ -443,15 +451,21 @@ Any metadata changes made will be stored in the project manifest.
                id="com.vaadin.integration.eclipse.toolbars.vaadinToolbar"
                label="Vaadin">
             <command
+                  commandId="com.vaadin.integration.eclipse.commands.compileThemeCommand"
+                  icon="icons/compile-theme-16.png"
+                  id="com.vaadin.integration.eclipse.toolbars.compileThemeCommand"
+                  tooltip="Compile Vaadin Theme">
+            </command>
+            <command
                   commandId="com.vaadin.integration.eclipse.commands.compileWidgetsetCommand"
                   icon="icons/compile-widgetset-16.png"
                   id="com.vaadin.integration.eclipse.toolbars.compileWidgetsetCommand"
-                  tooltip="Compile Vaadin widgets">
+                  tooltip="Compile Vaadin Widgetset">
             </command>
          </toolbar>
       </menuContribution>
    </extension>
--->
+<!--
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
@@ -469,6 +483,7 @@ Any metadata changes made will be stored in the project manifest.
          </action>
       </actionSet>
    </extension>
+-->
    <extension
          point="org.eclipse.wst.server.core.publishTasks">
       <publishTask
