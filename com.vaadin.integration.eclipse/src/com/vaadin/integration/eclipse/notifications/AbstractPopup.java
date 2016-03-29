@@ -1,5 +1,6 @@
 package com.vaadin.integration.eclipse.notifications;
 
+import org.eclipse.jface.window.Window;
 import org.eclipse.mylyn.commons.ui.dialogs.AbstractNotificationPopup;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -11,6 +12,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 import com.vaadin.integration.eclipse.VaadinPlugin;
 
@@ -24,6 +26,9 @@ abstract class AbstractPopup extends AbstractNotificationPopup {
 
     static final int TITLE_HEIGHT = 36;
 
+    // copied from superclass because private
+    private Shell shell;
+
     protected AbstractPopup(Display display) {
         super(display);
 
@@ -36,6 +41,40 @@ abstract class AbstractPopup extends AbstractNotificationPopup {
 
         textColor = new Color(display, 160, 159, 145);
         bckgrnd = new Color(display, 226, 226, 216);
+    }
+
+    @Override
+    protected void configureShell(Shell newShell) {
+        shell = newShell;
+        super.configureShell(newShell);
+    }
+
+    // a workaround for fixupDisplayBounds problem in superclass
+    @Override
+    public int open() {
+        if (shell == null || shell.isDisposed()) {
+            shell = null;
+            create();
+        }
+
+        constrainShellSize();
+        // location will be constrained by subclasses if necessary
+        // shell.setLocation(fixupDisplayBounds(shell.getSize(),
+        // shell.getLocation()));
+
+        shell.setVisible(true);
+
+        return Window.OK;
+    }
+
+    @Override
+    public void setFadingEnabled(boolean fadingEnabled) {
+        if (fadingEnabled) {
+            // would require copying internals of Mylyn
+            // AbstractNotificationPopup.open() etc.
+            throw new IllegalArgumentException(
+                    "AbstractPopup does not support fading");
+        }
     }
 
     @Override

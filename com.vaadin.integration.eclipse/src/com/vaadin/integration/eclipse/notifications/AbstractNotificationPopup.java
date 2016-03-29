@@ -128,8 +128,9 @@ abstract class AbstractNotificationPopup extends AbstractPopup {
     }
 
     private Rectangle getPrimaryClientArea() {
-        Monitor primaryMonitor = getShell().getDisplay().getPrimaryMonitor();
-        return primaryMonitor != null ? primaryMonitor.getClientArea()
+        Monitor monitor = ContributionService.getInstance()
+                .getContributionControl().getMonitor();
+        return monitor != null ? monitor.getClientArea()
                 : getShell().getDisplay().getClientArea();
     }
 
