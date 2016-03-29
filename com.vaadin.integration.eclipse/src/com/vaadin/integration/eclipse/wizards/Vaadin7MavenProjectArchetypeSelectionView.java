@@ -62,13 +62,18 @@ public class Vaadin7MavenProjectArchetypeSelectionView extends
             btnArchetype.setLayoutData(btnGridData);
             vaadinArchetypeButtons.add(btnArchetype);
 
+            final VaadinArchetype archetype = vaadinArch;
+
             MouseListener btnActivateListener = new MouseAdapter() {
 
                 @Override
                 public void mouseDown(MouseEvent arg0) {
-                    btnArchetype.setFocus();
-                    btnArchetype.setSelection(true);
-
+                    // must set the selection for all radio buttons, not just
+                    // this one
+                    selectVaadinArchetype(archetype);
+                    if (isVisible()) {
+                        btnArchetype.setFocus();
+                    }
                 }
             };
 
