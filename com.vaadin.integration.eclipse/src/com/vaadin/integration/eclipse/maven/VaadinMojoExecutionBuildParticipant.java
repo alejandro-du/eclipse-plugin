@@ -38,11 +38,13 @@ import com.vaadin.integration.eclipse.preferences.PreferenceConstants;
  */
 public class VaadinMojoExecutionBuildParticipant extends
         MojoExecutionBuildParticipant {
-    private static final String COMPILE_WIDGETSET_GOAL = "compile";
+
+    public static final String COMPILE_WIDGETSET_GOAL = "compile";
+    public static final String UPDATE_THEME_GOAL = "update-theme";
+    public static final String COMPILE_THEME_GOAL = "compile-theme";
+    public static final String UPDATE_WIDGETSET_GOAL = "update-widgetset";
+
     private static final String WS_UPDATED_FILE = "ws-updated";
-    private static final String UPDATE_THEME_GOAL = "update-theme";
-    private static final String COMPILE_THEME_GOAL = "compile-theme";
-    private static final String UPDATE_WIDGETSET_GOAL = "update-widgetset";
 
     private static final String RELATIVE_THEME_DIRECTORY = "VAADIN/themes";
     private static final String GENERATED_WIDGETSET_DIRECTORY_PARAMETER = "generatedWidgetsetDirectory";
