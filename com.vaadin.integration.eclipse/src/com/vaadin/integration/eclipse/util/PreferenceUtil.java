@@ -122,6 +122,11 @@ public class PreferenceUtil {
     private static final String PREFERENCES_MAVEN_LATEST_VERSIONS_UPGRADE = VaadinPlugin.PLUGIN_ID
             + "." + "mavenLatestVersionsUpgrade";
 
+    // three-value setting for per-project widgetset autocompilation
+    // ("null"/"true"/"false")
+    private static final String PREFERENCES_MAVEN_AUTO_COMPILE_WIDGETSET = VaadinPlugin.PLUGIN_ID
+            + "." + "mavenAutoCompileWidgetset";
+
     /**
      * Checks whether scanning for addon themes has explicitly been suspended by
      * the user
@@ -378,14 +383,14 @@ public class PreferenceUtil {
     }
 
     /**
-     * Compares the two strings. Returns true if both are null or both contain
-     * the same characters.
+     * Compares the two values. Returns true if both are null or have the equal
+     * value.
      * 
      * @param oldValue
      * @param newValue
      * @return
      */
-    private boolean equals(String oldValue, String newValue) {
+    private boolean equals(Object oldValue, Object newValue) {
         if (oldValue == null) {
             return newValue == null;
         }
@@ -535,5 +540,34 @@ public class PreferenceUtil {
         String oldValue = getPreviousCompileAction();
         prefStore.setValue(PREFERENCES_PREVIOUS_COMPILE_ACTION, action);
         return !equals(oldValue, action);
+    }
+
+    /**
+     * Gets the project specific status of Maven widgetset auto-compilation.
+     * 
+     * @return true or false for per-project override or null to use the global
+     *         default
+     */
+    public Boolean isMavenAutoCompileWidgetset() {
+        if (!prefStore.contains(PREFERENCES_MAVEN_AUTO_COMPILE_WIDGETSET)
+                || "null".equals(prefStore
+                        .getString(PREFERENCES_MAVEN_AUTO_COMPILE_WIDGETSET))) {
+            return null;
+        } else {
+            return prefStore
+                    .getBoolean(PREFERENCES_MAVEN_AUTO_COMPILE_WIDGETSET);
+        }
+    }
+
+    public boolean setMavenAutoCompileWidgetset(Boolean autoCompile) {
+        Boolean oldValue = isMavenAutoCompileWidgetset();
+        if (autoCompile != null) {
+            prefStore.setValue(PREFERENCES_MAVEN_AUTO_COMPILE_WIDGETSET,
+                    String.valueOf(autoCompile));
+        } else {
+            prefStore
+                    .setValue(PREFERENCES_MAVEN_AUTO_COMPILE_WIDGETSET, "null");
+        }
+        return !equals(oldValue, autoCompile);
     }
 }

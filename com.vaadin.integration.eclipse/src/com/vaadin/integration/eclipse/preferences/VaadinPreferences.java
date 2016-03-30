@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
-import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.mylyn.commons.ui.compatibility.CommonFonts;
@@ -14,10 +13,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
@@ -62,11 +59,11 @@ public class VaadinPreferences extends PreferencePage
         composite.setLayout(layout);
         composite.setFont(parent.getFont());
 
-        createNotificationsSection(composite);
-
         createMavenSection(composite);
 
         createPrereleaseSection(composite);
+
+        createNotificationsSection(composite);
 
         // checkState();
         return composite;
@@ -116,7 +113,18 @@ public class VaadinPreferences extends PreferencePage
                 PreferenceConstants.NOTIFICATIONS_CENTER_POPUP_ENABLED,
                 Messages.VaadinPreferences_NotificationsPopup, panel, true));
 
-        createUpdateSection(panel);
+        addField(new VaadinStringCheckboxEditor(
+                PreferenceConstants.NOTIFICATIONS_NEW_VERSION_POLLING_INTERVAL,
+                Messages.VaadinPreferences_VersionNotifications, panel, true,
+                String.valueOf(NotificationsPollingSchedule.PER_DAY
+                        .getSeconds()),
+                String.valueOf(NotificationsPollingSchedule.NEVER.getSeconds())));
+        addField(new VaadinStringCheckboxEditor(
+                PreferenceConstants.NOTIFICATIONS_CENTER_POLLING_INTERVAL,
+                Messages.VaadinPreferences_OtherNotifications, panel, true,
+                String.valueOf(NotificationsPollingSchedule.PER_FOUR_HOUR
+                        .getSeconds()),
+                String.valueOf(NotificationsPollingSchedule.NEVER.getSeconds())));
 
         updateNotificationContols(enabled);
     }
@@ -141,7 +149,7 @@ public class VaadinPreferences extends PreferencePage
 
         final VaadinBooleanFieldEditor enabled = new VaadinBooleanFieldEditor(
                 PreferenceConstants.PRERELEASE_ARCHETYPES_ENABLED,
-                "Enable Vaadin pre-release archetypes", panel, true);
+                "Enable Vaadin pre-release archetypes", panel, false);
         addField(enabled);
     }
 
@@ -165,48 +173,8 @@ public class VaadinPreferences extends PreferencePage
 
         final VaadinBooleanFieldEditor autoWidgetsetBuildEnabled = new VaadinBooleanFieldEditor(
                 PreferenceConstants.MAVEN_WIDGETSET_AUTOMATIC_BUILD_ENABLED,
-                "Enable automatic widgetset compilation", panel, true);
+                "Enable automatic widgetset compilation", panel, false);
         addField(autoWidgetsetBuildEnabled);
-    }
-
-    private void createUpdateSection(Composite panel) {
-        Group group = new Group(panel, SWT.FILL);
-
-        GridData data = new GridData();
-        data.verticalIndent = 10;
-        data.horizontalAlignment = SWT.FILL;
-        group.setLayoutData(data);
-        data.grabExcessHorizontalSpace = true;
-
-        group.setText(Messages.VaadinPreferences_UpdateSchedule);
-        VaadinBooleanFieldEditor editor = new VaadinBooleanFieldEditor(
-                PreferenceConstants.NOTIFICATIONS_FETCH_ON_OPEN,
-                Messages.VaadinPreferences_NotificationsFetchOnOpen, group,
-                true);
-        ((GridData) editor.getControl().getLayoutData()).horizontalSpan = 2;
-        addField(editor);
-
-        editor = new VaadinBooleanFieldEditor(
-                PreferenceConstants.NOTIFICATIONS_FETCH_ON_START,
-                Messages.VaadinPreferences_NotificationsFetchOnStart, group,
-                true);
-        ((GridData) editor.getControl().getLayoutData()).horizontalSpan = 2;
-        addField(editor);
-
-        addField(new NotificationsComboFieldEditor(
-                PreferenceConstants.NOTIFICATIONS_CENTER_POLLING_INTERVAL,
-                Messages.VaadinPreferences_NotificationsPollingInterval,
-                group));
-        addField(new NotificationsComboFieldEditor(
-                PreferenceConstants.NOTIFICATIONS_NEW_VERSION_POLLING_INTERVAL,
-                Messages.VaadinPreferences_NotificationsVersionPollingInterval,
-                group));
-
-        GridLayout groupLayout = new GridLayout(2, false);
-        groupLayout.marginTop = 5;
-        groupLayout.marginBottom = 5;
-        group.setLayout(groupLayout);
-
     }
 
     private void updateNotificationContols(
@@ -231,7 +199,7 @@ public class VaadinPreferences extends PreferencePage
     private static class VaadinBooleanFieldEditor extends BooleanFieldEditor
             implements VaadinFieldEditor {
 
-        private Button control;
+        protected Button control;
         private boolean isNotificationEditor;
 
         VaadinBooleanFieldEditor(String name, String label, Composite composite,
@@ -264,60 +232,33 @@ public class VaadinPreferences extends PreferencePage
         }
     }
 
-    private static class NotificationsComboFieldEditor extends ComboFieldEditor
-            implements VaadinFieldEditor {
+    private static class VaadinStringCheckboxEditor extends
+            VaadinBooleanFieldEditor {
+        private String trueValue;
+        private String falseValue;
 
-        private Combo control;
-
-        public NotificationsComboFieldEditor(String prefName, String label,
-                Composite parent) {
-            super(prefName, label, getOptions(), parent);
-        }
-
-        public void setEnable(boolean enable) {
-            getLabelControl().setEnabled(enable);
-            control.setEnabled(enable);
-        }
-
-        public boolean isNotificationEditor() {
-            return true;
+        public VaadinStringCheckboxEditor(String name, String label,
+                Composite composite, boolean notificationRelated,
+                String trueValue, String falseValue) {
+            super(name, label, composite, notificationRelated);
+            this.trueValue = trueValue;
+            this.falseValue = falseValue;
         }
 
         @Override
-        protected void doFillIntoGrid(Composite parent, int numColumns) {
-            int size = parent.getChildren().length;
-            super.doFillIntoGrid(parent, numColumns);
-            parent.getChildren()[size].setEnabled(false);
-            control = (Combo) parent.getChildren()[size + 1];
-            GridData data = ((GridData) control.getLayoutData());
-            data.horizontalAlignment = SWT.RIGHT;
-            data.grabExcessHorizontalSpace = true;
+        protected void doStore() {
+            String value = getBooleanValue() ? trueValue : falseValue;
+            getPreferenceStore().setValue(getPreferenceName(), value);
         }
 
         @Override
-        public void setPresentsDefaultValue(boolean booleanValue) {
-            super.setPresentsDefaultValue(booleanValue);
-        }
-
-        private static String[][] getOptions() {
-            String[][] values = new String[NotificationsPollingSchedule
-                                           .values().length][];
-            values[0] = new String[] { Messages.VaadinPreferences_OncePerHour,
-                    String.valueOf(NotificationsPollingSchedule.PER_HOUR
-                            .getSeconds()) };
-
-            values[1] = new String[] { Messages.VaadinPreferences_OncePer4Hours,
-                    String.valueOf(NotificationsPollingSchedule.PER_FOUR_HOUR
-                            .getSeconds()) };
-
-            values[2] = new String[] { Messages.VaadinPreferences_OncePerDay,
-                    String.valueOf(NotificationsPollingSchedule.PER_DAY
-                            .getSeconds()) };
-
-            values[3] = new String[] { Messages.VaadinPreferences_Never,
-                    String.valueOf(NotificationsPollingSchedule.NEVER
-                            .getSeconds()) };
-            return values;
+        protected void doLoad() {
+            super.doLoadDefault();
+            String value = getPreferenceStore().getString(
+                    getPreferenceName());
+            if (control != null) {
+                control.setSelection(!falseValue.equals(value));
+            }
         }
     }
 

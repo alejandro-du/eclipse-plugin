@@ -1238,7 +1238,7 @@ public class VaadinPluginUtil {
      * @param type
      *            The class the check for
      * @param project
-     *            The project
+     *            The project, can be null
      * @return True if the class is found on the classpath, otherwise false
      */
     public static boolean isVaadinFeatureTypeSupported(String type,

@@ -18,7 +18,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
                 .getPreferenceStore();
         store.setDefault(
                 PreferenceConstants.NOTIFICATIONS_NEW_VERSION_POLLING_INTERVAL,
-                NotificationsPollingSchedule.PER_FOUR_HOUR.getSeconds());
+                NotificationsPollingSchedule.PER_DAY.getSeconds());
         store.setDefault(
                 PreferenceConstants.NOTIFICATIONS_CENTER_POLLING_INTERVAL,
                 NotificationsPollingSchedule.PER_FOUR_HOUR.getSeconds());
@@ -50,10 +50,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
         }
 
         store.setDefault(PreferenceConstants.NOTIFICATIONS_USER_TOKEN, "");
-        store.setDefault(PreferenceConstants.NOTIFICATIONS_FETCH_ON_START,
-                true);
-        store.setDefault(PreferenceConstants.NOTIFICATIONS_FETCH_ON_OPEN,
-                false);
+        store.setDefault(PreferenceConstants.NOTIFICATIONS_FETCH_ON_START, true);
+        store.setDefault(PreferenceConstants.NOTIFICATIONS_FETCH_ON_OPEN, true);
 
         store.setDefault(PreferenceConstants.NOTIFICATIONS_VERSION_UPDATE_ITEM,
                 true);

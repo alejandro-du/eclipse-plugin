@@ -18,11 +18,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.m2e.core.MavenPlugin;
 import org.eclipse.m2e.core.embedder.IMaven;
+import org.eclipse.m2e.core.project.IMavenProjectFacade;
 import org.eclipse.m2e.core.project.configurator.MojoExecutionBuildParticipant;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 import com.vaadin.integration.eclipse.VaadinPlugin;
 import com.vaadin.integration.eclipse.preferences.PreferenceConstants;
+import com.vaadin.integration.eclipse.util.PreferenceUtil;
 
 /**
  * An m2e build participant that automatically triggers the execution of
@@ -140,11 +142,20 @@ public class VaadinMojoExecutionBuildParticipant extends
                     }
                 }
             } else if (isGoal(COMPILE_WIDGETSET_GOAL)) {
-                boolean automaticBuildsEnabled = VaadinPlugin
+                IMavenProjectFacade facade = getMavenProjectFacade();
+                Boolean projectAutoCompileSetting = PreferenceUtil.get(
+                        facade.getProject())
+                        .isMavenAutoCompileWidgetset();
+                boolean automaticBuildsEnabled;
+                if (projectAutoCompileSetting != null) {
+                    automaticBuildsEnabled = projectAutoCompileSetting;
+                } else {
+                    automaticBuildsEnabled = VaadinPlugin
                         .getInstance()
                         .getPreferenceStore()
                         .getBoolean(
                                 PreferenceConstants.MAVEN_WIDGETSET_AUTOMATIC_BUILD_ENABLED);
+                }
 
                 if (!automaticBuildsEnabled) {
                     return false;

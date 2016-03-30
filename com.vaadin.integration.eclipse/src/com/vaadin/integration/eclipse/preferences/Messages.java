@@ -7,17 +7,21 @@ public class Messages extends NLS {
             .getName() + ".messages"; //$NON-NLS-1$
 
     public static String VaadinPreferences_NotificationsEnable;
-    public static String VaadinPreferences_NotificationsFetchOnStart;
+    // public static String VaadinPreferences_NotificationsFetchOnStart;
     public static String VaadinPreferences_NotificationsPopup;
     public static String VaadinPreferences_NotificationsSectionTitle;
-    public static String VaadinPreferences_Never;
-    public static String VaadinPreferences_NotificationsPollingInterval;
-    public static String VaadinPreferences_OncePer4Hours;
-    public static String VaadinPreferences_OncePerDay;
-    public static String VaadinPreferences_OncePerHour;
-    public static String VaadinPreferences_NotificationsFetchOnOpen;
-    public static String VaadinPreferences_UpdateSchedule;
-    public static String VaadinPreferences_NotificationsVersionPollingInterval;
+    // public static String VaadinPreferences_Never;
+    // public static String VaadinPreferences_NotificationsPollingInterval;
+    // public static String VaadinPreferences_OncePer4Hours;
+    // public static String VaadinPreferences_OncePerDay;
+    // public static String VaadinPreferences_OncePerHour;
+    // public static String VaadinPreferences_NotificationsFetchOnOpen;
+    // public static String VaadinPreferences_UpdateSchedule;
+    // public static String
+    // VaadinPreferences_NotificationsVersionPollingInterval;
+
+    public static String VaadinPreferences_VersionNotifications;
+    public static String VaadinPreferences_OtherNotifications;
 
     static {
         // initialize resource bundle

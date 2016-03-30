@@ -439,6 +439,7 @@ public class ProjectUtil {
      * jar and gets the version from the metadata in the jar.
      * 
      * @param project
+     *            project to check, can be null
      * @param useClasspath
      *            true to also search the classpath if no Vaadin JAR is found in
      *            WEB-INF/lib
