@@ -10,6 +10,7 @@ import org.eclipse.mylyn.commons.ui.compatibility.CommonFonts;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -22,6 +23,7 @@ import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
 import com.vaadin.integration.eclipse.VaadinPlugin;
+import com.vaadin.integration.eclipse.notifications.ContributionService;
 
 /**
  * The Eclipse preferences page for Vaadin plugin.
@@ -31,6 +33,7 @@ public class VaadinPreferences extends PreferencePage
         implements IWorkbenchPreferencePage {
 
     private final List<VaadinFieldEditor> editors;
+    private Button signOutButton;
 
     public VaadinPreferences() {
         setPreferenceStore(VaadinPlugin.getInstance().getPreferenceStore());
@@ -104,7 +107,7 @@ public class VaadinPreferences extends PreferencePage
 
             @Override
             public void widgetSelected(SelectionEvent e) {
-                updateNotificationContols(enabled);
+                updateNotificationControls(enabled);
             }
 
         });
@@ -126,7 +129,22 @@ public class VaadinPreferences extends PreferencePage
                         .getSeconds()),
                 String.valueOf(NotificationsPollingSchedule.NEVER.getSeconds())));
 
-        updateNotificationContols(enabled);
+        signOutButton = new Button(panel, SWT.PUSH);
+        signOutButton
+                .setText(com.vaadin.integration.eclipse.notifications.Messages.Notifications_SignOut);
+        signOutButton.addSelectionListener(new SelectionListener() {
+            public void widgetSelected(SelectionEvent e) {
+                ContributionService.getInstance().signOut(null);
+                updateNotificationControls(enabled);
+            }
+
+            public void widgetDefaultSelected(SelectionEvent e) {
+                ContributionService.getInstance().signOut(null);
+                updateNotificationControls(enabled);
+            }
+        });
+
+        updateNotificationControls(enabled);
     }
 
     private void createPrereleaseSection(Composite composite) {
@@ -177,13 +195,16 @@ public class VaadinPreferences extends PreferencePage
         addField(autoWidgetsetBuildEnabled);
     }
 
-    private void updateNotificationContols(
-            final VaadinBooleanFieldEditor enabled) {
+    private void updateNotificationControls(
+            final VaadinBooleanFieldEditor enableControl) {
+        boolean enabled = enableControl.getBooleanValue();
         for (VaadinFieldEditor editor : editors) {
-            if (!editor.equals(enabled) && editor.isNotificationEditor()) {
-                editor.setEnable(enabled.getBooleanValue());
+            if (!editor.equals(enableControl) && editor.isNotificationEditor()) {
+                editor.setEnable(enabled);
             }
         }
+        signOutButton.setEnabled(enabled
+                && ContributionService.getInstance().isSignedIn());
     }
 
     private interface VaadinFieldEditor {

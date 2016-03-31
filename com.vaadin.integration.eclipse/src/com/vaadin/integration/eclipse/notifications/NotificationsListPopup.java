@@ -36,7 +36,7 @@ import com.vaadin.integration.eclipse.notifications.model.VersionUpdateNotificat
  */
 class NotificationsListPopup extends AbstractPopup {
 
-    private static final int MAX_HEIGHT = 400;
+    private static final int MAX_HEIGHT = 375;
     private static final int RIGHT_SHIFT = 5;
 
     private static final int ITEMS_LIMIT = 100;
@@ -198,7 +198,8 @@ class NotificationsListPopup extends AbstractPopup {
         }
 
         // toolbar bottom composite below content
-        createToolBar(pane);
+        // sign-out moved to preferences
+        // createToolBar(pane);
     }
 
     @Override

@@ -231,7 +231,7 @@ public final class ContributionService extends ContributionControlAccess {
      * @param callback
      *            callback to invoke after refreshing the notification list
      */
-    void signOut(Runnable callback) {
+    public void signOut(Runnable callback) {
         // This method has to be called inside SWT UI thread.
         assert Display.getCurrent() != null;
 
@@ -370,7 +370,7 @@ public final class ContributionService extends ContributionControlAccess {
      *
      * @return true when signed in
      */
-    boolean isSignedIn() {
+    public boolean isSignedIn() {
         return getToken() != null && !getToken().isEmpty();
     }
 
