@@ -724,6 +724,7 @@ public final class ContributionService extends ContributionControlAccess {
     }
 
     private static void loadNotificationIcons() {
+        registerIcon(Utils.POPUP_LOGO_ICON);
         registerIcon(Utils.REGULAR_NOTIFICATION_ICON);
         registerIcon(Utils.NEW_NOTIFICATION_ICON);
         registerIcon(Utils.GO_ICON);

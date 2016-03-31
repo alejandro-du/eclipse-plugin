@@ -144,7 +144,7 @@ class NotificationsListPopup extends AbstractPopup {
         titleImageLabel.setImage(getPopupShellImage(TITLE_HEIGHT));
         titleImageLabel.setVisible(showContent);
 
-        GridDataFactory.fillDefaults().align(SWT.LEFT, SWT.CENTER).indent(0, 3)
+        GridDataFactory.fillDefaults().align(SWT.LEFT, SWT.CENTER).indent(0, 0)
                 .applyTo(titleImageLabel);
 
         titleTextLabel = new Label(parent, SWT.NONE);

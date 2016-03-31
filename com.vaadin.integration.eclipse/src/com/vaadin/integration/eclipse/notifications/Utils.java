@@ -47,8 +47,10 @@ public final class Utils {
     static final String HELVETICA = "Helvetica";
     static final String ARIAL = "Arial";
 
-    static final String REGULAR_NOTIFICATION_ICON = "icons.vaadin-icon16";
-    static final String NEW_NOTIFICATION_ICON = "icons.vaadin-icon16-new";
+    static final String POPUP_LOGO_ICON = "icons.vaadin-icon-16";
+
+    static final String REGULAR_NOTIFICATION_ICON = "icons.bell_grey16";
+    static final String NEW_NOTIFICATION_ICON = "icons.bell_red16";
     static final String GO_ICON = "icons.triangle-icon";
     static final String RETURN_ICON = "icons.chevron-left-icon";
     static final String CLEAR_ALL_ICON = "icons.bell-slash-icon";

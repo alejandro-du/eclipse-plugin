@@ -107,7 +107,7 @@ abstract class AbstractPopup extends AbstractNotificationPopup {
     @Override
     protected Image getPopupShellImage(int maximumHeight) {
         return VaadinPlugin.getInstance().getImageRegistry()
-                .get(Utils.REGULAR_NOTIFICATION_ICON);
+                .get(Utils.POPUP_LOGO_ICON);
     }
 
     @Override

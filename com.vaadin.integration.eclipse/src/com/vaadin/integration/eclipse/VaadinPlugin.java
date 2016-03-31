@@ -137,7 +137,7 @@ public class VaadinPlugin extends AbstractUIPlugin {
         desc = ImageDescriptor.createFromURL(url);
         registry.put(COMPILE_WIDGETSET_AND_THEME_IMAGE_ID, desc);
 
-        path = new Path("icons/vaadin-logo-white-64.png");
+        path = new Path("icons/vaadin-logo-white-56.png");
         url = FileLocator.find(bundle, path, null);
         desc = ImageDescriptor.createFromURL(url);
         registry.put(NEW_MAVEN_PROJECT_WIZARD_BANNER_IMAGE_ID, desc);
