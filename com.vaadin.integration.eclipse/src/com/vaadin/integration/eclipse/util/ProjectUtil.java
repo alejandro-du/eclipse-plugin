@@ -14,6 +14,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -38,6 +40,7 @@ import org.eclipse.wst.common.componentcore.resources.IVirtualFolder;
 
 import com.vaadin.integration.eclipse.VaadinFacetUtils;
 import com.vaadin.integration.eclipse.VaadinPlugin;
+import com.vaadin.integration.eclipse.maven.MavenUtil;
 import com.vaadin.integration.eclipse.util.files.LocalFileManager;
 
 // TODO this class needs cleanup of all the project related methods - there is a lot of overlap etc.
@@ -735,6 +738,27 @@ public class ProjectUtil {
             }
         }
         return false;
+    }
+
+    public static List<IProject> getVaadinMavenProjects() {
+        IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+        IProject[] projects = workspaceRoot.getProjects();
+        ArrayList<IProject> vaadinMavenProjects = new ArrayList<IProject>();
+        for (IProject project : projects) {
+            try {
+                if (!project.isOpen() || !project.hasNature(JavaCore.NATURE_ID)
+                        || !MavenUtil.isMavenProject(project)
+                        || !isVaadin7(project)) {
+                    continue;
+                }
+                vaadinMavenProjects.add(project);
+            } catch (CoreException e) {
+                ErrorUtil.handleBackgroundException(IStatus.WARNING,
+                        "Could not check Vaadin version in project " //$NON-NLS-1$
+                                + project.getName(), e);
+            }
+        }
+        return vaadinMavenProjects;
     }
 
 }

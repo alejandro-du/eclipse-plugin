@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.m2e.core.ui.internal.UpdateMavenProjectJob;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -14,6 +15,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import com.vaadin.integration.eclipse.VaadinPlugin;
@@ -85,6 +87,20 @@ public class VaadinMavenProjectPropertyPage implements IVaadinPropertyPage {
             modifiedValues = true;
             PreferenceUtil.get(project).setMavenAutoCompileWidgetset(
                     newAutoCompilePref);
+
+            // if necessary, trigger a build to auto-compile the widgetset
+            boolean oldEffectiveAutoCompile = Boolean.TRUE
+                    .equals(oldAutoCompilePref)
+                    || (oldAutoCompilePref == null && isWorkspaceAutoCompileWidgetset());
+            ;
+            boolean newEffectiveAutoCompile = Boolean.TRUE
+                    .equals(newAutoCompilePref)
+                    || (newAutoCompilePref == null && isWorkspaceAutoCompileWidgetset());
+            if (!oldEffectiveAutoCompile && newEffectiveAutoCompile) {
+                // trigger Maven project update and build
+                new UpdateMavenProjectJob(new IProject[] { project }, true,
+                        false, true, false, true).schedule();
+            }
         }
 
         if (modifiedValues) {
@@ -110,6 +126,12 @@ public class VaadinMavenProjectPropertyPage implements IVaadinPropertyPage {
 
         overrideButton = new Button(composite, SWT.CHECK);
         overrideButton.setText("Enable project specific settings");
+
+        Label horizontalLine = new Label(composite, SWT.SEPARATOR
+                | SWT.HORIZONTAL);
+        horizontalLine.setLayoutData(new GridData(GridData.FILL, GridData.FILL,
+                true, false, 1, 1));
+        horizontalLine.setFont(composite.getFont());
 
         autoCompileButton = new Button(composite, SWT.CHECK);
         autoCompileButton.setText("Enable automatic widgetset compilation");
@@ -145,11 +167,7 @@ public class VaadinMavenProjectPropertyPage implements IVaadinPropertyPage {
                 .isMavenAutoCompileWidgetset();
         if (autoCompilePref == null) {
             overrideButton.setSelection(false);
-            boolean globalSetting = VaadinPlugin
-                    .getInstance()
-                    .getPreferenceStore()
-                    .getBoolean(
-                            PreferenceConstants.MAVEN_WIDGETSET_AUTOMATIC_BUILD_ENABLED);
+            boolean globalSetting = isWorkspaceAutoCompileWidgetset();
             autoCompileButton.setSelection(globalSetting);
             autoCompileButton.setEnabled(false);
         } else {
@@ -157,6 +175,14 @@ public class VaadinMavenProjectPropertyPage implements IVaadinPropertyPage {
             autoCompileButton.setSelection(autoCompilePref);
             autoCompileButton.setEnabled(true);
         }
+    }
+
+    private boolean isWorkspaceAutoCompileWidgetset() {
+        return VaadinPlugin
+                .getInstance()
+                .getPreferenceStore()
+                .getBoolean(
+                        PreferenceConstants.MAVEN_WIDGETSET_AUTOMATIC_BUILD_ENABLED);
     }
 
     public IProject getProject() {

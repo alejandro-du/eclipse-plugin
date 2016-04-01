@@ -3,9 +3,13 @@ package com.vaadin.integration.eclipse.preferences;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.m2e.core.ui.internal.UpdateMavenProjectJob;
 import org.eclipse.mylyn.commons.ui.compatibility.CommonFonts;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -24,6 +28,7 @@ import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
 import com.vaadin.integration.eclipse.VaadinPlugin;
 import com.vaadin.integration.eclipse.notifications.ContributionService;
+import com.vaadin.integration.eclipse.util.ProjectUtil;
 
 /**
  * The Eclipse preferences page for Vaadin plugin.
@@ -34,6 +39,8 @@ public class VaadinPreferences extends PreferencePage
 
     private final List<VaadinFieldEditor> editors;
     private Button signOutButton;
+    private VaadinBooleanFieldEditor autoWidgetsetBuildEnabled;
+    private boolean oldAutoCompileWidgetset;
 
     public VaadinPreferences() {
         setPreferenceStore(VaadinPlugin.getInstance().getPreferenceStore());
@@ -44,11 +51,54 @@ public class VaadinPreferences extends PreferencePage
     }
 
     @Override
+    public void setVisible(boolean visible) {
+        super.setVisible(visible);
+        if (visible) {
+            oldAutoCompileWidgetset = VaadinPlugin
+                    .getInstance()
+                    .getPreferenceStore()
+                    .getBoolean(
+                            PreferenceConstants.MAVEN_WIDGETSET_AUTOMATIC_BUILD_ENABLED);
+        }
+    }
+
+    @Override
     public boolean performOk() {
         for (VaadinFieldEditor editor : editors) {
             editor.store();
             editor.setPresentsDefaultValue(false);
         }
+
+        // if "auto-compile widgetset" is switched on, ask whether the user
+        // wants to trigger a build
+        boolean newAutoCompileWidgetset = autoWidgetsetBuildEnabled
+                .getBooleanValue();
+        if (!oldAutoCompileWidgetset && newAutoCompileWidgetset) {
+            boolean needsBuild = false;
+            String title = "Widgetset auto-compilation setting changed";
+            String message = "\nWould you like to compile widgetsets right now? This might take some time.";
+
+            MessageDialog buildDialog = new MessageDialog(getShell(), title,
+                    null, message, MessageDialog.QUESTION, new String[] {
+                            IDialogConstants.YES_LABEL,
+                            IDialogConstants.NO_LABEL }, 0);
+            int res = buildDialog.open();
+            if (res != 0 && res != 1) {
+                return false;
+            }
+            needsBuild = (res == 0);
+
+            if (needsBuild) {
+                // find all Vaadin Maven projects and trigger this
+                List<IProject> mavenProjects = ProjectUtil
+                        .getVaadinMavenProjects();
+                new UpdateMavenProjectJob(
+                        mavenProjects.toArray(new IProject[0]), true, false,
+                        true, false, true).schedule();
+            }
+        }
+        oldAutoCompileWidgetset = newAutoCompileWidgetset;
+
         return true;
     }
 
@@ -189,7 +239,7 @@ public class VaadinPreferences extends PreferencePage
         expandable.setText("Maven");
         expandable.setFont(CommonFonts.BOLD);
 
-        final VaadinBooleanFieldEditor autoWidgetsetBuildEnabled = new VaadinBooleanFieldEditor(
+        autoWidgetsetBuildEnabled = new VaadinBooleanFieldEditor(
                 PreferenceConstants.MAVEN_WIDGETSET_AUTOMATIC_BUILD_ENABLED,
                 "Enable automatic widgetset compilation", panel, false);
         addField(autoWidgetsetBuildEnabled);
