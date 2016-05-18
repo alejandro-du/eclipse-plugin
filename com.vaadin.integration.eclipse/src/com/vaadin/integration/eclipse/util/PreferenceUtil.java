@@ -79,6 +79,10 @@ public class PreferenceUtil {
     private static final String PREFERENCES_WIDGETSET_EXTRA_PARAMETERS = VaadinPlugin.PLUGIN_ID
             + "." + "widgetsetExtraParameters";
 
+    // extra JVM parameters for widgetset compilation
+    private static final String PREFERENCES_WIDGETSET_EXTRA_JVM_PARAMETERS = VaadinPlugin.PLUGIN_ID
+            + "." + "widgetsetExtraJvmParameters";
+
     // project type flags - note that in the future, there could be multiple
     // flags set at the same time
     private static final String PREFERENCES_PROJECT_TYPE_GAE = VaadinPlugin.PLUGIN_ID
@@ -265,6 +269,10 @@ public class PreferenceUtil {
         return prefStore.getString(PREFERENCES_WIDGETSET_EXTRA_PARAMETERS);
     }
 
+    public String getWidgetsetCompilationExtraJvmParameters() {
+        return prefStore.getString(PREFERENCES_WIDGETSET_EXTRA_JVM_PARAMETERS);
+    }
+
     /**
      * Sets the extra command line parameters used in widgetset compilation.
      * Returns true if the value was changed, false if it remained the same.
@@ -279,6 +287,24 @@ public class PreferenceUtil {
             params = "";
         }
         prefStore.setValue(PREFERENCES_WIDGETSET_EXTRA_PARAMETERS, params);
+        return !equals(oldValue, params);
+
+    }
+
+    /**
+     * Sets the extra JVM parameters used in widgetset compilation. Returns true
+     * if the value was changed, false if it remained the same.
+     * 
+     * @param params
+     * @return
+     */
+    public boolean setWidgetsetCompilationExtraJvmParameters(String params) {
+        String oldValue = prefStore
+                .getString(PREFERENCES_WIDGETSET_EXTRA_JVM_PARAMETERS);
+        if (params == null) {
+            params = "";
+        }
+        prefStore.setValue(PREFERENCES_WIDGETSET_EXTRA_JVM_PARAMETERS, params);
         return !equals(oldValue, params);
 
     }

@@ -308,6 +308,11 @@ public class VaadinIvyProjectPropertyPage implements IVaadinPropertyPage {
             modifiedValues = true;
         }
 
+        String extraJvmParams = widgetsetComposite.getExtraJvmParameters();
+        if (preferences.setWidgetsetCompilationExtraJvmParameters(extraJvmParams)) {
+            modifiedValues = true;
+        }
+
         if (modifiedValues) {
             preferences.persist();
         }

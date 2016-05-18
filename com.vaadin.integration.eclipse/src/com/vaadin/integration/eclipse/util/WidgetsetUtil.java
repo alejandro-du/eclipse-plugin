@@ -166,6 +166,17 @@ public class WidgetsetUtil {
                 args.add("-Dgwt.persistentunitcachedir=" + tempDir);
             }
 
+            String extraJvmParams = preferences
+                    .getWidgetsetCompilationExtraJvmParameters();
+            if (extraJvmParams != null) {
+                String[] params = extraJvmParams.split(" ");
+                for (String param : params) {
+                    if (!"".equals(param)) {
+                        args.add(param);
+                    }
+                }
+            }
+
             // TODO run com.vaadin.terminal.gwt.widgetsetutils.WidgetSetBuilder
             // and com.google.gwt.dev.Compiler separately and directly if Java
             // 6, do not use WidgetsetCompiler in that case

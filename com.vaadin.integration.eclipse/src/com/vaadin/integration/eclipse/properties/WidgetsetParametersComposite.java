@@ -27,6 +27,7 @@ public class WidgetsetParametersComposite extends Composite {
     private Button suspendAutomaticBuilds;
     private Button verboseCompilation;
     private Text extraParameters;
+    private Text extraJvmParameters;
     private Button createDevelopmentModeLaunchButton;
     private Button createSuperDevelopmentModeLaunchButton;
 
@@ -77,6 +78,10 @@ public class WidgetsetParametersComposite extends Composite {
                 .getWidgetsetCompilationExtraParameters();
         extraParameters.setText(extraParams);
 
+        String extraJvmParams = preferences
+                .getWidgetsetCompilationExtraJvmParameters();
+        extraJvmParameters.setText(extraJvmParams);
+
         boolean superDevModeSupported = VaadinPluginUtil
                 .isSuperDevModeSupported(project);
         createSuperDevelopmentModeLaunchButton
@@ -104,6 +109,9 @@ public class WidgetsetParametersComposite extends Composite {
         }
         if (extraParameters != null) {
             extraParameters.setEnabled(enabled);
+        }
+        if (extraJvmParameters != null) {
+            extraJvmParameters.setEnabled(enabled);
         }
         if (createDevelopmentModeLaunchButton != null) {
             createDevelopmentModeLaunchButton.setEnabled(enabled);
@@ -182,6 +190,13 @@ public class WidgetsetParametersComposite extends Composite {
         gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
         gd.horizontalSpan = 2;
         extraParameters.setLayoutData(gd);
+
+        label = new Label(options, SWT.NULL);
+        label.setText("Additional JVM parameters for widgetset compiler:");
+        extraJvmParameters = new Text(options, SWT.SINGLE | SWT.BORDER);
+        gd = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+        gd.horizontalSpan = 2;
+        extraJvmParameters.setLayoutData(gd);
     }
 
     private void createInstructionsComposite(Composite parent) {
@@ -309,5 +324,13 @@ public class WidgetsetParametersComposite extends Composite {
      */
     public String getExtraParameters() {
         return extraParameters.getText();
+    }
+    /**
+     * Returns extra JVM parameters for the widgetset compiler.
+     * 
+     * @return String extra JVM parameters for widgetset compiler, not null
+     */
+    public String getExtraJvmParameters() {
+        return extraJvmParameters.getText();
     }
 }
