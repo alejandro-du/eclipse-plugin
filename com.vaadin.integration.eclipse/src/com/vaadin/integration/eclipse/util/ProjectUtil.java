@@ -474,38 +474,46 @@ public class ProjectUtil {
      * @return The version of the Vaadin JAR currently in the project. Returns
      *         null if no Vaadin JAR was found or if the version number could
      *         not be determined.
-     * @throws CoreException
      */
     public static IPath getVaadinLibraryInProject(IProject project,
-            boolean useClasspath) throws CoreException {
-        IFolder lib = ProjectUtil.getWebInfLibFolder(project);
-        if (lib != null && lib.exists()) {
-            IResource[] files = lib.members();
-            for (IResource resource : files) {
-                // is it a Vaadin JAR?
-                if (resource instanceof IFile) {
-                    if (VersionUtil
-                            .couldBeOfficialVaadinJar(resource.getName())) {
-                        // Name matches vaadin jar, still check for version from
-                        // the jar itself
+            boolean useClasspath) {
+        try {
+            IFolder lib = ProjectUtil.getWebInfLibFolder(project);
 
-                        String version = VersionUtil
-                                .getVaadinVersionFromJar(resource.getFullPath());
+            if (lib != null && lib.exists()) {
+                IResource[] files = lib.members();
+                for (IResource resource : files) {
+                    // is it a Vaadin JAR?
+                    if (resource instanceof IFile) {
+                        if (VersionUtil.couldBeOfficialVaadinJar(resource
+                                .getName())) {
+                            // Name matches vaadin jar, still check for version
+                            // from
+                            // the jar itself
 
-                        if (version != null) {
-                            return resource.getFullPath();
+                            String version = VersionUtil
+                                    .getVaadinVersionFromJar(resource
+                                            .getFullPath());
+
+                            if (version != null) {
+                                return resource.getFullPath();
+                            }
                         }
                     }
                 }
             }
+        } catch (CoreException e) {
         }
 
         if (useClasspath) {
-            IJavaProject jproject = JavaCore.create(project);
-            IPath resource = ProjectUtil.findProjectVaadinJarPath(jproject);
-            String version = VersionUtil.getVaadinVersionFromJar(resource);
-            if (version != null) {
-                return resource;
+            try {
+                IJavaProject jproject = JavaCore.create(project);
+                IPath resource = ProjectUtil.findProjectVaadinJarPath(jproject);
+                String version = VersionUtil.getVaadinVersionFromJar(resource);
+                if (version != null) {
+                    return resource;
+                }
+            } catch (CoreException e) {
             }
         }
 
