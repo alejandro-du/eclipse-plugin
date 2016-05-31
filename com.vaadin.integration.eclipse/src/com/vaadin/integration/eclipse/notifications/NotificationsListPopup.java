@@ -50,10 +50,6 @@ class NotificationsListPopup extends AbstractPopup {
 
     private StackLayout mainLayout;
 
-    private Control signOutWidget;
-
-    private Control settingsLink;
-
     private Label titleImageLabel;
 
     private Label titleTextLabel;
@@ -252,23 +248,6 @@ class NotificationsListPopup extends AbstractPopup {
         return link;
     }
 
-    private void createToolBar(Composite parent) {
-        Composite toolBar = new Composite(parent, SWT.NO_FOCUS);
-        GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
-        data.heightHint = TITLE_HEIGHT;
-        toolBar.setLayoutData(data);
-
-        GridLayout layout = new GridLayout(2, false);
-        toolBar.setLayout(layout);
-        cancelVerticalSpace(layout);
-
-        signOutWidget = createAction(toolBar, SWT.LEFT,
-                Messages.Notifications_SignOut);
-        settingsLink = createAction(toolBar, SWT.RIGHT,
-                Messages.Notifications_Settings);
-        updateBottomBar();
-    }
-
     private NotificationsListComposite createListArea(Composite pane) {
         return createListArea(pane, ITEMS_LIMIT);
     }
@@ -277,17 +256,6 @@ class NotificationsListPopup extends AbstractPopup {
         NotificationsListComposite composite = new NotificationsListComposite(
                 pane, updateManager, limit);
         return composite;
-    }
-
-    private Control createAction(Composite parent, int alignment, String text) {
-        ScalingHyperlink link = new NotificationHyperlink(parent);
-        link.setText(text);
-        link.registerMouseTrackListener();
-        link.setLayoutData(new GridData(alignment, SWT.CENTER, true, true));
-        link.addHyperlinkListener(updateManager);
-        link.setForeground(getTextColor());
-        link.setFont(getBoldFont());
-        return link;
     }
 
     private void resetNotificationsList(Control activeListControl) {
@@ -299,15 +267,6 @@ class NotificationsListPopup extends AbstractPopup {
         }
         notificationsList.dispose();
         notificationsList = newList;
-
-        updateBottomBar();
-    }
-
-    private void updateBottomBar() {
-        signOutWidget
-                .setVisible(ContributionService.getInstance().isSignedIn());
-        settingsLink.setVisible(ContributionService.getInstance().isSignedIn()
-                && ContributionService.getInstance().getSettingsUrl() != null);
     }
 
     private class UpdateManagerImpl extends HyperlinkAdapter implements
@@ -370,8 +329,6 @@ class NotificationsListPopup extends AbstractPopup {
         public void linkActivated(HyperlinkEvent e) {
             if (returnLink != null && returnLink.isActionSource(e)) {
                 handleReturnLink();
-            } else if (e.widget == signOutWidget) {
-                handleSignOut();
             } else if (e.widget == clearAll) {
                 clearAll();
             } else {
@@ -429,14 +386,6 @@ class NotificationsListPopup extends AbstractPopup {
                         Messages.Notifications_SettingsFailMsg,
                         Messages.Notifications_BrowserFailReason);
             }
-        }
-
-        private void handleSignOut() {
-            showList();
-
-            ContributionService.getInstance().signOut(
-                    new RefreshCallback(mainLayout.topControl));
-            signOutWidget.setVisible(false);
         }
 
         private void handleReturnLink() {
