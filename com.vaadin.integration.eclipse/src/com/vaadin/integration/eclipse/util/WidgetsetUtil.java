@@ -74,7 +74,9 @@ import com.vaadin.integration.eclipse.wizards.DirectoryManifestProvider;
 
 public class WidgetsetUtil {
 
-    private static final String DEFAULT_WIDGET_SET_NAME_VAADIN6 = "com.vaadin.terminal.gwt.DefaultWidgetSet";
+    private static final String[] PROXY_PROPERTIES = {"http.proxyHost","http.proxyPort", "http.nonProxyHosts",
+    		"https.proxyHost","https.proxyPort", "socksProxyHost","socksProxyPort" };
+	private static final String DEFAULT_WIDGET_SET_NAME_VAADIN6 = "com.vaadin.terminal.gwt.DefaultWidgetSet";
     public static final String DEFAULT_WIDGET_SET_NAME = "com.vaadin.DefaultWidgetSet";
 
     /**
@@ -176,12 +178,19 @@ public class WidgetsetUtil {
                     }
                 }
             }
-
+            
+			for (String propertyName: PROXY_PROPERTIES)
+            {
+	            String propertyValue = System.getProperty(propertyName);
+	            if(propertyValue != null) {
+	            	 args.add("-D" + propertyName + "=" + propertyValue);
+	            }
+            }
             // TODO run com.vaadin.terminal.gwt.widgetsetutils.WidgetSetBuilder
             // and com.google.gwt.dev.Compiler separately and directly if Java
             // 6, do not use WidgetsetCompiler in that case
 
-            ArrayList<String> compilerArgs = new ArrayList<String>(args);
+            List<String> compilerArgs = new ArrayList<String>(args);
             String compilerClass = "com.vaadin.tools.WidgetsetCompiler";
             compilerArgs.add(compilerClass);
 
