@@ -535,6 +535,11 @@ Any metadata changes made will be stored in the project manifest.
                   class="com.vaadin.integration.eclipse.notifications.NotificationsContribution"
                   id="%notifications.control">
             </control>
+            <command
+                  commandId="com.vaadin.integration.eclipse.nothing"
+                  icon="icons/spacer.png"
+                  id="com.vaadin.integration.eclipse.nothing">
+            </command>
          </toolbar>
       </menuContribution>
    </extension>
