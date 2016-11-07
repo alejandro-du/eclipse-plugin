@@ -10,7 +10,7 @@
     <updatesite.url>No update site defined</updatesite.url>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <tycho.version>0.21.0</tycho.version>
+    <tycho.version>0.26.0</tycho.version>
 
     <!-- Development signature -->
     <keystore.path>${project.parent.basedir}/plugin.keystore</keystore.path>
@@ -54,7 +54,7 @@
        <plugin>
           <groupId>org.eclipse.tycho</groupId>
           <artifactId>target-platform-configuration</artifactId>
-          <version>0.21.0</version>
+          <version>${tycho.version}</version>
           <configuration>
               <environments>
                   <environment>
