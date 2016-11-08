@@ -104,6 +104,22 @@
                 id="com.vaadin">
         </category>
       <wizard
+            name="Vaadin 8 Project (Maven)"
+            icon="icons/new-vaadin-project-7-16.png"
+            category="com.vaadin"
+            project="true"
+            finalPerspective="org.eclipse.jst.j2ee.J2EEPerspective"
+            id="com.vaadin.integration.eclipse.wizards.Vaadin8MavenProjectWizard">
+         <class class="com.vaadin.integration.eclipse.wizards.Vaadin8MavenProjectWizard">
+            <parameter name="menuIndex" value="20" />
+         </class>
+         <description>
+            Create a Vaadin 8.x Maven project.
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IResource" />
+      </wizard>
+      <wizard
             name="Vaadin 7 Project (Maven)"
             icon="icons/new-vaadin-project-7-16.png"
             category="com.vaadin"

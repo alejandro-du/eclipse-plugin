@@ -6,24 +6,22 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-public class Vaadin7MavenProjectArchetypeSelectionPage extends WizardPage {
+public class VaadinMavenProjectArchetypeSelectionPage extends WizardPage {
 
     private final List<VaadinArchetype> vaadinArchetypes;
-    private Vaadin7MavenProjectArchetypeSelectionView selectionView;
+    private VaadinMavenProjectArchetypeSelectionView selectionView;
 
-    protected Vaadin7MavenProjectArchetypeSelectionPage(
+    protected VaadinMavenProjectArchetypeSelectionPage(
             List<VaadinArchetype> vaadinArchetypes) {
         super("Select Project Type");
 
         this.vaadinArchetypes = vaadinArchetypes;
     }
 
+    @Override
     public void createControl(Composite parent) {
-        // set by the wizard for all pages
-        // setTitle(Vaadin7MavenProjectWizard.WIZARD_PAGE_TITLE);
-
         setDescription("Select a Maven archetype");
-        selectionView = new Vaadin7MavenProjectArchetypeSelectionView(
+        selectionView = new VaadinMavenProjectArchetypeSelectionView(
                 vaadinArchetypes, parent, SWT.NONE);
         setControl(selectionView);
     }

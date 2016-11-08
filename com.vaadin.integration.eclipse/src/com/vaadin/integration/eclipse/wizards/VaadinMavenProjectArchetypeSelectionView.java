@@ -18,18 +18,18 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 
-public class Vaadin7MavenProjectArchetypeSelectionView extends
-        ScrolledComposite {
+public class VaadinMavenProjectArchetypeSelectionView
+        extends ScrolledComposite {
 
     private final Composite archetypesComposite;
     private final List<Button> vaadinArchetypeButtons;
 
-    public Vaadin7MavenProjectArchetypeSelectionView(
-            List<VaadinArchetype> vaadinArchetypes, Composite parent, int style) {
+    public VaadinMavenProjectArchetypeSelectionView(
+            List<VaadinArchetype> vaadinArchetypes, Composite parent,
+            int style) {
         super(parent, SWT.V_SCROLL | style);
-        
-        vaadinArchetypeButtons = new ArrayList<Button>(
-                vaadinArchetypes.size());
+
+        vaadinArchetypeButtons = new ArrayList<Button>(vaadinArchetypes.size());
 
         archetypesComposite = createContents(vaadinArchetypes);
         setContent(archetypesComposite);
@@ -43,13 +43,13 @@ public class Vaadin7MavenProjectArchetypeSelectionView extends
     private Composite createContents(List<VaadinArchetype> vaadinArchetypes) {
         setLayout(new FillLayout());
 
-        final Composite main = new Composite(this, SWT.NONE );
+        final Composite main = new Composite(this, SWT.NONE);
         main.setLayout(new GridLayout(1, false));
         int stdHeight = main.getFont().getFontData()[0].getHeight();
 
         for (VaadinArchetype vaadinArch : vaadinArchetypes) {
-            final Button btnArchetype = new Button(main, SWT.RADIO | SWT.WRAP
-                    | SWT.TOP);
+            final Button btnArchetype = new Button(main,
+                    SWT.RADIO | SWT.WRAP | SWT.TOP);
 
             btnArchetype.setText(vaadinArch.getTitle());
             btnArchetype.setData(vaadinArch);
@@ -94,12 +94,12 @@ public class Vaadin7MavenProjectArchetypeSelectionView extends
         main.addListener(SWT.Resize, new Listener() {
             int width = -1;
 
+            @Override
             public void handleEvent(Event e) {
                 int newWidth = main.getSize().x;
                 if (newWidth != width) {
-                    Vaadin7MavenProjectArchetypeSelectionView.this
-                            .setMinHeight(main.computeSize(newWidth,
-                                    SWT.DEFAULT).y);
+                    VaadinMavenProjectArchetypeSelectionView.this.setMinHeight(
+                            main.computeSize(newWidth, SWT.DEFAULT).y);
                     width = newWidth;
                 }
             }

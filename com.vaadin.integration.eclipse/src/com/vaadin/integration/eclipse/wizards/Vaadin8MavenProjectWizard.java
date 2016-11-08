@@ -9,9 +9,9 @@ import com.vaadin.integration.eclipse.preferences.PreferenceConstants;
 import com.vaadin.integration.eclipse.util.network.MavenVersionManager;
 
 @SuppressWarnings("restriction")
-public class Vaadin7MavenProjectWizard extends VaadinMavenProjectWizard {
+public class Vaadin8MavenProjectWizard extends VaadinMavenProjectWizard {
 
-    public static final String WIZARD_PAGE_TITLE = "Vaadin 7 Project with Maven";
+    public static final String WIZARD_PAGE_TITLE = "Vaadin 8 Project with Maven";
 
     @Override
     public void addPages() {
@@ -26,7 +26,13 @@ public class Vaadin7MavenProjectWizard extends VaadinMavenProjectWizard {
         boolean includePrereleases = VaadinPlugin.getInstance()
                 .getPreferenceStore()
                 .getBoolean(PreferenceConstants.PRERELEASE_ARCHETYPES_ENABLED);
-        return MavenVersionManager.getAvailableArchetypes(includePrereleases,
-                "7\\..*");
+        List<VaadinArchetype> vaadinArchetypes = MavenVersionManager
+                .getAvailableArchetypes(includePrereleases, "8\\..*");
+        // TODO remove this hack once Vaadin 8 has been released
+        if (vaadinArchetypes.isEmpty() && includePrereleases == false) {
+            vaadinArchetypes = MavenVersionManager.getAvailableArchetypes(true,
+                    "8\\..*");
+        }
+        return vaadinArchetypes;
     }
 }

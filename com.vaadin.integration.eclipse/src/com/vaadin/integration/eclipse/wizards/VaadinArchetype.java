@@ -4,9 +4,12 @@ import org.apache.maven.archetype.catalog.Archetype;
 
 public class VaadinArchetype {
 
-    private String title;
-    private String description;
-    private Archetype archetype;
+    private static final String PRERELEASE_REPOSITORY_URL = "http://maven.vaadin.com/vaadin-prereleases/";
+
+    private final String title;
+    private final String description;
+    private boolean prerelease;
+    private final Archetype archetype;
 
     public VaadinArchetype(String title, Archetype archetype,
             String description) {
@@ -16,13 +19,17 @@ public class VaadinArchetype {
     }
 
     public VaadinArchetype(String title, String artifactId, String groupId,
-            String version, String description) {
+            String version, String description, boolean prerelease) {
         this.title = title;
         archetype = new Archetype();
         archetype.setArtifactId(artifactId);
         archetype.setGroupId(groupId);
         archetype.setVersion(version);
         this.description = description;
+        this.prerelease = prerelease;
+        if (prerelease) {
+            archetype.setRepository(PRERELEASE_REPOSITORY_URL);
+        }
     }
 
     public String getTitle() {
@@ -31,6 +38,10 @@ public class VaadinArchetype {
 
     public String getDescription() {
         return description;
+    }
+
+    public boolean isPrerelease() {
+        return prerelease;
     }
 
     public Archetype getArchetype() {
