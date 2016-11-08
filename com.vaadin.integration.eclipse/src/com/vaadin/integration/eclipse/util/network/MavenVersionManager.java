@@ -146,7 +146,8 @@ public class MavenVersionManager {
                 String description = archetypeNode
                         .getElementsByTagName("description").item(0)
                         .getTextContent();
-                boolean prerelease = archetypeNode.hasAttribute("prerelease");
+                boolean prerelease = archetypeNode.hasAttribute("prerelease")
+                        && "true".equals(archetypeNode.getAttribute("prerelease"));
                 result.add(new VaadinArchetype(title, archetypeId, groupId,
                         version, description, prerelease));
             }
