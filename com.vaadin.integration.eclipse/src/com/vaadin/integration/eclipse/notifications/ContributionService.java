@@ -571,22 +571,16 @@ public final class ContributionService extends ContributionControlAccess {
         IProject[] projects = ResourcesPlugin.getWorkspace().getRoot()
                 .getProjects();
 
-        Map<IProject, AbstractVaadinVersion> nightlies = new HashMap<IProject, AbstractVaadinVersion>();
         Map<IProject, List<MavenVaadinVersion>> upgrades = new HashMap<IProject, List<MavenVaadinVersion>>();
         for (IProject project : projects) {
             PreferenceUtil util = PreferenceUtil.get(project);
-            AbstractVaadinVersion nightlyVersion = util
-                    .getLatestNightlyUpgradeVersion();
-            if (nightlyVersion != null) {
-                nightlies.put(project, nightlyVersion);
-            }
             List<MavenVaadinVersion> versions = util
                     .getLatestMavenUpgradeVersions();
             if (!versions.isEmpty()) {
                 upgrades.put(project, versions);
             }
         }
-        return new VersionUpdateNotification(nightlies, upgrades);
+        return new VersionUpdateNotification(upgrades);
     }
 
     private List<String> getAnonymouslyReadIds() {
@@ -881,50 +875,20 @@ public final class ContributionService extends ContributionControlAccess {
         }
 
         public void run() {
-            Map<IProject, ? extends AbstractVaadinVersion> nightlies = info
-                    .get().getNightlies();
-
             Map<IProject, List<MavenVaadinVersion>> newUpgrades = detectRecentUpgrades();
             persistUpgrades();
 
-            boolean containsUpdates = !nightlies.isEmpty()
-                    || !newUpgrades.isEmpty();
+            boolean containsUpdates = !newUpgrades.isEmpty();
             if (containsUpdates) {
-                Map<IProject, AbstractVaadinVersion> newMap = new HashMap<IProject, AbstractVaadinVersion>(
-                        versionNotification.getNightlyUpgrades());
-                newMap.putAll(nightlies);
-
-                versionNotification = new VersionUpdateNotification(newMap,
+                versionNotification = new VersionUpdateNotification(
                         info.get().getUpgradeProjects());
                 enableVersionNotification(true);
                 setVersionNotificationRead(false);
                 updateContributionControl();
-
-                // "tray notification": the following projects were upgraded to
-                // the latest Vaadin nightly builds
-                if (ContributionService.getInstance()
-                        .isVersionUpdatePopupEnabled()) {
-                    // Note: currently, the versionNotification above is used
-                    // instead of this temporary notification - see the comments
-                    // in
-                    // UpgradeNotificationPopup
-                    UpgradeNotificationPopup popup = new UpgradeNotificationPopup(
-                            new VersionUpdateNotification(nightlies,
-                                    newUpgrades));
-                    popup.open();
-                }
             }
         }
 
         private void persistUpgrades() {
-            Map<IProject, ? extends AbstractVaadinVersion> nightlies = info
-                    .get().getNightlies();
-            for (Entry<IProject, ? extends AbstractVaadinVersion> entry : nightlies
-                    .entrySet()) {
-                PreferenceUtil util = PreferenceUtil.get(entry.getKey());
-                util.setLatestNightlyUpgradeVersion(entry.getValue());
-                save(util);
-            }
             for (Entry<IProject, List<MavenVaadinVersion>> entry : info.get()
                     .getUpgradeProjects().entrySet()) {
                 PreferenceUtil util = PreferenceUtil.get(entry.getKey());
@@ -944,9 +908,9 @@ public final class ContributionService extends ContributionControlAccess {
         private Map<IProject, List<MavenVaadinVersion>> detectRecentUpgrades() {
             Map<IProject, List<MavenVaadinVersion>> known = versionNotification
                     .getUpgrades();
-            Map<IProject, List<MavenVaadinVersion>> nightlies = new HashMap<IProject, List<MavenVaadinVersion>>(
+            Map<IProject, List<MavenVaadinVersion>> upgrades = new HashMap<IProject, List<MavenVaadinVersion>>(
                     info.get().getUpgradeProjects());
-            for (Iterator<Entry<IProject, List<MavenVaadinVersion>>> iterator = nightlies
+            for (Iterator<Entry<IProject, List<MavenVaadinVersion>>> iterator = upgrades
                     .entrySet().iterator(); iterator.hasNext();) {
                 Entry<IProject, List<MavenVaadinVersion>> entry = iterator
                         .next();
@@ -956,7 +920,7 @@ public final class ContributionService extends ContributionControlAccess {
                     iterator.remove();
                 }
             }
-            return nightlies;
+            return upgrades;
         }
 
     }

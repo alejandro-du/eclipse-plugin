@@ -15,20 +15,12 @@ import com.vaadin.integration.eclipse.util.data.MavenVaadinVersion;
 
 public class VersionUpdateNotification extends Notification {
 
-    private final Map<IProject, ? extends AbstractVaadinVersion> nightlyUpgrades;
     private final Map<IProject, List<MavenVaadinVersion>> upgrades;
 
     public VersionUpdateNotification(
-            Map<IProject, ? extends AbstractVaadinVersion> nightlies,
             Map<IProject, List<MavenVaadinVersion>> regularUpgrades) {
-        nightlyUpgrades = new WeakHashMap<IProject, AbstractVaadinVersion>(
-                nightlies);
         upgrades = new WeakHashMap<IProject, List<MavenVaadinVersion>>(
                 regularUpgrades);
-    }
-
-    public Map<IProject, ? extends AbstractVaadinVersion> getNightlyUpgrades() {
-        return Collections.unmodifiableMap(nightlyUpgrades);
     }
 
     public Map<IProject, List<MavenVaadinVersion>> getUpgrades() {
@@ -48,7 +40,7 @@ public class VersionUpdateNotification extends Notification {
     }
 
     public boolean isEmpty() {
-        return getNightlyUpgrades().isEmpty() && getUpgrades().isEmpty();
+        return getUpgrades().isEmpty();
     }
 
 }

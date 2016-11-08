@@ -126,28 +126,6 @@ public class DownloadManager {
     }
 
     /**
-     * Returns a list of all available nightly versions.
-     * 
-     * @return
-     * @throws CoreException
-     */
-    public static List<DownloadableVaadinVersion> getAvailableNightlyVersions()
-            throws CoreException {
-        // refresh list
-        flushCache();
-        // fetch the version list from vaadin.com
-        List<DownloadableVaadinVersion> availableVersions = getAvailableVersions(false);
-        // filter for nightly builds only
-        List<DownloadableVaadinVersion> nightlyVersions = new ArrayList<DownloadableVaadinVersion>();
-        for (DownloadableVaadinVersion version : availableVersions) {
-            if (FileType.VAADIN_NIGHTLY.equals(version.getType())) {
-                nightlyVersions.add(version);
-            }
-        }
-        return nightlyVersions;
-    }
-
-    /**
      * Flush the cached list of versions, forcing it to be reloaded the next
      * time it is requested.
      */

@@ -17,17 +17,14 @@ final class NightlyScheduleRule implements ISchedulingRule {
     }
 
     public boolean contains(ISchedulingRule rule) {
-        // can contain perform upgrade and nightly build check as well as
-        // upgrade check scheduling
-        return NightlyUpgradeRule.getInstance() == rule
-                || NightlyCheckRule.getInstance() == rule || this == rule;
+        // can contain new version check as well as
+        // new version check scheduling
+        return NightlyCheckRule.getInstance() == rule || this == rule;
     }
 
     public boolean isConflicting(ISchedulingRule rule) {
-        // conflict with performing upgrade
-        // conflict with nightly build check
-        // conflict with another upgrade check scheduling job
-        return NightlyUpgradeRule.getInstance() == rule
-                || NightlyCheckRule.getInstance() == rule || this == rule;
+        // conflict with new version check
+        // conflict with another new version check scheduling job
+        return NightlyCheckRule.getInstance() == rule || this == rule;
     }
 }

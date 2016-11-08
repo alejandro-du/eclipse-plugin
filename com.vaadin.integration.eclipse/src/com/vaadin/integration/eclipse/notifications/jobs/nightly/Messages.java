@@ -5,11 +5,8 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
     private static final String BUNDLE_NAME = Messages.class.getPackage()
             .getName() + ".messages"; //$NON-NLS-1$
-    public static String Notifications_UpgradeSubTaskName;
     public static String Notifications_NightlyCheckJobName;
     public static String Notifications_NightlySchedulerJobName;
-    public static String Notifications_UpgradeJobName;
-    public static String Notifications_UpgradeTaskName;
     public static String Notifications_UsageStatJobName;
     public static String Notifications_UsageStatTask;
     public static String Notifications_UsageStatTaskName;

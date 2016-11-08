@@ -80,7 +80,6 @@ IVaadinFacetInstallDataModelProperties {
                 .equals(projectType);
         String portletVersion = model.getStringProperty(PORTLET_VERSION);
         boolean createPortlet = !PORTLET_VERSION_NONE.equals(portletVersion);
-        boolean useLatestNightly = model.getBooleanProperty(USE_LATEST_NIGHTLY);
 
         boolean servlet30 = isServlet30(model);
 
@@ -149,7 +148,6 @@ IVaadinFacetInstallDataModelProperties {
             try {
                 PreferenceUtil preferences = PreferenceUtil.get(project);
                 preferences.setProjectTypeGae(gaeProject);
-                preferences.setUsingLatestNightly(useLatestNightly);
                 preferences.persist();
             } catch (IOException e) {
                 throw ErrorUtil.newCoreException(

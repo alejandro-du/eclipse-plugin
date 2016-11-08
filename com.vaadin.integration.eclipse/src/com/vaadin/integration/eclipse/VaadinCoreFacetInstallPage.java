@@ -211,9 +211,6 @@ public class VaadinCoreFacetInstallPage extends J2EEModuleFacetInstallPage
         // synch version string and checkbox value to model
         synchHelper.synchCombo(versionComposite.getVersionCombo(),
                 VAADIN_VERSION, new Control[] {});
-        synchHelper.synchCheckbox(
-                versionComposite.getUseLatestNightlyCheckbox(),
-                USE_LATEST_NIGHTLY, new Control[] {});
     }
 
     protected void enableFields(boolean enabled) {

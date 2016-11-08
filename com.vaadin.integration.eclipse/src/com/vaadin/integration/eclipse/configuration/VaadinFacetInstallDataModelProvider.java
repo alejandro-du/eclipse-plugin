@@ -80,7 +80,6 @@ public class VaadinFacetInstallDataModelProvider extends
         names.add(PORTLET_VERSION);
         names.add(PORTLET_TITLE);
         names.add(VAADIN_VERSION);
-        names.add(USE_LATEST_NIGHTLY);
         names.add(VAADIN_PROJECT_TYPE);
         names.add(CREATE_TB_TEST);
         return names;
@@ -159,8 +158,6 @@ public class VaadinFacetInstallDataModelProvider extends
             } else {
                 return projectName.toString();
             }
-        } else if (propertyName.equals(USE_LATEST_NIGHTLY)) {
-            return Boolean.FALSE;
         } else if (propertyName.equals(VAADIN_VERSION)) {
             try {
                 if (isVaadin7Facet()) {
@@ -416,9 +413,6 @@ public class VaadinFacetInstallDataModelProvider extends
                 && PORTLET_VERSION_NONE
                         .equals(getStringProperty(PORTLET_VERSION))) {
             return false;
-        }
-        if (USE_LATEST_NIGHTLY.equals(propertyName)) {
-            return !isVaadin7Facet();
         }
         if (CREATE_TB_TEST.equals(propertyName)) {
             return isVaadin73Version();

@@ -55,7 +55,6 @@ public class VaadinVersionComposite extends Composite {
     private Button downloadButton;
     private IProject project = null;
     private VersionSelectionChangeListener versionSelectionListener;
-    private Button latestNightlyCheckbox;
     private Button updateNotificationCheckbox;
     // by default, do not allow selecting Vaadin 7 versions
     private boolean useDependencyManagement = false;
@@ -250,91 +249,6 @@ public class VaadinVersionComposite extends Composite {
             }
         });
 
-        latestNightlyCheckbox = new Button(this, SWT.CHECK);
-        latestNightlyCheckbox
-                .setText("Use latest nightly build (in same branch)");
-        latestNightlyCheckbox.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent event) {
-                boolean enabled;
-                if (null == project) {
-                    enabled = true;
-                } else {
-                    PreferenceUtil preferenceUtil = PreferenceUtil.get(project);
-                    boolean oldValue = preferenceUtil.isUsingLatestNightly();
-                    enabled = (oldValue != latestNightlyCheckbox
-                            .getSelection());
-                }
-                if (enabled) {
-                    // set preference on commit, not here
-
-                    // TODO progress monitoring?
-
-                    try {
-                        IPath vaadinLibrary = ProjectUtil
-                                .getVaadinLibraryInProject(project, true);
-                        if (vaadinLibrary != null) {
-                            // do not allow changes for Vaadin 7
-                            if (ProjectUtil.isVaadin7(project)) {
-                                // updateVersionCombo() disables the checkbox
-                                return;
-                            }
-                            // do not allow changes of a Vaadin version
-                            // outside the project
-                            if (!ProjectUtil.isInProject(project,
-                                    vaadinLibrary)) {
-                                return;
-                            }
-                        }
-                    } catch (CoreException e) {
-                        ErrorUtil.handleBackgroundException(e);
-                        // TODO show error message and return or let the user
-                        // continue? normally this should not happen
-                    }
-
-                    // download latest nightly in the branch immediately -
-                    // actual upgrade of project takes place when applying
-                    // changes
-                    try {
-                        List<DownloadableVaadinVersion> availableNightlies = DownloadManager
-                                .getAvailableNightlyVersions();
-
-                        int index = versionCombo.getSelectionIndex();
-                        String currentVersion = index >= 0
-                                ? versionCombo.getItem(index) : null;
-                        if ((null == currentVersion
-                                || "".equals(currentVersion.trim()))
-                                && !availableNightlies.isEmpty()) {
-                            // latest nightly build in the list if no branch
-                            // specified by current version
-                            currentVersion = availableNightlies.get(0)
-                                    .getVersionNumber();
-                        }
-
-                        DownloadableVaadinVersion latestNightly = Utils
-                                .getNightlyToUpgradeTo(currentVersion,
-                                        availableNightlies);
-
-                        updateVersionCombo();
-                        versionCombo.select(versionCombo
-                                .indexOf(latestNightly.getVersionNumber()));
-                    } catch (CoreException ex) {
-                        // log error and display message
-                        ErrorUtil.handleBackgroundException(IStatus.WARNING,
-                                "Failed to upgrade to the latest Vaadin nightly build",
-                                ex);
-                        ErrorUtil.displayError(
-                                "Failed to upgrade to the latest Vaadin nightly build",
-                                ex, getShell());
-                    }
-                }
-            }
-        });
-        latestNightlyCheckbox.setLayoutData(
-                new GridData(GridData.FILL, GridData.BEGINNING, true, false));
-        // Note that this can also be modified by the data model provider
-        latestNightlyCheckbox.setEnabled(!useDependencyManagement);
-
         // Add a checkbox for choosing whether to notify the user of Vaadin
         // version updates.
         updateNotificationCheckbox = new Button(this, SWT.CHECK);
@@ -356,7 +270,6 @@ public class VaadinVersionComposite extends Composite {
         updateNotificationCheckbox.setLayoutData(gridData);
 
         setControlVisible(downloadButton, !useDependencyManagement);
-        setControlVisible(latestNightlyCheckbox, !useDependencyManagement);
         getShell().layout(false);
     }
 
@@ -370,7 +283,6 @@ public class VaadinVersionComposite extends Composite {
         versionCombo.setEnabled(true);
         downloadButton.setEnabled(!useDependencyManagement);
         // Note that this can also be modified by the data model provider
-        latestNightlyCheckbox.setEnabled(!useDependencyManagement);
         try {
 
             versionCombo.removeAll();
@@ -447,8 +359,6 @@ public class VaadinVersionComposite extends Composite {
                     // files outside the project anyway.
                     versionCombo.setEnabled(false);
                     downloadButton.setEnabled(false);
-                    latestNightlyCheckbox.setSelection(false);
-                    latestNightlyCheckbox.setEnabled(false);
                 }
             } catch (CoreException ce) {
                 // ignore if cannot select current version
@@ -532,23 +442,9 @@ public class VaadinVersionComposite extends Composite {
         }
     }
 
-    /**
-     * This method exists only to enable automatic synchronization with a model.
-     * For other purposes, use {@link #isUseLatestNightly()}.
-     * 
-     * @return Button
-     */
-    public Button getUseLatestNightlyCheckbox() {
-        return latestNightlyCheckbox;
-    }
-
     public Composite createContents() {
         addVersionSelectionSection();
         return this;
-    }
-
-    public boolean isUseLatestNightly() {
-        return latestNightlyCheckbox.getSelection();
     }
 
     public AbstractVaadinVersion getSelectedVersion() {
@@ -597,17 +493,13 @@ public class VaadinVersionComposite extends Composite {
         updateVersionCombo();
 
         if (null != project) {
-            latestNightlyCheckbox.setSelection(
-                    PreferenceUtil.get(project).isUsingLatestNightly());
             updateNotificationCheckbox.setSelection(
                     PreferenceUtil.get(project).isUpdateNotificationEnabled());
         } else {
-            latestNightlyCheckbox.setSelection(false);
             updateNotificationCheckbox.setSelection(true);
         }
 
         setControlVisible(downloadButton, !useDependencyManagement);
-        setControlVisible(latestNightlyCheckbox, !useDependencyManagement);
         setControlVisible(updateNotificationCheckbox, useDependencyManagement);
         getShell().layout(false);
     }

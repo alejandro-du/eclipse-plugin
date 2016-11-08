@@ -174,30 +174,6 @@ public final class Utils {
         }
     }
 
-    /**
-     * Returns the latest nightly version for the same branch as the current
-     * version.
-     * 
-     * @param currentVersion
-     * @param availableNightlies
-     * @return latest nightly for the branch or null if not found
-     */
-    public static DownloadableVaadinVersion getNightlyToUpgradeTo(
-            String currentVersion,
-            List<DownloadableVaadinVersion> availableNightlies) {
-        String branch = parseBranch(currentVersion);
-        if (null == branch) {
-            return null;
-        }
-        for (DownloadableVaadinVersion version : availableNightlies) {
-            // sorted with latest first, return first match
-            if (branch.equals(parseBranch(version.getVersionNumber()))) {
-                return version;
-            }
-        }
-        return null;
-    }
-
     private static String parseBranch(String versionNumber) {
         return versionNumber.substring(0,
                 versionNumber.indexOf(".", versionNumber.indexOf(".") + 1));

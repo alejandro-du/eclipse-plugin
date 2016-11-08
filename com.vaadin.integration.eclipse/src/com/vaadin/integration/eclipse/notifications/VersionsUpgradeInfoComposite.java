@@ -141,37 +141,13 @@ class VersionsUpgradeInfoComposite extends Composite {
         labelsFont = Utils.createFont(12, SWT.NORMAL, Utils.HELVETICA,
                 Utils.ARIAL);
 
-        boolean hasNightlies = makeNightlySection(composite);
-        makeUpgradeSection(composite, hasNightlies);
+        makeUpgradeSection(composite);
 
         scrolled.setMinSize(scrolled.computeSize(0, SWT.DEFAULT));
         return scrolled;
     }
 
-    private boolean makeNightlySection(Composite composite) {
-        Map<IProject, ? extends AbstractVaadinVersion> nightlies = notification
-                .getNightlyUpgrades();
-        if (!nightlies.isEmpty()) {
-            Label label = new Label(composite, SWT.NONE);
-            label.setText(Messages.Notifications_VersionsNightlyBuildsSection);
-            label.setFont(footerFont);
-            GridDataFactory.fillDefaults().grab(true, false)
-                    .align(SWT.FILL, SWT.FILL).applyTo(label);
-            for (Entry<IProject, ? extends AbstractVaadinVersion> entry : nightlies
-                    .entrySet()) {
-                Label nightly = new Label(composite, SWT.NONE);
-                nightly.setText(MessageFormat.format(
-                        Messages.Notifications_VersionsNightlyProjectItem,
-                        entry.getKey().getName(), entry.getValue().toString()));
-                nightly.setFont(labelsFont);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private void makeUpgradeSection(Composite composite,
-            boolean hasNightlySection) {
+    private void makeUpgradeSection(Composite composite) {
         Map<IProject, List<MavenVaadinVersion>> upgrades = notification
                 .getUpgrades();
         if (!upgrades.isEmpty()) {
@@ -179,9 +155,6 @@ class VersionsUpgradeInfoComposite extends Composite {
             label.setText(Messages.Notifications_VersionsVaadin7ProjectsTitle);
             GridDataFactory factory = GridDataFactory.fillDefaults()
                     .grab(true, false).align(SWT.FILL, SWT.FILL);
-            if (hasNightlySection) {
-                factory.indent(0, 10);
-            }
             factory.applyTo(label);
             label.setFont(footerFont);
             for (Entry<IProject, List<MavenVaadinVersion>> entry : upgrades

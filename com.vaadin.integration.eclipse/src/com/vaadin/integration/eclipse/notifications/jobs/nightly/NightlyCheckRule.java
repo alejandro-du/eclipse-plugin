@@ -3,7 +3,7 @@ package com.vaadin.integration.eclipse.notifications.jobs.nightly;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 /**
- * Scheduling rule for checking for new Vaadin nightly builds.
+ * Scheduling rule for checking for new Vaadin versions.
  */
 final class NightlyCheckRule implements ISchedulingRule {
 
@@ -17,13 +17,11 @@ final class NightlyCheckRule implements ISchedulingRule {
     }
 
     public boolean contains(ISchedulingRule rule) {
-        // can contain perform upgrade and nightly build check
-        return NightlyUpgradeRule.getInstance() == rule || this == rule;
+        return this == rule;
     }
 
     public boolean isConflicting(ISchedulingRule rule) {
-        // conflict with performing upgrade
-        // conflict with nightly build check
-        return NightlyUpgradeRule.getInstance() == rule || this == rule;
+        // conflict with new version check
+        return this == rule;
     }
 }

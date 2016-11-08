@@ -88,10 +88,6 @@ public class PreferenceUtil {
     private static final String PREFERENCES_PROJECT_TYPE_GAE = VaadinPlugin.PLUGIN_ID
             + "." + "projectTypeGae";
 
-    // "true"/"false"/missing - missing means false
-    private static final String PREFERENCES_USE_LATEST_NIGHTLY = VaadinPlugin.PLUGIN_ID
-            + "." + "useLatestNightly";
-
     // "true"/"false"/missing - if missing, default value is taken from
     // Eclipse preferences
     private static final String PREFERENCES_UPDATE_NOTIFICATION_ENABLED = VaadinPlugin.PLUGIN_ID
@@ -110,16 +106,6 @@ public class PreferenceUtil {
     // widgetset
     private static final String PREFERENCES_PREVIOUS_COMPILE_ACTION = VaadinPlugin.PLUGIN_ID
             + "." + "previousCompileAction";
-
-    // Latest nightly version suggested for the project to upgrade (and may be
-    // already upgraded). Required for persisted notification about versions
-    // upgrade.
-    private static final String PREFERENCES_NIGHTLY_LATEST_VERSION_UPGRADE = VaadinPlugin.PLUGIN_ID
-            + "." + "nightlyLatestVersionUpgrade";
-
-    // Accompanied with previous key. Contains file type for the version
-    private static final String PREFERENCES_NIGHTLY_LATEST_VERSION_FTYPE = VaadinPlugin.PLUGIN_ID
-            + "." + "nightlyLatestVersionFileType";
 
     // Latest maven versions suggested for the project to upgrade. Required for
     // persisted notification about version upgrade.
@@ -331,16 +317,6 @@ public class PreferenceUtil {
     }
 
     /**
-     * Persist latest suggested (and may be upgraded) version for the project.
-     */
-    public void setLatestNightlyUpgradeVersion(AbstractVaadinVersion version) {
-        prefStore.setValue(PREFERENCES_NIGHTLY_LATEST_VERSION_UPGRADE,
-                version.getVersionNumber());
-        prefStore.setValue(PREFERENCES_NIGHTLY_LATEST_VERSION_FTYPE,
-                version.getType().name());
-    }
-
-    /**
      * Persist latest suggested maven versions for the project.
      */
     public void setLatestMavenUpgradeVersions(
@@ -351,22 +327,6 @@ public class PreferenceUtil {
         }
         prefStore.setValue(PREFERENCES_MAVEN_LATEST_VERSIONS_UPGRADE,
                 array.toJSONString());
-    }
-
-    /**
-     * Get persisted latest suggested (and may be upgraded) version for the
-     * project.
-     */
-    public AbstractVaadinVersion getLatestNightlyUpgradeVersion() {
-        String version = prefStore
-                .getString(PREFERENCES_NIGHTLY_LATEST_VERSION_UPGRADE);
-        String fType = prefStore
-                .getString(PREFERENCES_NIGHTLY_LATEST_VERSION_FTYPE);
-        if (version == null || version.isEmpty()) {
-            return null;
-        }
-        return new AbstractVaadinVersion(version, fileTypeForName(fType)) {
-        };
     }
 
     /**
@@ -465,33 +425,6 @@ public class PreferenceUtil {
     public void setWidgetsetDirty(boolean dirty) {
         prefStore.setValue(PREFERENCES_WIDGETSET_DIRTY,
                 Boolean.toString(dirty));
-    }
-
-    /**
-     * Checks if the project is configured to use the latest nightly build.
-     * 
-     * @return
-     */
-    public boolean isUsingLatestNightly() {
-        if (prefStore.contains(PREFERENCES_USE_LATEST_NIGHTLY)) {
-            return prefStore.getBoolean(PREFERENCES_USE_LATEST_NIGHTLY);
-        }
-        return false;
-    }
-
-    /**
-     * Sets whether the project should always use the latest nightly build of
-     * the branch. Returns true if the value was changed, false if it remained
-     * the same.
-     * 
-     * @param useLatestNightly
-     * @return
-     */
-    public boolean setUsingLatestNightly(boolean useLatestNightly) {
-        boolean oldValue = isUsingLatestNightly();
-        prefStore.setValue(PREFERENCES_USE_LATEST_NIGHTLY,
-                Boolean.toString(useLatestNightly));
-        return oldValue != useLatestNightly;
     }
 
     /**

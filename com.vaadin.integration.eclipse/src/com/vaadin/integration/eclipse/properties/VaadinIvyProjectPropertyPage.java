@@ -237,11 +237,6 @@ public class VaadinIvyProjectPropertyPage implements IVaadinPropertyPage {
         PreferenceUtil preferences = PreferenceUtil.get(project);
         // save widgetset compilation parameters
 
-        boolean useLatestNightly = vaadinVersionComposite.isUseLatestNightly();
-        if (preferences.setUsingLatestNightly(useLatestNightly)) {
-            modifiedValues = true;
-        }
-
         boolean suspended = widgetsetComposite.areWidgetsetBuildsSuspended();
         WidgetsetBuildManager.setWidgetsetBuildsSuspended(project, suspended);
 

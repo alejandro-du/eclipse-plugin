@@ -58,9 +58,9 @@ abstract class NightlyCheckJob extends Job {
             return checkProjects(monitor);
         } catch (CoreException e) {
             ErrorUtil.handleBackgroundException(
-                    "Failed to update Vaadin nightly build list", e); //$NON-NLS-1$
+                    "Failed to update Vaadin version list", e); //$NON-NLS-1$
             return new Status(IStatus.WARNING, VaadinPlugin.PLUGIN_ID, 1,
-                    "Failed to update Vaadin nightly build list", e); //$NON-NLS-1$
+                    "Failed to update Vaadin version list", e); //$NON-NLS-1$
         } finally {
             monitor.done();
         }
@@ -70,45 +70,19 @@ abstract class NightlyCheckJob extends Job {
 
     private IStatus checkProjects(IProgressMonitor monitor)
             throws CoreException {
-        // map from project with "use latest nightly" to the current
-        // Vaadin version number string in the project
-        Map<IProject, String> nightlyProjects = getProjectsUsingLatestNightly();
         List<IProject> vaadin7Projects = getVaadin7Projects();
 
-        LOG.info(
-                "Projects with nightly versions : " + nightlyProjects.keySet()); //$NON-NLS-1$
         LOG.info("All vaadin 7 projects : " + vaadin7Projects); //$NON-NLS-1$
 
         monitor.worked(1);
 
-        if (nightlyProjects.isEmpty() && vaadin7Projects.isEmpty()) {
+        if (vaadin7Projects.isEmpty()) {
             return Status.OK_STATUS;
         } else if (monitor.isCanceled()) {
             return Status.CANCEL_STATUS;
         }
 
-        // update version list
-        List<DownloadableVaadinVersion> availableNightlies = DownloadManager
-                .getAvailableNightlyVersions();
-
-        LOG.fine("Available nightlies : " + availableNightlies); //$NON-NLS-1$
-
         monitor.worked(1);
-
-        final Map<IProject, DownloadableVaadinVersion> possibleUpgrades = new HashMap<IProject, DownloadableVaadinVersion>();
-
-        for (IProject project : nightlyProjects.keySet()) {
-            String currentVersion = nightlyProjects.get(project);
-            DownloadableVaadinVersion latestNightly = Utils
-                    .getNightlyToUpgradeTo(currentVersion, availableNightlies);
-
-            if (null != latestNightly && !latestNightly.getVersionNumber()
-                    .equals(currentVersion)) {
-                possibleUpgrades.put(project, latestNightly);
-            }
-        }
-
-        LOG.info("Nightly projects to upgrade : " + possibleUpgrades.keySet()); //$NON-NLS-1$
 
         final Map<IProject, List<MavenVaadinVersion>> vaadin7Upgrades = getVaadinUpgrades(
                 vaadin7Projects);
@@ -117,59 +91,18 @@ abstract class NightlyCheckJob extends Job {
 
         monitor.worked(1);
 
-        if (possibleUpgrades.isEmpty() && vaadin7Upgrades.isEmpty()) {
+        if (vaadin7Upgrades.isEmpty()) {
             return Status.OK_STATUS;
         } else if (monitor.isCanceled()) {
             return Status.CANCEL_STATUS;
         }
 
-        // create new task to upgrade Vaadin nightly builds in projects
-        NightlyUpgradeJob upgradeJob = new NightlyUpgradeJob(possibleUpgrades);
-        // avoid concurrent checks and upgrades, "lock" the workspace
-        upgradeJob.setRule(MultiRule.combine(NightlyUpgradeRule.getInstance(),
-                ResourcesPlugin.getWorkspace().getRoot()));
-        upgradeJob.schedule();
-
         monitor.worked(1);
 
         getConsumer().accept(
-                new ProjectsUpgradeInfo(possibleUpgrades, vaadin7Upgrades));
+                new ProjectsUpgradeInfo(vaadin7Upgrades));
 
         return Status.OK_STATUS;
-    }
-
-    /**
-     * Returns the open projects in the workspace for which the
-     * "Use latest nightly" option is selected.
-     * 
-     * @return
-     */
-    private Map<IProject, String> getProjectsUsingLatestNightly() {
-        Map<IProject, String> projectsWithNightly = new HashMap<IProject, String>();
-        IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-        IProject[] projects = workspaceRoot.getProjects();
-        for (IProject project : projects) {
-            try {
-                if (!project.isOpen() || !project.hasNature(JavaCore.NATURE_ID)) {
-                    continue;
-                }
-                // add if "use latest nightly" is set
-                PreferenceUtil preferences = PreferenceUtil.get(project);
-                if (preferences.isUsingLatestNightly()) {
-                    String versionNumber = ProjectUtil
-                            .getVaadinLibraryVersion(project, true);
-                    if (null != versionNumber) {
-                        projectsWithNightly.put(project, versionNumber);
-                    }
-                }
-            } catch (CoreException e) {
-                ErrorUtil.handleBackgroundException(IStatus.WARNING,
-                        "Could not check Vaadin version in project " //$NON-NLS-1$
-                                + project.getName(),
-                        e);
-            }
-        }
-        return projectsWithNightly;
     }
 
     private List<IProject> getVaadin7Projects() {

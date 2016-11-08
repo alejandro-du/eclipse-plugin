@@ -11,8 +11,8 @@ import com.vaadin.integration.eclipse.notifications.Consumer;
 import com.vaadin.integration.eclipse.notifications.ProjectsUpgradeInfo;
 
 /**
- * Background scheduler (not visible in the task list) that triggers nightly
- * build check job. This job is then rescheduled by
+ * Background scheduler (not visible in the task list) that triggers new
+ * version check job. This job is then rescheduled by
  * {@link VersionUpdateJobListener}.
  *
  * This is waiting only job. It's purpose to wait until some delay (via schedule

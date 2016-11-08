@@ -41,8 +41,6 @@ public class Messages extends NLS {
     public static String Notifications_TokenViewTitle;
     public static String Notifications_TokenErrorMsg;
     public static String Notifications_VersionsDismiss;
-    public static String Notifications_VersionsNightlyBuildsSection;
-    public static String Notifications_VersionsNightlyProjectItem;
     public static String Notifications_VersionsTitle;
     public static String Notifications_VersionsVaadin7AvailableVersions;
     public static String Notifications_VersionsVaadin7ProjectItem;
