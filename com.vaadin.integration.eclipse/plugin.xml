@@ -69,26 +69,6 @@
                class="com.vaadin.integration.eclipse.CoreFacetVersionChangeDelegate">
          </delegate>
       </action>
-      <template id="template.vaadin6">
-         <label>Vaadin 6 Project (deprecated)</label>
-         <fixed facet="jst.java"/>
-         <fixed facet="jst.web"/>
-         <fixed facet="com.vaadin.integration.eclipse.core"/>
-      </template>
-      <template id="template.vaadin7">
-         <label>Vaadin 7 Ivy Project (deprecated)</label>
-         <fixed facet="jst.java"/>
-         <fixed facet="jst.web"/>
-         <fixed facet="com.vaadin.integration.eclipse.core"/>
-      </template>
-   </extension>
-   <extension point="org.eclipse.wst.common.project.facet.core.presets">
-      <dynamic-preset id="com.vaadin.integration.eclipse.presetv6d">
-         <factory class="com.vaadin.integration.eclipse.wizards.Vaadin6PresetFactory"/>
-      </dynamic-preset>
-      <dynamic-preset id="com.vaadin.integration.eclipse.presetv7d">
-         <factory class="com.vaadin.integration.eclipse.wizards.Vaadin7PresetFactory"/>
-      </dynamic-preset>
    </extension>
    <extension
          point="org.eclipse.wst.common.project.facet.core.runtimes">
@@ -123,10 +103,6 @@
                 name="Vaadin"
                 id="com.vaadin">
         </category>
-        <category
-                name="Vaadin Legacy"
-                id="com.vaadin.legacy">
-        </category>
       <wizard
             name="Vaadin 7 Project (Maven)"
             icon="icons/new-vaadin-project-7-16.png"
@@ -139,40 +115,6 @@
          </class>
          <description>
             Create a Vaadin 7.x Maven project.
-         </description>
-         <selection
-               class="org.eclipse.core.resources.IResource" />
-      </wizard>
-      <wizard
-            name="Vaadin 6 Project"
-            icon="icons/new-vaadin-project-6-16.png"
-            category="com.vaadin.legacy"
-            project="true"
-            finalPerspective="org.eclipse.jst.j2ee.J2EEPerspective"
-            id="com.vaadin.integration.eclipse.wizards.Vaadin6ProjectWizard">
-         <class class="com.vaadin.integration.eclipse.wizards.Vaadin6ProjectWizard">
-            <parameter name="javaeeproject" value="true"/>
-            <parameter name="menuIndex" value="25" />
-         </class>
-         <description>
-            Create a Vaadin 6.x project.
-         </description>
-         <selection
-               class="org.eclipse.core.resources.IResource" />
-      </wizard>
-      <wizard
-            name="Vaadin 7 Project (Ivy)"
-            icon="icons/new-vaadin-project-7-16.png"
-            category="com.vaadin.legacy"
-            project="true"
-            finalPerspective="org.eclipse.jst.j2ee.J2EEPerspective"
-            id="com.vaadin.integration.eclipse.wizards.Vaadin7ProjectWizard">
-         <class class="com.vaadin.integration.eclipse.wizards.Vaadin7ProjectWizard">
-            <parameter name="javaeeproject" value="true"/>
-            <parameter name="menuIndex" value="25" />
-         </class>
-         <description>
-            Create a Vaadin 7.x project.
          </description>
          <selection
                class="org.eclipse.core.resources.IResource" />
