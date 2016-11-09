@@ -1,7 +1,6 @@
 package com.vaadin.integration.eclipse.properties;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -13,10 +12,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -30,15 +26,10 @@ import com.vaadin.integration.eclipse.builder.AddonStylesBuilder;
 import com.vaadin.integration.eclipse.builder.AddonStylesImporter;
 import com.vaadin.integration.eclipse.builder.WidgetsetBuildManager;
 import com.vaadin.integration.eclipse.maven.MavenUtil;
-import com.vaadin.integration.eclipse.properties.VaadinVersionComposite.VersionSelectionChangeListener;
 import com.vaadin.integration.eclipse.util.ErrorUtil;
 import com.vaadin.integration.eclipse.util.PreferenceUtil;
-import com.vaadin.integration.eclipse.util.ProjectDependencyManager;
 import com.vaadin.integration.eclipse.util.ProjectUtil;
 import com.vaadin.integration.eclipse.util.WidgetsetUtil;
-import com.vaadin.integration.eclipse.util.data.AbstractVaadinVersion;
-import com.vaadin.integration.eclipse.util.data.LocalVaadinVersion;
-import com.vaadin.integration.eclipse.util.data.MavenVaadinVersion;
 
 /**
  * Property page grouping Vaadin Ivy project related project properties.
@@ -56,8 +47,6 @@ public class VaadinIvyProjectPropertyPage implements IVaadinPropertyPage {
     private VaadinVersionComposite vaadinVersionComposite;
     private WidgetsetParametersComposite widgetsetComposite;
     private ThemingParametersComposite themingComposite;
-    private String projectVaadinVersionString;
-    private CLabel modifiedLabel;
 
     private IProject project;
 
@@ -78,12 +67,6 @@ public class VaadinIvyProjectPropertyPage implements IVaadinPropertyPage {
 
         if (themingComposite != null) {
             themingComposite.setProject(project);
-        }
-
-        if (project != null) {
-            projectVaadinVersionString = vaadinVersionComposite
-                    .getSelectedVersionString();
-            vaadinVersionSelectValueChange();
         }
     }
 
@@ -124,29 +107,6 @@ public class VaadinIvyProjectPropertyPage implements IVaadinPropertyPage {
         }
 
         try {
-            if (isVersionChanged()) {
-                final AbstractVaadinVersion selectedVaadinVersion = vaadinVersionComposite
-                        .getSelectedVersion();
-
-                if (selectedVaadinVersion != null) {
-                    ProjectUtil.ensureVaadinFacetAndNature(project);
-                }
-                boolean versionUpdated = false;
-                if (selectedVaadinVersion instanceof LocalVaadinVersion) {
-                    versionUpdated = updateProjectVaadinJar(project,
-                            (LocalVaadinVersion) selectedVaadinVersion);
-                } else if (selectedVaadinVersion instanceof MavenVaadinVersion) {
-                    // TODO add support for upgrading a project to Vaadin 7 or
-                    // changing Vaadin 7 version in project Ivy configuration
-                }
-                if (versionUpdated) {
-                    widgetsetDirty = true;
-
-                    // Recreate combo box to ensure the changed version is
-                    // rendered correctly (if user pushed apply)
-                    performDefaults();
-                }
-            }
             if (themingComposite.isAddonScanningSuspended()
                     || MavenUtil.isMavenProject(project)) {
                 AddonStylesBuilder.removeBuilder(project);
@@ -181,51 +141,6 @@ public class VaadinIvyProjectPropertyPage implements IVaadinPropertyPage {
         if (WidgetsetUtil.isWidgetsetDirty(project)) {
             WidgetsetBuildManager.runWidgetSetBuildTool(project, false,
                     new NullProgressMonitor());
-        }
-
-        return true;
-    }
-
-    /**
-     * Updates the project Vaadin jar if needed.
-     *
-     * @param project
-     *            The target project
-     * @param selectedVaadinVersion
-     *            The version string selected in the version combo box
-     * @return true if the version was updated, false otherwise
-     * @throws InterruptedException
-     * @throws InvocationTargetException
-     * @throws CoreException
-     */
-    private boolean updateProjectVaadinJar(final IProject project,
-            final LocalVaadinVersion selectedVaadinVersion)
-                    throws CoreException {
-
-        // Do the actual update
-        IRunnableWithProgress op = new IRunnableWithProgress() {
-            public void run(IProgressMonitor monitor)
-                    throws InvocationTargetException {
-                try {
-                    ProjectDependencyManager.updateVaadinLibraries(project,
-                            selectedVaadinVersion, monitor);
-                } catch (CoreException e) {
-                    throw new InvocationTargetException(e);
-                } finally {
-                    monitor.done();
-                }
-            }
-        };
-        try {
-            new ProgressMonitorDialog(getShell()).run(true, true, op);
-        } catch (InvocationTargetException e) {
-            Throwable realException = e.getTargetException();
-            throw ErrorUtil.newCoreException(
-                    "Failed to updated Vaadin library in project",
-                    realException);
-        } catch (InterruptedException e) {
-            throw ErrorUtil.newCoreException(
-                    "Failed to updated Vaadin library in project", e);
         }
 
         return true;
@@ -345,19 +260,6 @@ public class VaadinIvyProjectPropertyPage implements IVaadinPropertyPage {
         vaadinVersionComposite = new VaadinVersionComposite(group, SWT.NULL);
         vaadinVersionComposite.createContents();
         vaadinVersionComposite.setUseDependencyManagement(false);
-        vaadinVersionComposite
-        .setVersionSelectionListener(new VersionSelectionChangeListener() {
-
-            public void versionChanged() {
-                vaadinVersionSelectValueChange();
-            }
-        });
-
-        modifiedLabel = new CLabel(group, SWT.NONE);
-        modifiedLabel.setImage(ICON_INFORMATION_SMALL);
-        modifiedLabel.setText("");
-        modifiedLabel.setVisible(false);
-        modifiedLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         if (AddonStylesImporter.isSupported(getProject())) {
 
@@ -381,33 +283,6 @@ public class VaadinIvyProjectPropertyPage implements IVaadinPropertyPage {
 
         return composite;
     }
-
-    private void vaadinVersionSelectValueChange() {
-        if (isVersionChanged()) {
-            modifiedLabel.setVisible(true);
-            String willHappen = "Vaadin jar in the project will be ";
-            if (vaadinVersionComposite.getSelectedVersionString().equals("")) {
-                willHappen += "removed";
-            } else {
-                willHappen += "updated";
-            }
-            modifiedLabel.setText(willHappen);
-        } else {
-            modifiedLabel.setVisible(false);
-        }
-
-    }
-
-    private boolean isVersionChanged() {
-        String selectedVersionString = vaadinVersionComposite
-                .getSelectedVersionString();
-        if (projectVaadinVersionString == null) {
-            return !selectedVersionString.equals("");
-        }
-
-        return !projectVaadinVersionString.equals(selectedVersionString);
-    }
-
     public void setProject(IProject project) {
         this.project = project;
     }
