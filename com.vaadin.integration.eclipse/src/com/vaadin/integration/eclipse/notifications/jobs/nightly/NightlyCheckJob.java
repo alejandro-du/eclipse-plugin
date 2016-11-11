@@ -72,7 +72,7 @@ abstract class NightlyCheckJob extends Job {
             throws CoreException {
         List<IProject> vaadin7Projects = getVaadin7Projects();
 
-        LOG.info("All vaadin 7 projects : " + vaadin7Projects); //$NON-NLS-1$
+        LOG.info("All vaadin 7+ projects : " + vaadin7Projects); //$NON-NLS-1$
 
         monitor.worked(1);
 
@@ -87,7 +87,7 @@ abstract class NightlyCheckJob extends Job {
         final Map<IProject, List<MavenVaadinVersion>> vaadin7Upgrades = getVaadinUpgrades(
                 vaadin7Projects);
 
-        LOG.info("Vaadin 7 projects to upgrade : " + vaadin7Upgrades.keySet()); //$NON-NLS-1$
+        LOG.info("Vaadin 7+ projects to upgrade : " + vaadin7Upgrades.keySet()); //$NON-NLS-1$
 
         monitor.worked(1);
 
