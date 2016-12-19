@@ -104,7 +104,7 @@
                 id="com.vaadin">
         </category>
       <wizard
-            name="Vaadin 8 Project (Maven)"
+            name="Vaadin 8 Project"
             icon="icons/new-vaadin-project-7-16.png"
             category="com.vaadin"
             project="true"
@@ -120,7 +120,7 @@
                class="org.eclipse.core.resources.IResource" />
       </wizard>
       <wizard
-            name="Vaadin 7 Project (Maven)"
+            name="Vaadin 7 Project"
             icon="icons/new-vaadin-project-7-16.png"
             category="com.vaadin"
             project="true"
