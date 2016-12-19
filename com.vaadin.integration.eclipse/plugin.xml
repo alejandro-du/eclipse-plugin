@@ -140,12 +140,12 @@
     <extension
        point="org.eclipse.ui.perspectiveExtensions">
        <perspectiveExtension targetID="org.eclipse.jst.j2ee.J2EEPerspective">
-          <newWizardShortcut id="com.vaadin.integration.eclipse.wizards.Vaadin7MavenProjectWizard"/>
+          <newWizardShortcut id="com.vaadin.integration.eclipse.wizards.Vaadin8MavenProjectWizard"/>
        </perspectiveExtension>
     </extension>
 	<!-- This is required to have the New Vaadin Project in the project explorer top-level menu -->
     <extension point="org.eclipse.ui.navigator.navigatorContent">
-       <commonWizard type="new" wizardId="com.vaadin.integration.eclipse.wizards.Vaadin7MavenProjectWizard" menuGroupId="org.eclipse.jst.j2ee.ui.newProjects">
+       <commonWizard type="new" wizardId="com.vaadin.integration.eclipse.wizards.Vaadin8MavenProjectWizard" menuGroupId="org.eclipse.jst.j2ee.ui.newProjects">
           <enablement></enablement>
        </commonWizard>
     </extension>
