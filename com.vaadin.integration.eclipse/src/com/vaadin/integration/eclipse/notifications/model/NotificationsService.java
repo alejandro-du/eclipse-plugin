@@ -484,10 +484,16 @@ public final class NotificationsService {
                 saveCache(object);
             }
 
-            JSONArray array = (JSONArray) object.get(NOTIFICATIONS);
-            List<Notification> list = new ArrayList<Notification>(array.size());
-            for (int i = 0; i < array.size(); i++) {
-                list.add(buildNotification((JSONObject) array.get(i)));
+            // A single notification is not wrapped into an array
+            Object notifications = object.get(NOTIFICATIONS);
+            List<Notification> list = new ArrayList<Notification>();
+            if (notifications instanceof JSONArray) {
+                JSONArray array = (JSONArray) notifications;
+                for (int i = 0; i < array.size(); i++) {
+                    list.add(buildNotification((JSONObject) array.get(i)));
+                }
+            } else {
+                list.add(buildNotification((JSONObject) notifications));
             }
 
             return list;
