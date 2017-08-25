@@ -127,7 +127,7 @@ public class VersionUtil {
         Attributes attr = manifest.getMainAttributes();
         String bundleName = attr.getValue("Bundle-Name");
         if (bundleName != null
-                && (bundleName.equals("Vaadin") || bundleName
+                && (bundleName.startsWith("Vaadin") || bundleName
                         .startsWith("vaadin-"))) {
             return attr.getValue(versionAttribute);
         }
