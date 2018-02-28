@@ -707,7 +707,7 @@ public final class NotificationsService {
 
     private Point scaleImageSize(Point original) {
         return new Point(Utils.MAX_WIDTH,
-                (Utils.MAX_WIDTH * original.y) / original.x);
+                Math.max(1, (Utils.MAX_WIDTH * original.y) / original.x));
     }
 
     private File getCacheFolder() {
