@@ -2,6 +2,8 @@ language: java
 jdk: oraclejdk8
 sudo: false
 
+install: mvn install -DskipTests=true -Dmaven.javadoc.skip=true -Dtycho.disableP2Mirrors=true -B -V
+
 cache:
   directories:
   - $HOME/.m2
