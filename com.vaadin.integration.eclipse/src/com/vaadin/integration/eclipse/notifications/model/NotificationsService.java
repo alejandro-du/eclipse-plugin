@@ -493,7 +493,9 @@ public final class NotificationsService {
                     list.add(buildNotification((JSONObject) array.get(i)));
                 }
             } else {
-                list.add(buildNotification((JSONObject) notifications));
+                if (notifications != null) {
+                    list.add(buildNotification((JSONObject) notifications));
+                }
             }
 
             return list;
