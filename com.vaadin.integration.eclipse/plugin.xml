@@ -104,6 +104,18 @@
                 id="com.vaadin">
         </category>
       <wizard
+            category="com.vaadin"
+            class="com.vaadin.integration.eclipse.wizards.platform.PlatformMavenProjectWizard"
+            finalPerspective="org.eclipse.jst.j2ee.J2EEPerspective"
+            icon="icons/icon-flow.png"
+            id="com.vaadin.integration.eclipse.wizards.PlatformMavenProjectWizard"
+            name="Vaadin Project"
+            project="true">
+         <description>
+            Create a Vaadin Platform Maven project.
+         </description>
+      </wizard>        
+      <wizard
             name="Vaadin 8 Project"
             icon="icons/new-vaadin-project-8-16.png"
             category="com.vaadin"
