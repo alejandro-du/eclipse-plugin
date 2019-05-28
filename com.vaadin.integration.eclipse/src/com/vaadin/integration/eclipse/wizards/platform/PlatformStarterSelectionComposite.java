@@ -93,7 +93,7 @@ public class PlatformStarterSelectionComposite extends Composite {
                 });
 
         Label stackLabel = new Label(this, SWT.NONE);
-        stackLabel.setText("Project backend:");
+        stackLabel.setText("Tech stack:");
 
         stackCombo = new ComboViewer(this, SWT.READ_ONLY);
         stackCombo.getCombo()
