@@ -112,7 +112,7 @@
             name="Vaadin Project"
             project="true">
          <description>
-            Create a Vaadin Platform Maven project.
+            Create a Vaadin Project.
          </description>
       </wizard>        
       <wizard

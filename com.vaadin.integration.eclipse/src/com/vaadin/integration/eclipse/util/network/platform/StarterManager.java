@@ -41,7 +41,8 @@ import net.lingala.zip4j.exception.ZipException;
 public class StarterManager {
 
     private static final String START_SERVICE_URL = "https://vaadin.com/vaadincom/start-service/";
-    private static final String STARTER_DOWNLOAD_URL = "https://vaadin.com/vaadincom/start-service/%s/%s";
+    private static final String STARTER_DOWNLOAD_URL = START_SERVICE_URL
+            + "%s/%s";
 
     private static final String TMP_STARTER_SPLIT_SUFFIX = "-tmp-starter-split-suffix-";
 
