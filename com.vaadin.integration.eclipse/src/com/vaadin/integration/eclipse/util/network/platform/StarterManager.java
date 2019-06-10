@@ -17,6 +17,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.util.EntityUtils;
 import org.apache.maven.model.Model;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -69,7 +70,8 @@ public class StarterManager {
 
     public static Starter getSupportedStarter(Starter starter) {
         if (!"pre-release".equals(starter.getRelease())
-                || starter.isCommercial()) {
+                || starter.isCommercial()
+                || "component".equals(starter.getId())) {
             return null;
         }
         List<String> techStacks = starter.getTechStacks();
@@ -81,18 +83,19 @@ public class StarterManager {
 
     public static File download(String release, String id, String appName,
             String groupId, String stack)
-            throws IOException, URISyntaxException {
+            throws IOException, URISyntaxException, FileNotFoundException {
         URIBuilder uriBuilder = new URIBuilder(
                 String.format(STARTER_DOWNLOAD_URL, release, id));
         uriBuilder.addParameter("appName", appName);
         uriBuilder.addParameter("groupId", groupId);
         uriBuilder.addParameter("techStack", stack);
 
-        HttpResponse response = Request.Post(uriBuilder.build().toString())
+        HttpResponse response = Request.Get(uriBuilder.build().toString())
                 .addHeader("accept", "application/json").execute()
                 .returnResponse();
         if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-            return null;
+            throw new FileNotFoundException(
+                    EntityUtils.toString(response.getEntity()));
         }
 
         Header contentDispositionHeader = response
@@ -124,10 +127,22 @@ public class StarterManager {
         int splitIndex = starter.getName().indexOf(TMP_STARTER_SPLIT_SUFFIX);
         String fileName = starter.getName().substring(0, splitIndex);
         String directoryPath = path + File.separatorChar + fileName;
+        String unzipPath = findUnzipPath(directoryPath);
 
         ZipFile zipFile = new ZipFile(starter);
-        zipFile.extractAll(directoryPath);
-        return new File(directoryPath);
+        zipFile.extractAll(unzipPath);
+        return new File(unzipPath);
+    }
+
+    private static String findUnzipPath(String directoryPath) {
+        if (new File(directoryPath).exists()) {
+            int counter = 1;
+            while (new File(directoryPath + counter).exists()) {
+                counter++;
+            }
+            directoryPath = directoryPath + counter;
+        }
+        return directoryPath;
     }
 
     public static void scheduleStarterImport(final Starter starter,
@@ -143,9 +158,6 @@ public class StarterManager {
                     File starterFile = StarterManager.download(
                             starter.getRelease(), starter.getId(), projectName,
                             groupId, stack);
-                    if (starterFile == null) {
-                        throw new FileNotFoundException();
-                    }
                     monitor.internalWorked(80);
                     File starterDirectory = StarterManager
                             .unzip(ResourcesPlugin.getWorkspace().getRoot()
@@ -154,13 +166,13 @@ public class StarterManager {
                     monitor.done();
                 } catch (CoreException e) {
                     throw new InvocationTargetException(e,
-                            "Error occured during Maven import of the starter project");
+                            "Error occured during Maven import of the starter project.");
                 } catch (FileNotFoundException e) {
                     throw new InvocationTargetException(e,
-                            "Starter project download failed, server response is invalid");
+                            "Starter project download failed. Invalid server response.");
                 } catch (Exception e) {
                     throw new InvocationTargetException(e,
-                            "Error occured during starter project download");
+                            "Error occured during starter project download.");
                 }
             }
         };
@@ -171,12 +183,10 @@ public class StarterManager {
             new ProgressMonitorDialog(win.getShell()).run(true, false, op);
         } catch (InvocationTargetException e) {
             ErrorUtil.handleBackgroundException(e.getMessage(), e);
-            ErrorUtil.displayError(
-                    "Error occured during starter project download", null,
-                    win.getShell());
+            ErrorUtil.displayError(e.getMessage(), null, win.getShell());
         } catch (InterruptedException e) {
             ErrorUtil.handleBackgroundException(
-                    "Starter project download was interrupted", e);
+                    "Starter project download was interrupted.", e);
         }
     }
 
