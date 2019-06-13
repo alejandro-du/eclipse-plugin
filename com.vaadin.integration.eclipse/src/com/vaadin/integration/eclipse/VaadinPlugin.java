@@ -82,7 +82,6 @@ public class VaadinPlugin extends AbstractUIPlugin {
     public static final String COMPILE_THEME_IMAGE_ID = "icons.compile-theme";
     public static final String COMPILE_WIDGETSET_AND_THEME_IMAGE_ID = "icons.compile-widgetset-and-theme";
     public static final String NEW_MAVEN_PROJECT_WIZARD_BANNER_IMAGE_ID = "icons.new-vaadin-maven-project-wizard-banner";
-    public static final String NEW_PLATFORM_MAVEN_PROJECT_WIZARD_BANNER_IMAGE_ID = "icons.new-platform-maven-project-wizard-banner";
 
     public static final String COMPILE_ACTION_WIDGETSET = "widgetset";
     public static final String COMPILE_ACTION_THEME = "theme";
@@ -142,11 +141,6 @@ public class VaadinPlugin extends AbstractUIPlugin {
         url = FileLocator.find(bundle, path, null);
         desc = ImageDescriptor.createFromURL(url);
         registry.put(NEW_MAVEN_PROJECT_WIZARD_BANNER_IMAGE_ID, desc);
-
-        path = new Path("icons/flow-logo-64.png");
-        url = FileLocator.find(bundle, path, null);
-        desc = ImageDescriptor.createFromURL(url);
-        registry.put(NEW_PLATFORM_MAVEN_PROJECT_WIZARD_BANNER_IMAGE_ID, desc);
     }
 
     private synchronized ImageRegistry doGetImageRegistry() {
