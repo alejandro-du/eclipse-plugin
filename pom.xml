@@ -149,6 +149,7 @@
       </activation>
       <modules>
         <module>com.vaadin.integration.eclipse</module>
+		<module>com.vaadin.integration.eclipse.flow</module>
         <module>feature</module>
         <module>update-site</module>
       </modules>
