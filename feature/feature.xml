@@ -62,5 +62,11 @@ permissions and limitations under the License.
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
+         
+   <plugin
+         id="com.vaadin.integration.eclipse.flow"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 </feature>
