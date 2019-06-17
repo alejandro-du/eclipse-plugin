@@ -1,20 +1,15 @@
 <plugin>
-    <extension
-         point="org.eclipse.ui.newWizards">
-      <wizard
-            category="com.vaadin"
+    <extension point="org.eclipse.ui.newWizards">
+        <wizard category="com.vaadin"
             class="com.vaadin.integration.eclipse.flow.wizard.ui.PlatformMavenProjectWizard"
             icon="icons/icon-flow.png"
             id="com.vaadin.integration.eclipse.wizards.PlatformMavenProjectWizard"
-            name="Vaadin Project"
-            project="true">
-         <description>
-            Create a Vaadin Project.
-         </description>
-      </wizard>
-      <category
-            id="com.vaadin"
-            name="Vaadin">
-      </category>        
-	</extension>
+            name="Vaadin Project" project="true">
+            <description>
+                Create a Vaadin Project.
+            </description>
+        </wizard>
+        <category id="com.vaadin" name="Vaadin">
+        </category>
+    </extension>
 </plugin>
