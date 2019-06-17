@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.vaadin.eclipse</groupId>
-    <artifactId>integration-root</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
-  </parent> 
-  <!-- We have two identical artifactIds for historical reasons. 
-       To distinguish between them, a different groupID is necessary.  -->
-  <groupId>com.vaadin.eclipse.feature</groupId>
-  <artifactId>com.vaadin.integration.eclipse</artifactId>  
-  <packaging>eclipse-feature</packaging>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.vaadin.eclipse</groupId>
+        <artifactId>integration-root</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+    </parent>
+    <!-- We have two identical artifactIds for historical reasons. To distinguish 
+        between them, a different groupID is necessary. -->
+    <groupId>com.vaadin.eclipse.feature</groupId>
+    <artifactId>com.vaadin.integration.eclipse</artifactId>
+    <packaging>eclipse-feature</packaging>
 </project>

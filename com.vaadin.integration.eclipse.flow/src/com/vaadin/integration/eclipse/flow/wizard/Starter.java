@@ -1,4 +1,4 @@
-package com.vaadin.integration.eclipse.util.network.platform;
+package com.vaadin.integration.eclipse.flow.wizard;
 
 import java.util.List;
 

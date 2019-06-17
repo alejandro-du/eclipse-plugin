@@ -1,4 +1,4 @@
-package com.vaadin.integration.eclipse.wizards.platform;
+package com.vaadin.integration.eclipse.flow.wizard.ui;
 
 import java.io.IOException;
 
@@ -8,9 +8,9 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
-import com.vaadin.integration.eclipse.VaadinPlugin;
-import com.vaadin.integration.eclipse.util.ErrorUtil;
-import com.vaadin.integration.eclipse.util.network.platform.Starter;
+import com.vaadin.integration.eclipse.flow.FlowPlugin;
+import com.vaadin.integration.eclipse.flow.util.LogUtil;
+import com.vaadin.integration.eclipse.flow.wizard.Starter;
 
 public class PlatformMavenProjectSelectionPage extends WizardPage {
 
@@ -36,7 +36,7 @@ public class PlatformMavenProjectSelectionPage extends WizardPage {
             starterSelectionComposite.init();
             updateStatus(null, false);
         } catch (IOException e) {
-            ErrorUtil.handleBackgroundException(
+            LogUtil.handleBackgroundException(
                     "Can't fetch data from the start service", e);
             updateStatus("Unable to fetch information about available starters",
                     true);
@@ -49,9 +49,8 @@ public class PlatformMavenProjectSelectionPage extends WizardPage {
     }
 
     private void configureImg() {
-        ImageRegistry registry = VaadinPlugin.getInstance().getImageRegistry();
-        Image wizardBannerIcon = registry.get(
-                VaadinPlugin.NEW_PLATFORM_MAVEN_PROJECT_WIZARD_BANNER_IMAGE_ID);
+        ImageRegistry registry = FlowPlugin.getInstance().getImageRegistry();
+        Image wizardBannerIcon = registry.get(FlowPlugin.VAADIN_PROJECT_IMG);
         setImageDescriptor(ImageDescriptor.createFromImage(wizardBannerIcon));
     }
 

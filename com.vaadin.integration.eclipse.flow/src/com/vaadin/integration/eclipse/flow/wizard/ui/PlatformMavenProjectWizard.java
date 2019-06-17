@@ -1,4 +1,4 @@
-package com.vaadin.integration.eclipse.wizards.platform;
+package com.vaadin.integration.eclipse.flow.wizard.ui;
 
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.IPageChangedListener;
@@ -10,8 +10,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
-import com.vaadin.integration.eclipse.util.network.platform.Starter;
-import com.vaadin.integration.eclipse.util.network.platform.StarterManager;
+import com.vaadin.integration.eclipse.flow.wizard.Starter;
+import com.vaadin.integration.eclipse.flow.wizard.StarterManager;
 
 public class PlatformMavenProjectWizard extends Wizard implements INewWizard {
 

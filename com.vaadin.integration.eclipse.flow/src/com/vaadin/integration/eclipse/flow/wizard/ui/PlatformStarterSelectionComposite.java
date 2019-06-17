@@ -1,4 +1,4 @@
-package com.vaadin.integration.eclipse.wizards.platform;
+package com.vaadin.integration.eclipse.flow.wizard.ui;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -18,8 +18,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import com.vaadin.integration.eclipse.util.network.platform.Starter;
-import com.vaadin.integration.eclipse.util.network.platform.StarterManager;
+import com.vaadin.integration.eclipse.flow.wizard.Starter;
+import com.vaadin.integration.eclipse.flow.wizard.StarterManager;
 
 public class PlatformStarterSelectionComposite extends Composite {
 

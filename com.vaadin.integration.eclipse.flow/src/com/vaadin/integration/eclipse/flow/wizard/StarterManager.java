@@ -1,4 +1,4 @@
-package com.vaadin.integration.eclipse.util.network.platform;
+package com.vaadin.integration.eclipse.flow.wizard;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -34,7 +34,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.vaadin.integration.eclipse.util.ErrorUtil;
+import com.vaadin.integration.eclipse.flow.util.LogUtil;
 
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
@@ -182,10 +182,10 @@ public class StarterManager {
         try {
             new ProgressMonitorDialog(win.getShell()).run(true, false, op);
         } catch (InvocationTargetException e) {
-            ErrorUtil.handleBackgroundException(e.getMessage(), e);
-            ErrorUtil.displayError(e.getMessage(), null, win.getShell());
+            LogUtil.handleBackgroundException(e.getMessage(), e);
+            LogUtil.displayError(e.getMessage(), null, win.getShell());
         } catch (InterruptedException e) {
-            ErrorUtil.handleBackgroundException(
+            LogUtil.handleBackgroundException(
                     "Starter project download was interrupted.", e);
         }
     }
