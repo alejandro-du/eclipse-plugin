@@ -1,57 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.vaadin.eclipse</groupId>
-    <artifactId>integration-root</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
-  </parent>
-  <artifactId>com.vaadin.integration.eclipse.repository</artifactId>
-  <packaging>eclipse-repository</packaging>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.vaadin.eclipse</groupId>
+        <artifactId>integration-root</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>com.vaadin.integration.eclipse.repository</artifactId>
+    <packaging>eclipse-repository</packaging>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jarsigner-plugin</artifactId>
-        <configuration>
-			<processMainArtifact>false</processMainArtifact>
-			<archiveDirectory>${project.basedir}/target/repository/plugins</archiveDirectory>
-			<includes>
-				<include>*ivy*.jar</include>
-		    </includes>
-        </configuration>
-      </plugin>		
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.6</version>
-            <executions>
-                <execution>
-                    <id>deploy-to-update-site</id>
-                    <phase>deploy</phase>
-                    <configuration>
-                        <tasks>
-                            <echo message="Deploying to update site ${updatesite.url}" />
-                            <exec executable="scp" searchpath="true" resultproperty="nightly.install.scp.result">
-                                <arg value="-B"/>
-                                <arg value="-r"/>
-                                <arg value="target/repository/content.jar"/>
-                                <arg value="target/repository/artifacts.jar"/>
-                                <arg value="target/repository/features"/>
-                                <arg value="target/repository/plugins"/>
-                                <arg value="${updatesite.url}"/>
-                            </exec>
-                        </tasks>
-                    </configuration>
-                    <goals>
-                        <goal>run</goal>
-                    </goals>
-                </execution>
-             </executions>
-        </plugin>
-    </plugins>
-  </build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jarsigner-plugin</artifactId>
+                <configuration>
+                    <processMainArtifact>false</processMainArtifact>
+                    <archiveDirectory>${project.basedir}/target/repository/plugins</archiveDirectory>
+                    <includes>
+                        <include>*ivy*.jar</include>
+                    </includes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>deploy-to-update-site</id>
+                        <phase>deploy</phase>
+                        <configuration>
+                            <tasks>
+                                <echo
+                                    message="Deploying to update site ${updatesite.url}" />
+                                <exec executable="scp"
+                                    searchpath="true"
+                                    resultproperty="nightly.install.scp.result">
+                                    <arg value="-B" />
+                                    <arg value="-r" />
+                                    <arg
+                                        value="target/repository/content.jar" />
+                                    <arg
+                                        value="target/repository/artifacts.jar" />
+                                    <arg
+                                        value="target/repository/features" />
+                                    <arg
+                                        value="target/repository/plugins" />
+                                    <arg value="${updatesite.url}" />
+                                </exec>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
