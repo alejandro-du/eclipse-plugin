@@ -34,6 +34,7 @@ import org.eclipse.ui.PlatformUI;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.vaadin.integration.eclipse.flow.service.AnalyticsService;
 import com.vaadin.integration.eclipse.flow.util.LogUtil;
 
 import net.lingala.zip4j.core.ZipFile;
@@ -161,6 +162,7 @@ public class StarterManager {
                             .unzip(ResourcesPlugin.getWorkspace().getRoot()
                                     .getLocation().toOSString(), starterFile);
                     StarterManager.scheduleMavenImport(starterDirectory);
+                    AnalyticsService.track(AnalyticsService.CREATE_EVENT_TYPE);
                     monitor.done();
                 } catch (CoreException e) {
                     throw new InvocationTargetException(e,
