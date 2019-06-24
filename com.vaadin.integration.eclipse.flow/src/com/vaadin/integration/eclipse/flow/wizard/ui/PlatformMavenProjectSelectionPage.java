@@ -17,9 +17,9 @@ public class PlatformMavenProjectSelectionPage extends WizardPage {
     private PlatformStarterSelectionComposite starterSelectionComposite;
 
     public PlatformMavenProjectSelectionPage() {
-        super("Vaadin Project");
+        super("Vaadin 14 Project");
         configureImg();
-        setTitle("Vaadin Project");
+        setTitle("Vaadin 14 Project");
         setDescription("Select a Maven project type");
     }
 
