@@ -4,9 +4,9 @@
             class="com.vaadin.integration.eclipse.flow.wizard.ui.PlatformMavenProjectWizard"
             icon="icons/icon-flow.png"
             id="com.vaadin.integration.eclipse.wizards.PlatformMavenProjectWizard"
-            name="Vaadin Project" project="true">
+            name="Vaadin 14 Project" project="true">
             <description>
-                Create a Vaadin Project.
+                Create a Vaadin 14 Project.
             </description>
         </wizard>
         <category id="com.vaadin" name="Vaadin">

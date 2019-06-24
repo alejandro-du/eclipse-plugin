@@ -18,7 +18,7 @@ public class PlatformMavenProjectWizard extends Wizard implements INewWizard {
     private PlatformMavenProjectSelectionPage projectSelectionPage;
 
     public PlatformMavenProjectWizard() {
-        setWindowTitle("New Vaadin Project");
+        setWindowTitle("New Vaadin 14 Project");
         setHelpAvailable(false);
     }
 
