@@ -75,9 +75,7 @@ public class StarterManager {
             return null;
         }
         List<String> techStacks = starter.getTechStacks();
-        if (techStacks.contains("html")) {
-            techStacks.remove("html");
-        }
+        techStacks.remove("html");
         return techStacks.size() != 0 ? starter : null;
     }
 

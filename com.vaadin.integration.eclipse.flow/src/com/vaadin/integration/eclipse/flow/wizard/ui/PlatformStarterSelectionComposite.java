@@ -28,9 +28,17 @@ public class PlatformStarterSelectionComposite extends Composite {
     private Text groupIdText;
     private Text projectNameText;
     private ComboViewer starterCombo;
+    private Label starterDescriptionLabel;
     private ComboViewer stackCombo;
 
     private Map<String, Starter> idToStarter;
+    private Map<String, String> starterToDesc = new HashMap<String, String>();
+    {
+        starterToDesc.put("project-base",
+                "Starting point to create your own Vaadin Flow application.");
+        starterToDesc.put("simple-ui",
+                "Fully functional Vaadin 14 Java application highlighting all the core features of Vaadin Flow.");
+    }
 
     public PlatformStarterSelectionComposite(Composite parent) {
         super(parent, SWT.NONE);
@@ -89,8 +97,12 @@ public class PlatformStarterSelectionComposite extends Composite {
                         Starter selectedStarter = (Starter) selection
                                 .getFirstElement();
                         selectStack(selectedStarter);
+                        updateDescription(selectedStarter);
                     }
                 });
+
+        new Label(this, SWT.NONE);
+        starterDescriptionLabel = new Label(this, SWT.NONE);
 
         Label stackLabel = new Label(this, SWT.NONE);
         stackLabel.setText("Tech stack:");
@@ -106,6 +118,12 @@ public class PlatformStarterSelectionComposite extends Composite {
                 return (String) element;
             }
         });
+    }
+
+    private void updateDescription(Starter selectedStarter) {
+        String description = starterToDesc.get(selectedStarter.getId());
+        starterDescriptionLabel.setText(description);
+        layout(true);
     }
 
     private void setInitialData() throws IOException {
@@ -126,6 +144,7 @@ public class PlatformStarterSelectionComposite extends Composite {
         Starter selectedStarter = idToStarter.get(SELECTED_STARTER_ID);
         starterCombo.setInput(starters);
         starterCombo.setSelection(new StructuredSelection(selectedStarter));
+        updateDescription(selectedStarter);
         selectStack(selectedStarter);
     }
 

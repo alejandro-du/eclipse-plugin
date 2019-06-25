@@ -14,6 +14,9 @@ import com.vaadin.integration.eclipse.flow.wizard.Starter;
 
 public class PlatformMavenProjectSelectionPage extends WizardPage {
 
+    private static final int WIDTH = 650;
+    private static final int HEIGHT = 500;
+
     private PlatformStarterSelectionComposite starterSelectionComposite;
 
     public PlatformMavenProjectSelectionPage() {
@@ -29,6 +32,7 @@ public class PlatformMavenProjectSelectionPage extends WizardPage {
                 parent);
         setControl(starterSelectionComposite);
         init();
+        setSize();
     }
 
     public void init() {
@@ -41,6 +45,10 @@ public class PlatformMavenProjectSelectionPage extends WizardPage {
             updateStatus("Unable to fetch information about available starters",
                     true);
         }
+    }
+
+    private void setSize() {
+        getShell().setSize(WIDTH, HEIGHT);
     }
 
     private void updateStatus(String errorMessage, boolean errorHappened) {
