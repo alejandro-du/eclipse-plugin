@@ -9,7 +9,9 @@ Bundle-Activator: com.vaadin.integration.eclipse.flow.FlowPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  lib/gson-2.8.5.jar,
- lib/zip4j-1.3.2.jar
+ lib/zip4j-1.3.2.jar,
+ lib/license-checker-1.0.0.jar,
+ lib/gwt-elemental-2.8.0.jar
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.ui,
