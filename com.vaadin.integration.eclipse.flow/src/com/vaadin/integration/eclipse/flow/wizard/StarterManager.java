@@ -162,7 +162,7 @@ public class StarterManager {
                             .unzip(ResourcesPlugin.getWorkspace().getRoot()
                                     .getLocation().toOSString(), starterFile);
                     StarterManager.scheduleMavenImport(starterDirectory);
-                    AnalyticsService.track(AnalyticsService.CREATE_EVENT_TYPE);
+                    AnalyticsService.trackProjectCreate(starter.getId(), stack);
                     monitor.done();
                 } catch (CoreException e) {
                     throw new InvocationTargetException(e,
