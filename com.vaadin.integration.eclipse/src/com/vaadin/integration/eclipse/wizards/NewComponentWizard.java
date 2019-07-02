@@ -52,7 +52,7 @@ public class NewComponentWizard extends Wizard implements INewWizard {
      */
     public NewComponentWizard() {
         super();
-        setWindowTitle("New Vaadin Widget");
+        setWindowTitle("New Vaadin widget");
         setNeedsProgressMonitor(true);
     }
 

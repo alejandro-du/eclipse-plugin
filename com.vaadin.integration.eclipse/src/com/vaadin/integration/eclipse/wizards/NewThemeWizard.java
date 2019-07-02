@@ -74,7 +74,7 @@ public class NewThemeWizard extends Wizard implements INewWizard {
      */
     public NewThemeWizard() {
         super();
-        setWindowTitle("New Vaadin Theme");
+        setWindowTitle("New Vaadin theme");
         setNeedsProgressMonitor(true);
     }
 
