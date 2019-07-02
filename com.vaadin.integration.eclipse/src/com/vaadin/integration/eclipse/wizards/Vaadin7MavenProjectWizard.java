@@ -11,7 +11,7 @@ import com.vaadin.integration.eclipse.util.network.MavenVersionManager;
 @SuppressWarnings("restriction")
 public class Vaadin7MavenProjectWizard extends VaadinMavenProjectWizard {
 
-    public static final String WIZARD_PAGE_TITLE = "Vaadin 7 Project with Maven";
+    public static final String WIZARD_PAGE_TITLE = "Vaadin 7 project with Maven";
 
     @Override
     public void addPages() {

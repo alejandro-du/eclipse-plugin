@@ -104,7 +104,7 @@
                 id="com.vaadin">
         </category>
       <wizard
-            name="Vaadin 8 Project"
+            name="Vaadin 8 project"
             icon="icons/new-vaadin-project-8-16.png"
             category="com.vaadin"
             project="true"
@@ -120,7 +120,7 @@
                class="org.eclipse.core.resources.IResource" />
       </wizard>
       <wizard
-            name="Vaadin 7 Project"
+            name="Vaadin 7 project"
             icon="icons/new-vaadin-project-7-16.png"
             category="com.vaadin"
             project="true"
@@ -170,14 +170,14 @@
             class="com.vaadin.integration.eclipse.wizards.NewThemeWizard"
             icon="icons/new-theme-16.png"
             id="com.vaadin.integration.eclipse.wizards.NewThemeWizard"
-            name="Vaadin Theme">
+            name="Vaadin 8 theme">
       </wizard>
       <wizard
             category="com.vaadin"
             class="com.vaadin.integration.eclipse.wizards.NewComponentWizard"
             icon="icons/new-widget-16.png"
             id="com.vaadin.integration.eclipse.wizards.NewComponentWizard"
-            name="Vaadin Widget">
+            name="Vaadin 8 widget">
       </wizard>
    </extension>
    <extension
@@ -412,13 +412,13 @@ Any metadata changes made will be stored in the project manifest.
                   commandId="com.vaadin.integration.eclipse.commands.compileThemeCommand"
                   icon="icons/compile-theme-16.png"
                   id="com.vaadin.integration.eclipse.toolbars.compileThemeCommand"
-                  tooltip="Compile Vaadin Theme">
+                  tooltip="Compile Vaadin theme">
             </command>
             <command
                   commandId="com.vaadin.integration.eclipse.commands.compileWidgetsetCommand"
                   icon="icons/compile-widgetset-16.png"
                   id="com.vaadin.integration.eclipse.toolbars.compileWidgetsetCommand"
-                  tooltip="Compile Vaadin Widgetset">
+                  tooltip="Compile Vaadin widgetset">
             </command>
          </toolbar>
       </menuContribution>
