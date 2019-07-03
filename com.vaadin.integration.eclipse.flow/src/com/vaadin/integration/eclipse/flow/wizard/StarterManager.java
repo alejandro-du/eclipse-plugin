@@ -9,6 +9,7 @@ import java.lang.reflect.Type;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.http.Header;
@@ -75,8 +76,14 @@ public class StarterManager {
                 || "component".equals(starter.getId())) {
             return null;
         }
-        List<String> techStacks = starter.getTechStacks();
-        techStacks.remove("html");
+        List<TechStack> techStacks = starter.getTechStacks();
+        for (Iterator<TechStack> iterator = techStacks.iterator(); iterator
+                .hasNext();) {
+            TechStack stack = iterator.next();
+            if ("html".equals(stack.getId())) {
+                iterator.remove();
+            }
+        }
         return techStacks.size() != 0 ? starter : null;
     }
 
@@ -146,7 +153,7 @@ public class StarterManager {
 
     public static void scheduleStarterImport(final Starter starter,
             final String projectName, final String groupId,
-            final String stack) {
+            final TechStack stack) {
         IRunnableWithProgress op = new IRunnableWithProgress() {
             @Override
             public void run(IProgressMonitor monitor)
@@ -156,13 +163,14 @@ public class StarterManager {
                     monitor.internalWorked(50);
                     File starterFile = StarterManager.download(
                             starter.getRelease(), starter.getId(), projectName,
-                            groupId, stack);
+                            groupId, stack.getId());
                     monitor.internalWorked(80);
                     File starterDirectory = StarterManager
                             .unzip(ResourcesPlugin.getWorkspace().getRoot()
                                     .getLocation().toOSString(), starterFile);
                     StarterManager.scheduleMavenImport(starterDirectory);
-                    AnalyticsService.trackProjectCreate(starter.getId(), stack);
+                    AnalyticsService.trackProjectCreate(starter.getId(),
+                            stack.getId());
                     monitor.done();
                 } catch (CoreException e) {
                     throw new InvocationTargetException(e,

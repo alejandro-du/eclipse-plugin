@@ -1,7 +1,5 @@
 package com.vaadin.integration.eclipse.flow.wizard.ui;
 
-import java.io.IOException;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.wizard.WizardPage;
@@ -11,6 +9,7 @@ import org.eclipse.swt.widgets.Composite;
 import com.vaadin.integration.eclipse.flow.FlowPlugin;
 import com.vaadin.integration.eclipse.flow.util.LogUtil;
 import com.vaadin.integration.eclipse.flow.wizard.Starter;
+import com.vaadin.integration.eclipse.flow.wizard.TechStack;
 
 public class PlatformMavenProjectSelectionPage extends WizardPage {
 
@@ -23,7 +22,8 @@ public class PlatformMavenProjectSelectionPage extends WizardPage {
         super("Vaadin 10+ project");
         configureImg();
         setTitle("Vaadin 10+ project");
-        setDescription("Select a Maven project type");
+        setDescription(
+                "Select a Maven project type.\nPlease note that Vaadin 14 is still a pre-release version.");
     }
 
     @Override
@@ -39,7 +39,7 @@ public class PlatformMavenProjectSelectionPage extends WizardPage {
         try {
             starterSelectionComposite.init();
             updateStatus(null, false);
-        } catch (IOException e) {
+        } catch (Exception e) {
             LogUtil.handleBackgroundException(
                     "Can't fetch data from the start service", e);
             updateStatus("Unable to fetch information about available starters",
@@ -74,7 +74,7 @@ public class PlatformMavenProjectSelectionPage extends WizardPage {
         return starterSelectionComposite.getStarter();
     }
 
-    public String getStack() {
+    public TechStack getStack() {
         return starterSelectionComposite.getStack();
     }
 }

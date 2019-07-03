@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Text;
 
 import com.vaadin.integration.eclipse.flow.wizard.Starter;
 import com.vaadin.integration.eclipse.flow.wizard.StarterManager;
+import com.vaadin.integration.eclipse.flow.wizard.TechStack;
 
 public class PlatformStarterSelectionComposite extends Composite {
 
@@ -115,7 +116,7 @@ public class PlatformStarterSelectionComposite extends Composite {
         stackCombo.setLabelProvider(new LabelProvider() {
             @Override
             public String getText(Object element) {
-                return (String) element;
+                return ((TechStack) element).getId();
             }
         });
     }
@@ -149,8 +150,8 @@ public class PlatformStarterSelectionComposite extends Composite {
     }
 
     private void selectStack(Starter selectedStarter) {
-        List<String> techStacks = selectedStarter.getTechStacks();
-        String selectedStack = techStacks.get(0);
+        List<TechStack> techStacks = selectedStarter.getTechStacks();
+        TechStack selectedStack = techStacks.get(0);
         stackCombo.setInput(techStacks);
         stackCombo.setSelection(new StructuredSelection(selectedStack));
     }
@@ -169,9 +170,9 @@ public class PlatformStarterSelectionComposite extends Composite {
         return (Starter) selection.getFirstElement();
     }
 
-    public String getStack() {
+    public TechStack getStack() {
         StructuredSelection selection = (StructuredSelection) stackCombo
                 .getSelection();
-        return (String) selection.getFirstElement();
+        return (TechStack) selection.getFirstElement();
     }
 }
