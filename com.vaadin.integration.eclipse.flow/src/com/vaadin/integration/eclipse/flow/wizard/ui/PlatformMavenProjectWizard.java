@@ -12,6 +12,7 @@ import org.eclipse.ui.IWorkbench;
 
 import com.vaadin.integration.eclipse.flow.wizard.Starter;
 import com.vaadin.integration.eclipse.flow.wizard.StarterManager;
+import com.vaadin.integration.eclipse.flow.wizard.TechStack;
 
 public class PlatformMavenProjectWizard extends Wizard implements INewWizard {
 
@@ -33,7 +34,7 @@ public class PlatformMavenProjectWizard extends Wizard implements INewWizard {
         final Starter starter = projectSelectionPage.getStarter();
         final String projectName = projectSelectionPage.getProjectName();
         final String groupId = projectSelectionPage.getGroupId();
-        final String stack = projectSelectionPage.getStack();
+        final TechStack stack = projectSelectionPage.getStack();
         Display.getDefault().asyncExec(new Runnable() {
             @Override
             public void run() {

@@ -14,7 +14,7 @@ public class Starter {
     private String description;
     private boolean commercial;
     private boolean requiresWebComponent;
-    private List<String> techStacks;
+    private List<TechStack> techStacks;
 
     public String getId() {
         return id;
@@ -72,11 +72,11 @@ public class Starter {
         this.requiresWebComponent = requiresWebComponent;
     }
 
-    public List<String> getTechStacks() {
+    public List<TechStack> getTechStacks() {
         return techStacks;
     }
 
-    public void setTechStacks(List<String> techStacks) {
+    public void setTechStacks(List<TechStack> techStacks) {
         this.techStacks = techStacks;
     }
 }
