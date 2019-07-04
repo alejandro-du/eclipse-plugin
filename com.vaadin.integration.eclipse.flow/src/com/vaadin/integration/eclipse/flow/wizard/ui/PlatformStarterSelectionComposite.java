@@ -25,6 +25,7 @@ import com.vaadin.integration.eclipse.flow.wizard.TechStack;
 public class PlatformStarterSelectionComposite extends Composite {
 
     private static final String SELECTED_STARTER_ID = "project-base";
+    private static final String SPRING_STACK_ID = "spring";
 
     private Text groupIdText;
     private Text projectNameText;
@@ -151,9 +152,18 @@ public class PlatformStarterSelectionComposite extends Composite {
 
     private void selectStack(Starter selectedStarter) {
         List<TechStack> techStacks = selectedStarter.getTechStacks();
-        TechStack selectedStack = techStacks.get(0);
+        TechStack selectedStack = getInitialStack(techStacks);
         stackCombo.setInput(techStacks);
         stackCombo.setSelection(new StructuredSelection(selectedStack));
+    }
+
+    private TechStack getInitialStack(List<TechStack> techStacks) {
+        for (TechStack stack : techStacks) {
+            if (SPRING_STACK_ID.equals(stack.getId())) {
+                return stack;
+            }
+        }
+        return techStacks.get(0);
     }
 
     public String getGroupId() {
