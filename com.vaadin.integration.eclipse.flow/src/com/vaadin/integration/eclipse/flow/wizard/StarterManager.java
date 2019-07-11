@@ -1,18 +1,23 @@
 package com.vaadin.integration.eclipse.flow.wizard;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.fluent.Request;
@@ -47,7 +52,7 @@ public class StarterManager {
     private static final String STARTER_DOWNLOAD_URL = START_SERVICE_URL
             + "%s/%s";
 
-    private static final String TMP_STARTER_SPLIT_SUFFIX = "-tmp-starter-split-suffix-";
+    private static final String TMP_STARTER_PREFIX = "tmp-starter-";
 
     public static List<Starter> fetchStarters() throws IOException {
         Response response = Request.Get(START_SERVICE_URL)
@@ -104,17 +109,8 @@ public class StarterManager {
                     EntityUtils.toString(response.getEntity()));
         }
 
-        Header contentDispositionHeader = response
-                .getFirstHeader("content-disposition");
-        String fileNameFull = contentDispositionHeader.getElements()[0]
-                .getParameterByName("filename").getValue();
-
-        int extensionIndex = fileNameFull.indexOf(".zip");
-        String fileName = fileNameFull.substring(0, extensionIndex);
-
         File tmpDir = new File(System.getProperty("java.io.tmpdir"));
-        File tmpFile = File.createTempFile(fileName + TMP_STARTER_SPLIT_SUFFIX,
-                ".zip", tmpDir);
+        File tmpFile = File.createTempFile(TMP_STARTER_PREFIX, ".zip", tmpDir);
         tmpFile.deleteOnExit();
 
         FileOutputStream out = null;
@@ -129,18 +125,78 @@ public class StarterManager {
         return tmpFile;
     }
 
-    public static File unzip(String path, File starter) throws ZipException {
-        int splitIndex = starter.getName().indexOf(TMP_STARTER_SPLIT_SUFFIX);
-        String fileName = starter.getName().substring(0, splitIndex);
-        String directoryPath = path + File.separatorChar + fileName;
-        String unzipPath = findUnzipPath(directoryPath);
+    public static File unzip(String workspacePath, File starter)
+            throws ZipException, IOException {
+        Path unzipTmpPath = Files.createTempDirectory(
+                Paths.get(starter.getParent()), getTmpFileName(starter));
+        File unzipTmpDir = unzipTmpPath.toFile();
+        unzipTmpDir.deleteOnExit();
 
         ZipFile zipFile = new ZipFile(starter);
-        zipFile.extractAll(unzipPath);
-        return new File(unzipPath);
+        zipFile.extractAll(unzipTmpDir.toString());
+
+        String projectDirName = getProjectDirName(unzipTmpDir);
+        String unzipPath = workspacePath + File.separatorChar + projectDirName;
+        String freeUnzipPath = findFreeUnzipPath(unzipPath);
+
+        File unzipDir = new File(freeUnzipPath);
+        copy(new File(
+                unzipTmpDir.toString() + File.separatorChar + projectDirName),
+                unzipDir);
+
+        return new File(freeUnzipPath);
     }
 
-    private static String findUnzipPath(String directoryPath) {
+    private static String getProjectDirName(File starter) {
+        File[] subDirs = starter.listFiles();
+        File projectDir = subDirs[0];
+        return projectDir.getName();
+    }
+
+    private static String getTmpFileName(File starter) {
+        String tmpFileName = starter.getName();
+        int index = tmpFileName.lastIndexOf('.');
+        return index != -1 ? tmpFileName.substring(0, index) : tmpFileName;
+    }
+
+    private static void copy(File source, File target) throws IOException {
+        if (source.isDirectory()) {
+            if (!target.exists()) {
+                target.mkdir();
+            }
+            String files[] = source.list();
+            for (String file : files) {
+                File srcFile = new File(source, file);
+                File destFile = new File(target, file);
+                copy(srcFile, destFile);
+            }
+        } else {
+            copyFile(source, target);
+        }
+    }
+
+    private static void copyFile(File source, File dest) throws IOException {
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = new FileInputStream(source);
+            os = new FileOutputStream(dest);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+        } finally {
+            if (is != null) {
+                is.close();
+            }
+            if (os != null) {
+                os.close();
+            }
+        }
+    }
+
+    private static String findFreeUnzipPath(String directoryPath) {
         if (new File(directoryPath).exists()) {
             int counter = 1;
             while (new File(directoryPath + counter).exists()) {
