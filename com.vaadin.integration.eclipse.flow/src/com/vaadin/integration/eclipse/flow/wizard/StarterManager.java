@@ -144,7 +144,18 @@ public class StarterManager {
                 unzipTmpDir.toString() + File.separatorChar + projectDirName),
                 unzipDir);
 
+        delete(unzipTmpDir);
+
         return new File(freeUnzipPath);
+    }
+
+    private static void delete(File file) {
+        if (file.isDirectory()) {
+            for (String child : file.list()) {
+                delete(new File(file, child));
+            }
+        }
+        file.delete();
     }
 
     private static String getProjectDirName(File starter) {
@@ -227,6 +238,7 @@ public class StarterManager {
                     StarterManager.scheduleMavenImport(starterDirectory);
                     AnalyticsService.trackProjectCreate(starter.getId(),
                             stack.getId());
+                    starterFile.delete();
                     monitor.done();
                 } catch (CoreException e) {
                     throw new InvocationTargetException(e,
