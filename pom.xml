@@ -22,14 +22,14 @@
         <keystore.store.password>reindeer</keystore.store.password>
         <keystore.key.password>reindeer</keystore.key.password>
 
-        <vaadin.eclipse.updatesite>http://vaadin.com/eclipse</vaadin.eclipse.updatesite>
+        <vaadin.eclipse.updatesite>https://vaadin.com/eclipse</vaadin.eclipse.updatesite>
     </properties>
 
     <repositories>
         <repository>
             <id>eclipse-mars</id>
             <layout>p2</layout>
-            <url>http://download.eclipse.org/releases/mars</url>
+            <url>https://download.eclipse.org/releases/mars</url>
         </repository>
         <!-- This is still needed for the old wysiwyg editor plug-in -->
         <repository>
@@ -40,7 +40,7 @@
         <repository>
             <id>ivyDE</id>
             <layout>p2</layout>
-            <url>http://www.apache.org/dist/ant/ivyde/updatesite</url>
+            <url>https://www.apache.org/dist/ant/ivyde/updatesite</url>
         </repository>
     </repositories>
 

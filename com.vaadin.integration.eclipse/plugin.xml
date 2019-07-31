@@ -518,7 +518,7 @@ Any metadata changes made will be stored in the project manifest.
    <!-- Note that this is not required for using the pre-release archetypes on the list retrieved from vaadin.com . -->
 <!--
    <extension point="org.eclipse.m2e.core.archetypeCatalogs">
-      <remote url="http://maven.vaadin.com/vaadin-prereleases/" description="Vaadin pre-release archetypes">
+      <remote url="https://maven.vaadin.com/vaadin-prereleases/" description="Vaadin pre-release archetypes">
       </remote>
    </extension>
 -->
