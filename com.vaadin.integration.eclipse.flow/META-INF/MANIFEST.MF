@@ -19,4 +19,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.m2e.maven.runtime,
  org.eclipse.m2e.core.ui,
  org.apache.httpcomponents.httpcore,
- org.apache.httpcomponents.httpclient
+ org.apache.httpcomponents.httpclient,
+ org.eclipse.m2e.launching,
+ org.eclipse.debug.ui,
+ org.eclipse.jdt.core,
+ org.eclipse.jdt.launching

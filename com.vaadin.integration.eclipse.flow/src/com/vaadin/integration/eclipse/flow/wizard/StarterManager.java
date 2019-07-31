@@ -28,6 +28,8 @@ import org.apache.maven.model.Model;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.m2e.core.MavenPlugin;
@@ -35,6 +37,7 @@ import org.eclipse.m2e.core.internal.IMavenConstants;
 import org.eclipse.m2e.core.project.MavenProjectInfo;
 import org.eclipse.m2e.core.project.ProjectImportConfiguration;
 import org.eclipse.m2e.core.ui.internal.wizards.ImportMavenProjectsJob;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
@@ -267,7 +270,7 @@ public class StarterManager {
     }
 
     @SuppressWarnings(value = { "restriction", "unchecked" })
-    private static void scheduleMavenImport(File starterDirectory)
+    private static void scheduleMavenImport(final File starterDirectory)
             throws CoreException {
         File pomFile = new File(starterDirectory,
                 IMavenConstants.POM_FILE_NAME);
@@ -281,6 +284,18 @@ public class StarterManager {
                 Collections.singleton(mavenProjectInfo), Collections.EMPTY_LIST,
                 new ProjectImportConfiguration());
         job.setRule(MavenPlugin.getProjectConfigurationManager().getRule());
+        job.addJobChangeListener(new JobChangeAdapter() {
+            @Override
+            public void done(IJobChangeEvent event) {
+                Display.getDefault().asyncExec(new Runnable() {
+                    @Override
+                    public void run() {
+                        new MavenGoal(starterDirectory.getName(), "package")
+                                .execute();
+                    }
+                });
+            }
+        });
         job.schedule();
     }
 }
