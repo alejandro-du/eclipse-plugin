@@ -4,7 +4,7 @@ import org.apache.maven.archetype.catalog.Archetype;
 
 public class VaadinArchetype {
 
-    private static final String PRERELEASE_REPOSITORY_URL = "http://maven.vaadin.com/vaadin-prereleases/";
+    private static final String PRERELEASE_REPOSITORY_URL = "https://maven.vaadin.com/vaadin-prereleases/";
 
     private final String title;
     private final String description;
